@@ -210,37 +210,40 @@ void USBD_init(void)
  */
 void USBD_Reset(void)
 {
-    pInformation->Current_Configuration = 0;
-    pInformation->Current_Feature = USBD_ConfigDescriptor[7];
-    pInformation->Current_Interface = 0;
+  pInformation->Current_Configuration = 0;
+  pInformation->Current_Feature = USBD_ConfigDescriptor[7];
+  pInformation->Current_Interface = 0;
 
-    SetBTABLE(BTABLE_ADDRESS);
+  SetBTABLE(BTABLE_ADDRESS);
 
-    SetEPType(ENDP0, EP_CONTROL);
-    SetEPTxStatus(ENDP0, EP_TX_STALL);
-    SetEPRxAddr(ENDP0, ENDP0_RXADDR);
-    SetEPTxAddr(ENDP0, ENDP0_TXADDR);
-    Clear_Status_Out(ENDP0);
-    SetEPRxCount(ENDP0, Device_Property.MaxPacketSize);
-    SetEPRxValid(ENDP0);
-    _ClearDTOG_RX(ENDP0);
-    _ClearDTOG_TX(ENDP0);
+  SetEPType(ENDP0, EP_CONTROL);
+  SetEPTxStatus(ENDP0, EP_TX_STALL);
+  SetEPRxAddr(ENDP0, ENDP0_RXADDR);
+  SetEPTxAddr(ENDP0, ENDP0_TXADDR);
+  Clear_Status_Out(ENDP0);
+  SetEPRxCount(ENDP0, Device_Property.MaxPacketSize);
+  SetEPRxValid(ENDP0);
+  _ClearDTOG_RX(ENDP0);
+  _ClearDTOG_TX(ENDP0);
 
-    SetEPType(ENDP1, EP_INTERRUPT);
-    SetEPTxAddr(ENDP1, ENDP1_TXADDR);
-    SetEPTxStatus(ENDP1, EP_TX_NAK);
-    _ClearDTOG_TX(ENDP1);
-    _ClearDTOG_RX(ENDP1);
+  SetEPType(ENDP1, EP_INTERRUPT);
+  SetEPTxAddr(ENDP1, ENDP1_TXADDR);
+  SetEPTxStatus(ENDP1, EP_TX_NAK);
+  _ClearDTOG_TX(ENDP1);
+  _ClearDTOG_RX(ENDP1);
 
-    SetEPType(ENDP2, EP_INTERRUPT);
-    SetEPTxAddr(ENDP2, ENDP2_TXADDR);
-    SetEPTxStatus(ENDP2, EP_TX_NAK);
-    _ClearDTOG_TX(ENDP2);
-    _ClearDTOG_RX(ENDP2);
+  SetEPType(ENDP2, EP_INTERRUPT);
+  SetEPTxAddr(ENDP2, ENDP2_TXADDR);
+  SetEPTxStatus(ENDP2, EP_TX_NAK);
+  _ClearDTOG_TX(ENDP2);
+  _ClearDTOG_RX(ENDP2);
 
-    SetDeviceAddress(0);
+  SetDeviceAddress(0);
 
-    bDeviceState = ATTACHED;
+  USBD_Endp1_Busy = 0;
+  USBD_Endp2_Busy = 0;
+
+  bDeviceState = ATTACHED;
 }
 
 /*********************************************************************

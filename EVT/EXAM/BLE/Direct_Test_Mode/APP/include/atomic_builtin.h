@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+#include "atomic.h"
+#include <stdbool.h>
 
 /* Included from <atomic.h> */
 

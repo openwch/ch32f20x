@@ -44,18 +44,17 @@ volatile UINT16 USBHS_Endp2_Up_LoadPtr = 0x00;
 volatile UINT8  USBHS_Endp2_Down_Flag = 0x00;                                   
 
 /******************************************************************************/
-/* USBÉè±¸ÃèÊö·û */
 UINT8 MyDevDescr[18] = { 0x12, 0x01, 0x10, 0x01, 0xFF, 0x80, 0x55, 0x40, 0x48,
         0x43, 0xe0, 0x55,  //USB MODULE
         (u8) Version_Num, (u8) (Version_Num >> 8), 
         0x00, 0x00, 0x00, 0x01 };
 
-/* USB配置描述符(全速) */
+/* USB configuration descriptor (full speed) */
 const UINT8 MyCfgDescr_FS[] = { 0x09, 0x02, 0x20, 0x00, 0x01, 0x01, 0x00, 0x80,
         0x32, 0x09, 0x04, 0x00, 0x00, 0x02, 0xFF, 0x80, 0x55, 0x00, 0x07, 0x05,
         0x82, 0x02, 0x40, 0x00, 0x00, 0x07, 0x05, 0x02, 0x02, 0x40, 0x00, 0x00 };
 
-/* USB配置描述符(高速) */
+/* USB Configuration Descriptor (High Speed) */
 const UINT8 MyCfgDescr_HS[] = { 0x09, 0x02, 0x20, 0x00, 0x01, 0x01, 0x00, 0x80,
         0x32, 0x09, 0x04, 0x00, 0x00, 0x02, 0xFF, 0x80, 0x55, 0x00, 0x07, 0x05,
         0x82, 0x02, 0x40, 0x00, 0x00, 0x07, 0x05, 0x02, 0x02, 0x40, 0x00, 0x00 };
@@ -83,7 +82,7 @@ void USBHS_RCC_Init( void )
 /*********************************************************************
  * @fn      USBHS_Device_Endp_Init
  *
- * @brief   USB2.0¸ßËÙÉè±¸¶Ëµã³õÊ¼»¯
+ * @brief   USBHS Device Endp Init
  *
  * @return  none
  */
@@ -118,7 +117,7 @@ void USBHS_Device_Endp_Init ( void )
 /*********************************************************************
  * @fn      USBHS_Device_Init
  *
- * @brief   USB2.0¸ßËÙÉè±¸³õÊ¼»¯
+ * @brief   USBHS Device Init
  *
  * @return  none
  */
@@ -156,7 +155,7 @@ void USBHS_Device_Init ( FunctionalState sta )
 /*********************************************************************
  * @fn      USBHS_Device_SetAddress
  *
- * @brief   USB2.0¸ßËÙÉè±¸ÉèÖÃÉè±¸µØÖ·
+ * @brief   USBHS Device SetAddress
  *
  * @return  none
  */
@@ -184,14 +183,14 @@ void USBHS_IRQHandler( void )
     USBHS_Int_Flag = USBHSD->INT_FG;
 
     if (USBHS_Int_Flag & USBHS_TRANSFER_FLAG) {
-        /* 端点传输处理 */
+        /* Endpoint transport handling */
         end_num = (USBHSD->INT_ST) & MASK_UIS_ENDP;
         rx_token = (((USBHSD->INT_ST) & MASK_UIS_TOKEN) >> 4) & 0x03;
         /* 00: OUT, 01:SOF, 10:IN, 11:SETUP */
         if (end_num == 0) {
-            /* 端点0处理 */
+            /* process of endpoint 0 */
             if (rx_token == PID_IN ) {
-                /* 端点0上传成功中断 */
+                /* Upload successfully interrupted for endpoint 0 */
                 switch (USBHS_Dev_SetupReqCode) {
                 case USB_GET_DESCRIPTOR:
                 case 0x20: {
@@ -213,7 +212,7 @@ void USBHS_IRQHandler( void )
                     break;
 
                 default:
-                    /* 状态阶段完成中断或者是强制上传0长度数据包结束控制传输 */
+    /* The status phase is completed and interrupted or the 0-length data packet is forced to be uploaded to end the control transmission. */
                     USBHSD->UEP0_TX_LEN = 0;
                     USBHSD->UEP0_TX_CTRL = USBHS_EP_T_RES_NAK;
                     USBHSD->UEP0_RX_CTRL = USBHS_EP_R_RES_ACK;
@@ -249,29 +248,28 @@ void USBHS_IRQHandler( void )
         }
         USBHSD->INT_FG = USBHS_TRANSFER_FLAG;
     } else if (USBHS_Int_Flag & USBHS_SETUP_FLAG) {
-        /* SETUP包处理 */
+        /* SETUP package processing */
         USBHS_Dev_SetupReqLen = pMySetupReqPak->wLength;
         USBHS_Dev_SetupReqCode = pMySetupReqPak->bRequest;
         chtype = pMySetupReqPak->bRequestType;
         len = 0x00;
         errflag = 0x00;
 
-        /* 判断当前是标准请求还是其他请求 */
+        /* Determine whether the current request is a standard request or another request */
         if (( pMySetupReqPak->bRequestType & USB_REQ_TYP_MASK)
                 != USB_REQ_TYP_STANDARD) {
-            /* 其它请求,如类请求,产商请求等 */
+            /* Other requests, such as class requests, vendor requests, etc. */
             if ( pMySetupReqPak->bRequestType & 0x40) {
-                /* 厂商请求 */
+                /* Vendor request */
                 switch (USBHS_Dev_SetupReqCode) {
                 default:
-                    errflag = 0xFF; /* 操作失败 */
+                    errflag = 0xFF; /* operation failed */
                     break;
                 }
             } else if ( pMySetupReqPak->bRequestType & 0x20) {
-                /* 类请求 */
+                /* class request */
             }
-
-            /* 判断是否可以正常处理 */
+            /* Determine whether it can be processed normally */
             if (errflag != 0xFF) {
                 if (USBHS_Dev_SetupReqLen > len) {
                     USBHS_Dev_SetupReqLen = len;
@@ -282,42 +280,42 @@ void USBHS_IRQHandler( void )
                 pDescr += len;
             }
         } else {
-            /* 处理标准USB请求包 */
+            /* Handles standard USB request packets */
             switch (USBHS_Dev_SetupReqCode) {
             case USB_GET_DESCRIPTOR: {
                 switch ((( pMySetupReqPak->wValue) >> 8)) {
                 case USB_DESCR_TYP_DEVICE:
-                    /* 获取设备描述符 */
+                    /* Get device descriptor */
                     pDescr = MyDevDescr;
                     len = MyDevDescr[0];
                     break;
 
                 case USB_DESCR_TYP_CONFIG:
-                    /* 获取配置描述符 */
+                    /* Get configuration descriptor */
                     pDescr = MyCfgDescr_HS;
                     len = MyCfgDescr_HS[2];
                     break;
 
                 case USB_DESCR_TYP_STRING:
-                    /* 获取字符串描述符 */
+                    /* Get string descriptor */
                     switch (( pMySetupReqPak->wValue) & 0xff) {
                     case 0:
-                        /* 语言字符串描述符 */
+                        /* Language string descriptor */
 
                         break;
 
                     case 1:
-                        /* USB产商字符串描述符 */
+                        /* USB vendor string descriptor */
 
                         break;
 
                     case 2:
-                        /* USB产品字符串描述符 */
+                        /* USB product string descriptor */
 
                         break;
 
                     case 3:
-                        /* USB序列号字符串描述符 */
+                        /* USB serial number string descriptor */
 
                         break;
 
@@ -328,19 +326,19 @@ void USBHS_IRQHandler( void )
                     break;
 
                 case 6:
-                    /* 设备限定描述符 */
+                    /* device qualified descriptor */
 
                     break;
 
                 case 7:
-                    /* 其他速度配置描述符 */
+                    /* Other speed configuration descriptors */
                     if (USBHS_Dev_Speed == 0x01)
                         errflag = 0xFF;
                     break;
 
                 case 0x0f:
-                    /* BOS描述符 */
-                    /* USB2.0设备不支持BOS描述符 */
+                    /* BOS descriptor */
+                    /* USB2.0 devices do not support BOS descriptors */
                     errflag = 0xFF;
                     break;
                 default:
@@ -348,7 +346,7 @@ void USBHS_IRQHandler( void )
                     break;
                 }
 
-                /* 判断是否可以正常处理 */
+                /* Determine whether it can be processed normally */
                 if (errflag != 0xFF) {
                     if (USBHS_Dev_SetupReqLen > len) {
                         USBHS_Dev_SetupReqLen = len;
@@ -362,12 +360,12 @@ void USBHS_IRQHandler( void )
                 break;
 
             case USB_SET_ADDRESS:
-                /* 设置地址 */
+                /* Set address */
                 USBHS_Dev_Address = ( pMySetupReqPak->wValue) & 0xff;
                 break;
 
             case USB_GET_CONFIGURATION:
-                /* 获取配置值 */
+                /* Get configuration value */
                 EP0_Databuf[0] = USBHS_Dev_Config;
                 if (USBHS_Dev_SetupReqLen > 1) {
                     USBHS_Dev_SetupReqLen = 1;
@@ -375,16 +373,16 @@ void USBHS_IRQHandler( void )
                 break;
 
             case USB_SET_CONFIGURATION:
-                /* 设置配置值 */
+                /* Set configuration values */
                 USBHS_Dev_Config = ( pMySetupReqPak->wValue) & 0xff;
                 USBHS_Dev_EnumStatus = 0x01;
                 break;
 
             case USB_CLEAR_FEATURE: {
-                /* 清除特性 */
+                /* Clear properties */
                 if (( pMySetupReqPak->bRequestType & USB_REQ_RECIP_MASK)
                         == USB_REQ_RECIP_ENDP) {
-                    /* 清除端点 */
+                    /* clear endpoint */
                     switch (( pMySetupReqPak->wIndex) & 0xff)/* wIndexL */
                     {
                     case 0x82:
@@ -425,9 +423,9 @@ void USBHS_IRQHandler( void )
                 }
                 break;
                 case USB_SET_FEATURE:
-                /* 设置特性 */
+                /* Set properties */
                 if (( pMySetupReqPak->bRequestType & 0x1F) == 0x00) {
-                    /* 设置设备 */
+                    /* Set up device */
                     if ( pMySetupReqPak->wValue == 0x01) {
                         errflag = 0xFF;
 
@@ -435,33 +433,33 @@ void USBHS_IRQHandler( void )
                         errflag = 0xFF;
                     }
                 } else if (( pMySetupReqPak->bRequestType & 0x1F) == 0x02) {
-                    /* 设置端点 */
+                    /* Set endpoint */
                     if ( pMySetupReqPak->wValue == 0x00) {
-                        /* 设置指定端点STALL */
+                        /* Set the specified endpoint STALL */
                         switch (( pMySetupReqPak->wIndex) & 0xff) {
                         case 0x82:
-                            /* 设置端点2 IN STALL */
+                            /* Set endpoint 2 IN STALL */
                             USBHSD->UEP2_TX_CTRL = ( USBHSD->UEP2_TX_CTRL
                                     & ~USBHS_EP_T_RES_MASK)
                                     | USBHS_EP_T_RES_STALL;
                             break;
 
                         case 0x02:
-                            /* 设置端点2 OUT Stall */
+                            /* Set endpoint 2 OUT Stall */
                             USBHSD->UEP2_RX_CTRL = ( USBHSD->UEP2_RX_CTRL
                                     & ~USBHS_EP_R_RES_MASK)
                                     | USBHS_EP_R_RES_STALL;
                             break;
 
                         case 0x81:
-                            /* 设置端点1 IN STALL */
+                            /* Set endpoint 1 IN STALL */
                             USBHSD->UEP1_TX_CTRL = ( USBHSD->UEP1_TX_CTRL
                                     & ~USBHS_EP_T_RES_MASK)
                                     | USBHS_EP_T_RES_STALL;
                             break;
 
                         case 0x01:
-                            /* 设置端点1 OUT STALL */
+                            /* Set endpoint 1 OUT STALL */
                             USBHSD->UEP1_RX_CTRL = ( USBHSD->UEP1_RX_CTRL
                                     & ~USBHS_EP_R_RES_MASK)
                                     | USBHS_EP_R_RES_STALL;
@@ -495,7 +493,7 @@ void USBHS_IRQHandler( void )
                 break;
 
             case USB_GET_STATUS:
-                /* 根据当前端点实际状态进行应答 */
+                /* Respond based on the actual status of the current endpoint */
                 EP0_Databuf[0] = 0x00;
                 EP0_Databuf[1] = 0x00;
                 if ( pMySetupReqPak->wIndex == 0x81) {
@@ -530,7 +528,7 @@ void USBHS_IRQHandler( void )
             }
         }
 
-        /* 端点0处理 */
+        /* Endpoint 0 processing */
         if (errflag == 0xFF) {
             /* IN - STALL / OUT - DATA - STALL */
             USBHS_Dev_SetupReqCode = 0xFF;
@@ -552,8 +550,8 @@ void USBHS_IRQHandler( void )
         USBHSD->INT_FG = USBHS_SETUP_FLAG;
     } else if (USBHS_Int_Flag & USBHS_DETECT_FLAG) {
         USBHS_Dev_Address = 0x00;
-        USBHS_Device_Endp_Init(); /* USB2.0高速设备端点初始化 */
-        USBHS_Device_SetAddress(USBHS_Dev_Address); /* USB2.0高速设备设置设备地址 */
+        USBHS_Device_Endp_Init(); /* USBHS device endpoint initialization */
+        USBHS_Device_SetAddress(USBHS_Dev_Address); /* USBHS device set device address */
         USBHSD->INT_FG = USBHS_DETECT_FLAG;
     } else if (USBHS_Int_Flag & USBHS_SUSPEND_FLAG) {
         USBHS_Dev_SleepStatus &= ~0x02;

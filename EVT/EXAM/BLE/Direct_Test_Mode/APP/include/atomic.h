@@ -8,8 +8,6 @@
 #ifndef ZEPHYR_INCLUDE_SYS_ATOMIC_H_
 #define ZEPHYR_INCLUDE_SYS_ATOMIC_H_
 
-#include <stdbool.h>
-#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -41,7 +41,7 @@ int main( void )
     Delay_Init( );
     USART_Printf_Init( 115200 );
     DUG_PRINTF( "SystemClk:%d\r\n", SystemCoreClock );
-    DUG_PRINTF( "USBFS HOST KM Test\r\n" );
+    DUG_PRINTF( "USBFS HOST MTP Test\r\n" );
 
     /* Initialize USBHS host */
     /* Note: Only CH32F205/CH32F207 support USB high-speed port. */

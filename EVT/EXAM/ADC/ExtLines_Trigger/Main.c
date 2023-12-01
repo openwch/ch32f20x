@@ -114,11 +114,11 @@ void EXTI_Event_Init( void )
  */
 u16 Get_ConversionVal( s16 val )
 {
-    if( ( val + Calibrattion_Val ) < 0 )
+    if( ( val + Calibrattion_Val ) < 0 || val==0 )
     {
         return 0;
     }
-    if( ( Calibrattion_Val + val ) > 4095 )
+    if( ( Calibrattion_Val + val ) > 4095 || val==4095)
     {
         return 4095;
     }

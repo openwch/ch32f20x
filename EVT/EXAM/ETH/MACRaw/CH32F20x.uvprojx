@@ -408,6 +408,11 @@
               <FileType>2</FileType>
               <FilePath>..\..\SRC\Startup\startup_ch32f20x_D8C.s</FilePath>
             </File>
+            <File>
+              <FileName>startup_ch32f20x_D8W.s</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\SRC\Startup\startup_ch32f20x_D8W.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -569,9 +574,29 @@
           <GroupName>ETH_Driver</GroupName>
           <Files>
             <File>
-              <FileName>eth_driver.c</FileName>
+              <FileName>eth_driver_D8C_10M.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\ETH_Driver\eth_driver.c</FilePath>
+              <FilePath>.\ETH_Driver\eth_driver_D8C_10M.c</FilePath>
+            </File>
+            <File>
+              <FileName>eth_driver_D8C_MII.c</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ETH_Driver\eth_driver_D8C_MII.c</FilePath>
+            </File>
+            <File>
+              <FileName>eth_driver_D8C_RGMII.c</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ETH_Driver\eth_driver_D8C_RGMII.c</FilePath>
+            </File>
+            <File>
+              <FileName>eth_driver_D8C_RMII.c</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ETH_Driver\eth_driver_D8C_RMII.c</FilePath>
+            </File>
+            <File>
+              <FileName>eth_driver_D8W.c</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ETH_Driver\eth_driver_D8W.c</FilePath>
             </File>
           </Files>
         </Group>

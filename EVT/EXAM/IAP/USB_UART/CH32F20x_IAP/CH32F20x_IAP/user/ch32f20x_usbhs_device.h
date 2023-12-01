@@ -470,52 +470,51 @@ typedef volatile unsigned long  *PUINT32V;
 #define USBHS_PLL_SRC_PRE_DIV8 (7<<24)
 
 /******************************************************************************/
-/* 端点大小相关宏定义 */
-#define DEF_USB_EP0_SIZE           64                                           /* 端点0大小 */
-#define DEF_USB_EP1_SIZE           64                                           /* 端点1大小 */
-#define DEF_USB_FS_EP2_SIZE        64                                           /* 端点2全速模式大小 */
-#define DEF_USB_HS_EP2_SIZE        512                                          /* 端点2高速模式大小 */
-#define DEF_USB_FS_EP_SIZE         64                                           /* 端点全速模式大小 */
-#define DEF_USB_HS_EP_SIZE         512                                          /* 端点高速模式大小 */
+/* Definitions of Endpoint size */
+#define DEF_USB_EP0_SIZE           64                                           /* Size of endpoint 0 */
+#define DEF_USB_EP1_SIZE           64                                           /* Size of endpoint 1 */
+#define DEF_USB_FS_EP2_SIZE        64                                           /* Size of endpoint 2 full speed mode */
+#define DEF_USB_HS_EP2_SIZE        512                                          /* Size of endpoint 2 high speed mode */
+#define DEF_USB_FS_EP_SIZE         64                                           /* Size of endpoint full speed mode */
+#define DEF_USB_HS_EP_SIZE         512                                          /* Size of endpoint high speed mode */
 
 /******************************************************************************/
-/* USB设备描述符，设备序列号（bcdDevice） */
+/* USB device descriptor, device serial number (bcdDevice) */
 #define DEF_IC_PRG_VER             0x11
 #define DEF_IC_PRG_VER2            0x00
 /******************************************************************************/
-/* 变量外扩 */
-extern __attribute__ ((aligned(16))) UINT8 EP0_Databuf[ USBHS_UEP0_SIZE ];        /*端点0数据收发缓冲区*/
-extern __attribute__ ((aligned(16))) UINT8 EP1_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点1数据接收缓冲区 */
-extern __attribute__ ((aligned(16))) UINT8 EP1_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点1数据发送缓冲区 */
-extern __attribute__ ((aligned(16))) UINT8 EP2_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点2数据接收缓冲区 */
-extern __attribute__ ((aligned(16))) UINT8 EP2_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点2数据发送缓冲区 */
+/* variable expansion */
+extern __attribute__ ((aligned(16))) UINT8 EP0_Databuf[ USBHS_UEP0_SIZE ];        /* Data sending and receiving buffer of endpoint 0 */
+extern __attribute__ ((aligned(16))) UINT8 EP1_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* Data receiving buffer of endpoint 1 */
+extern __attribute__ ((aligned(16))) UINT8 EP1_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* Data sending buffer of endpoint 1 */
+extern __attribute__ ((aligned(16))) UINT8 EP2_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* Data receiving buffer of endpoint 2 */
+extern __attribute__ ((aligned(16))) UINT8 EP2_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* Data sending buffer of endpoint 2 */
 
 extern const UINT8 *pDescr;
-extern volatile UINT8  USBHS_Dev_SetupReqCode;                                  /* USB2.0高速设备Setup包命令码 */
-extern volatile UINT16 USBHS_Dev_SetupReqLen;                                   /* USB2.0高速设备Setup包长度 */
-extern volatile UINT8  USBHS_Dev_SetupReqValueH;                                /* USB2.0高速设备Setup包Value高字节 */
-extern volatile UINT8  USBHS_Dev_Config;                                        /* USB2.0高速设备配置值 */
-extern volatile UINT8  USBHS_Dev_Address;                                       /* USB2.0高速设备地址值 */
-extern volatile UINT8  USBHS_Dev_SleepStatus;                                   /* USB2.0高速设备睡眠状态 */
-extern volatile UINT8  USBHS_Dev_EnumStatus;                                    /* USB2.0高速设备枚举状态 */
-extern volatile UINT8  USBHS_Dev_Endp0_Tog;                                     /* USB2.0高速设备端点0同步标志 */
+extern volatile UINT8  USBHS_Dev_SetupReqCode;                                  /* USBHS device Setup package command code */
+extern volatile UINT16 USBHS_Dev_SetupReqLen;                                   /* USBHS device Setup packet length */
+extern volatile UINT8  USBHS_Dev_SetupReqValueH;                                /* USBHS device Setup package Value high byte */
+extern volatile UINT8  USBHS_Dev_Config;                                        /* USBHS device configuration values */
+extern volatile UINT8  USBHS_Dev_Address;                                       /* USBHS device address value */
+extern volatile UINT8  USBHS_Dev_SleepStatus;                                   /* USBHS device sleep state */
+extern volatile UINT8  USBHS_Dev_EnumStatus;                                    /* USBHS device enumeration status */
+extern volatile UINT8  USBHS_Dev_Endp0_Tog;                                     /* USBHS device endpoint 0 sync flag */
 
-extern volatile UINT16 USBHS_Endp1_Up_Flag;                                     /* USB2.0高速设备端点1数据上传状态: 0:空闲; 1:正在上传; */
-extern volatile UINT8  USBHS_Endp1_Down_Flag;                                   /* USB2.0高速设备端点1下传成功标志 */
-extern volatile UINT8  USBHS_Endp1_Down_Len;                                    /* USB2.0高速设备端点1下传长度 */
+extern volatile UINT16 USBHS_Endp1_Up_Flag;                                     /* USBHS device data upload status of endpoint 1: 0: idle; 1: uploading; */
+extern volatile UINT8  USBHS_Endp1_Down_Flag;                                   /* USBHS device download success flag of endpoint 1 */
+extern volatile UINT8  USBHS_Endp1_Down_Len;                                    /* USBHS device download length of endpoint 1 */
 
-extern volatile UINT16 USBHS_Endp2_Up_Flag;                                     /* USB2.0高速设备端点2数据上传状态: 0:空闲; 1:正在上传; */
-extern volatile UINT16 USBHS_Endp2_Up_LoadPtr;                                  /* USB2.0高速设备端点2数据上传装载偏移 */
-extern volatile UINT8  USBHS_Endp2_Down_Flag;                                   /* USB2.0高速设备端点2下传成功标志 */
+extern volatile UINT16 USBHS_Endp2_Up_Flag;                                     /* USBHS device data upload status of endpoint 2: 0: idle; 1: uploading; */
+extern volatile UINT16 USBHS_Endp2_Up_LoadPtr;                                  /* USBHS device Data Upload Load Offset of endpoint 2 */
+extern volatile UINT8  USBHS_Endp2_Down_Flag;                                   /* USBHS device download success flag of endpoint 2 */
 
 /********************************************************************************/
-/* 函数外扩 */
-extern void USBHS_RCC_Init( void );                                             /* USB2.0高速设备RCC初始化 */
-extern void USBHS_Device_Endp_Init ( void );                                    /* USB2.0高速设备端点初始化 */
-extern void USBHS_Device_Init ( FunctionalState sta );                          /* USB2.0高速设备初始化 */
-extern void USBHS_Device_SetAddress( UINT32 address );                          /* USB2.0高速设备设置设备地址 */
-extern void USBHS_IRQHandler( void );                                           /* USB2.0高速设备中断服务程序 */
-extern void USBHS_Sleep_WakeUp_Cfg( void );                                     /* USB2.0高速设备睡眠唤醒配置 */
+extern void USBHS_RCC_Init( void );                                             /* USBHS device RCC initialization */
+extern void USBHS_Device_Endp_Init ( void );                                    /* USBHS device endpoint initialization */
+extern void USBHS_Device_Init ( FunctionalState sta );                          /* USBHS device initialization */
+extern void USBHS_Device_SetAddress( UINT32 address );                          /* USBHS device set device address */
+extern void USBHS_IRQHandler( void );                                           /* USBHS device interrupt service routine */
+extern void USBHS_Sleep_WakeUp_Cfg( void );                                     /* USBHS device sleep and wake configuration */
 void DevEPhs_IN_Deal(UINT8 l);
 void DevEPhs_OUT_Deal(UINT8 l);
 #ifdef __cplusplus

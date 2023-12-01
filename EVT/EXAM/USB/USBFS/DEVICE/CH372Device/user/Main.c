@@ -54,13 +54,13 @@ void Var_Init(void)
 int main(void)
 {
     uint8_t ret;
-		Delay_Init();
-		USART_Printf_Init( 115200 );
-		printf("SystemClk:%d\r\n",SystemCoreClock);
+    Delay_Init();
+    USART_Printf_Init( 115200 );
+    printf("SystemClk:%d\r\n",SystemCoreClock);
 
     /* USBOTG_FS device init */
-		printf( "CH372Device Running On USBHD(FS) Controller\r\n" );
-		Delay_Ms(10);
+    printf( "CH372Device Running On USBHD(FS) Controller\r\n" );
+    Delay_Ms(10);
 
     /* Variables init */
     Var_Init( );

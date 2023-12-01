@@ -80,8 +80,9 @@ void USBFS_RCC_Init(void)
  */
 void USBFS_Device_Endp_Init( void )
 {
-    uint8_t i;
-
+		
+		uint8_t i;
+	
     USBOTG_FS->UEP2_3_MOD = USBFS_UEP2_TX_EN|USBFS_UEP3_RX_EN;
 
     USBOTG_FS->UEP0_DMA = (uint32_t)USBFS_EP0_Buf;
@@ -97,7 +98,7 @@ void USBFS_Device_Endp_Init( void )
     USBOTG_FS->UEP2_TX_LEN = 0;
 
     /* Clear End-points Busy Status */
-    for( i=0; i<DEF_UEP_NUM; i++ )
+    for(i=0; i<DEF_UEP_NUM; i++ )
     {
         USBFS_Endp_Busy[ i ] = 0;
     }

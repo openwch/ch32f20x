@@ -35,6 +35,7 @@
 #include "ch32f20x_wwdg.h"
 #include "ch32f20x_it.h"
 #include "ch32f20x_misc.h"
+#include "ch32f20x_usb.h"
 
 
 #endif /* __CH32F20x_CONF_H */

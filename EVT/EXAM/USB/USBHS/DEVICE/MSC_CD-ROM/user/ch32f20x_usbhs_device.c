@@ -65,16 +65,16 @@ void USBHS_RCC_Init( void )
  */
 void USBHS_Device_Endp_Init ( void )
 {
-    uint8_t i;
-
-	USBHSD->ENDP_CONFIG = USBHS_UEP0_T_EN | USBHS_UEP0_R_EN | USBHS_UEP2_T_EN | USBHS_UEP3_R_EN;
+		uint8_t i;
+	
+		USBHSD->ENDP_CONFIG = USBHS_UEP0_T_EN | USBHS_UEP0_R_EN | USBHS_UEP2_T_EN | USBHS_UEP3_R_EN;
 	
     USBHSD->UEP0_MAX_LEN  = DEF_USBD_UEP0_SIZE;
-	USBHSD->UEP2_MAX_LEN  = DEF_USB_EP2_HS_SIZE;
+		USBHSD->UEP2_MAX_LEN  = DEF_USB_EP2_HS_SIZE;
     USBHSD->UEP3_MAX_LEN  = DEF_USB_EP3_HS_SIZE;
 
     USBHSD->UEP0_DMA    = (uint32_t)(uint8_t *)USBHS_EP0_Buf;
-	USBHSD->UEP2_TX_DMA = (uint32_t)(uint8_t *)CDROM_In_Buf;
+		USBHSD->UEP2_TX_DMA = (uint32_t)(uint8_t *)CDROM_In_Buf;
     USBHSD->UEP3_RX_DMA = (uint32_t)(uint8_t *)CDROM_Out_Buf;
 
     USBHSD->UEP0_TX_LEN  = 0;
@@ -85,8 +85,6 @@ void USBHS_Device_Endp_Init ( void )
     USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
 	
     USBHSD->UEP3_RX_CTRL = USBHS_UEP_R_RES_ACK;
-
-
 
     /* Clear End-points Busy Status */
     for( i=0; i<DEF_UEP_NUM; i++ )
