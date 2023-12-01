@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>CH32F20x_D8W,BLE_MEMHEAP_SIZE=15240,BLE_TX_NUM_EVENT=5,BLE_BUFF_NUM=10,CLK_OSC32K=0,BLE_BUFF_MAX_LEN=247</Define>
+              <Define>CH32F20x_D8W,BLE_MEMHEAP_SIZE=15240,BLE_TX_NUM_EVENT=7,BLE_BUFF_NUM=20,CLK_OSC32K=0,BLE_BUFF_MAX_LEN=247</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\SRC\StdPeriphDriver\inc;..\..\SRC\CMSIS;..\..\SRC\Debug;.\APP\include;.\Profile\include;..\HAL\include;..\LIB</IncludePath>
             </VariousControls>

@@ -213,7 +213,7 @@ void SystemCoreClockUpdate( void )
  */
 static void SetSysClock( void )
 {
-
+    //GPIO_IPD_Unused();
 
     /* If none of the define above is enabled, the HSI is used as System clock
      * source (default after reset)

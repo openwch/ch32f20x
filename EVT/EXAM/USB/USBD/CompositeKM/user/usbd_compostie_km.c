@@ -651,13 +651,19 @@ void MS_Scan_Handle( void )
  */
 void MCU_Sleep_Wakeup_Operate( void )
 {
+    printf( "Sleep\r\n" );
+    __disable_irq();
+    RCC_APB1PeriphClockCmd( RCC_APB1Periph_PWR, ENABLE);
     EXTI_ClearFlag( EXTI_Line12 | EXTI_Line13 | EXTI_Line14 | EXTI_Line15 );
     EXTI_ClearFlag( EXTI_Line4 | EXTI_Line5 | EXTI_Line6 | EXTI_Line7 );
-
-//    printf( "Sleep\r\n" );
-    __SEV( );
-    __WFE( );
-    __WFE( );
+    
+    __SEV();
+    __WFE();
+    PWR_EnterSTOPMode(PWR_Regulator_LowPower,PWR_STOPEntry_WFE);
+    
+    SystemInit();
+    SystemCoreClockUpdate();
+    Set_USBConfig();
     
     if( EXTI_GetFlagStatus( EXTI_Line12 | EXTI_Line13 | EXTI_Line14 | EXTI_Line15 ) != RESET  )
     {
@@ -669,8 +675,13 @@ void MCU_Sleep_Wakeup_Operate( void )
         EXTI_ClearFlag( EXTI_Line4 | EXTI_Line5 | EXTI_Line6 | EXTI_Line7 );
         Resume(RESUME_INTERNAL);
     }
-//    printf( "Wake\r\n" );
-}
+    else if(EXTI_GetFlagStatus(EXTI_Line18) != RESET )
+    {
+        EXTI_ClearFlag( EXTI_Line18 );
+        printf("USB Wake Up\n");
+    }
+    __enable_irq( );
+    printf( "Wake\r\n" );}
 
 
 

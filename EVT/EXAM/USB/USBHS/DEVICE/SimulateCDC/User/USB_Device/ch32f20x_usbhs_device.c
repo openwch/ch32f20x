@@ -65,8 +65,8 @@ void USBHS_RCC_Init( void )
  */
 void USBHS_Device_Endp_Init ( void )
 {
-    uint8_t i;
-
+		uint8_t i;
+	
     USBHSD->ENDP_CONFIG = USBHS_UEP3_T_EN | USBHS_UEP3_R_EN |
                           USBHS_UEP2_T_EN | USBHS_UEP2_R_EN;
 

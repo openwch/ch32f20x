@@ -55,10 +55,6 @@ volatile uint8_t  USBHS_Endp_Busy[ DEF_UEP_NUM ];
 RING_BUFF_COMM  RingBuffer_Comm;
 __attribute__ ((aligned(4))) uint8_t Data_Buffer[DEF_RING_BUFFER_SIZE];
 
-/******************************************************************************/
-/* Interrupt Service Routine Declaration*/
-void USBHS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-
 /*********************************************************************
  * @fn      USBHS_RCC_Init
  *
@@ -85,6 +81,8 @@ void USBHS_RCC_Init( void )
  */
 void USBHS_Device_Endp_Init ( void )
 {
+		uint8_t i;
+	
     USBHSD->ENDP_CONFIG = USBHS_UEP0_T_EN | USBHS_UEP0_R_EN | USBHS_UEP1_R_EN | USBHS_UEP2_T_EN;
 
     USBHSD->UEP0_MAX_LEN  = DEF_USBD_UEP0_SIZE;
@@ -99,6 +97,12 @@ void USBHS_Device_Endp_Init ( void )
     USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
     USBHSD->UEP1_RX_CTRL = USBHS_UEP_R_RES_ACK;
     USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+
+    /* Clear End-points Busy Status */
+    for( i=0; i<DEF_UEP_NUM; i++ )
+    {
+        USBHS_Endp_Busy[ i ] = 0;
+    }
 }
 
 /*********************************************************************
@@ -856,6 +860,7 @@ void USBHS_IRQHandler( void )
         USBHS_DevAddr = 0;
         USBHS_DevSleepStatus = 0;
         USBHS_DevEnumStatus = 0;
+
         USBHSD->DEV_AD = 0;
         USBHS_Device_Endp_Init( );
         USBHSD->INT_FG = USBHS_UIF_BUS_RST;

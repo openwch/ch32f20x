@@ -10,7 +10,7 @@
       <TargetName>CH32F20x</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -133,7 +133,7 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>1</Capability>
+            <Capability>0</Capability>
             <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
@@ -185,6 +185,7 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -338,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>CH32F20x_D8W,BLE_CALIBRATION_ENABLE=0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\SRC\StdPeriphDriver\inc;..\..\SRC\CMSIS;..\..\SRC\Debug;.\APP\include;.\Profile\include;..\HAL\include;..\LIB</IncludePath>
+              <IncludePath>..\..\SRC\StdPeriphDriver\inc;..\..\SRC\CMSIS;..\..\SRC\Debug;.\Profile\include;..\HAL\include;..\LIB;.\APP\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -416,6 +417,16 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>ch32f20x_usbfs_device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\ch32f20x_usbfs_device.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_desc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\usb_desc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -641,5 +652,14 @@
     <components/>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>CH32F20x</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

@@ -16,6 +16,7 @@
 #include "HAL.h"
 #include "test_dtm.h"
 #include "uart.h"
+#include "ch32f20x_usbfs_device.h"
 
 /*********************************************************************
  * GLOBAL TYPEDEFS
@@ -61,6 +62,12 @@ int main(void)
     WCHBLE_Init();
     HAL_Init();
     uart_task_init();
+#if USB_UartEnable == 1
+    /* Usb Init */
+    USBFS_RCC_Init();
+    USBFS_Device_Init( ENABLE );
+    USB_Task_Init();
+#endif
     test_dtm_init();
     GAPRole_CentralInit();
     Main_Circulation();

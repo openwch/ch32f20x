@@ -105,7 +105,6 @@ void EP4_IN_Callback (void)
  */
 uint8_t USBD_ENDPx_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len )
 {
-	uint8_t i;
 	if( endp == ENDP2 )
 	{
 		if (USBD_Endp2_Busy)

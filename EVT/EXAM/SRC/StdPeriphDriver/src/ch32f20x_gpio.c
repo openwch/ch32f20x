@@ -2,7 +2,7 @@
 * File Name          : ch32f20x_gpio.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/08/08
+* Date               : 2023/11/23
 * Description        : This file provides all the GPIO firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -558,7 +558,7 @@ void GPIO_PinRemapConfig( uint32_t GPIO_Remap, FunctionalState NewState )
     {
         tmpreg = AFIO->PCFR1;
 			
-#if defined (CH32F20x_D6)
+#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
 		if(((*(uint32_t *) 0x40022030) & 0x0F000000) == 0){
 				tmpreg = ((tmpreg>>1)&0xFFFFE000)|(tmpreg&0x00001FFF);
 		}
@@ -689,6 +689,7 @@ void GPIO_IPD_Unused(void)
     chip =  *( uint32_t * )0x1FFFF704 & (~0x000000F0);
     switch(chip)
     {
+#ifdef CH32F20x_D6
         case 0x20320400:     //CH32F203K8T6
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2|GPIO_Pin_9\
@@ -828,6 +829,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
+#elif defined(CH32F20x_D8)
         case 0x20320404:     //CH32F203CBT6
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
@@ -909,6 +911,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
+#elif defined(CH32F20x_D8C) 
         case 0x20500408:     //CH32F205RBT6
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
@@ -933,6 +936,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
+#elif defined(CH32F20x_D8W)
         case 0x2081040C:     //CH32F208RBT6
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
@@ -979,6 +983,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
+#endif
         default:
         {
             break;

@@ -74,6 +74,8 @@ void USBHS_RCC_Init( void )
  */
 void USBHS_Device_Endp_Init ( void )
 {
+		uint8_t i;
+	
     USBHSD->ENDP_CONFIG = USBHS_UEP0_T_EN | USBHS_UEP0_R_EN | USBHS_UEP1_T_EN | USBHS_UEP2_T_EN;
 
     USBHSD->UEP0_MAX_LEN = DEF_USBD_UEP0_SIZE;
@@ -88,6 +90,12 @@ void USBHS_Device_Endp_Init ( void )
     USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
     USBHSD->UEP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
     USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+
+    /* Clear End-points Busy Status */
+    for(i=0; i<DEF_UEP_NUM; i++ )
+    {
+        USBHS_Endp_Busy[ i ] = 0;
+    }
 }
 
 /*********************************************************************
@@ -822,7 +830,7 @@ void USBHS_IRQHandler( void )
 void USBHS_Send_Resume( void )
 {
     USBHSH->HOST_CTRL |= USBHS_UH_REMOTE_WKUP;
-    Delay_Ms( 5 );
+    Delay_Ms( 8 );
     USBHSH->HOST_CTRL &= ~USBHS_UH_REMOTE_WKUP;
     Delay_Ms( 1 );
 }

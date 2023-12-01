@@ -40,7 +40,11 @@ File Directory
   |      |      |      |      |-- Internal_Temperature:Internal temperature sensor routines  
   |      |      |      |      |-- TIM Trigger:TIM trigger ADC conversion routine 
   |      |      |      |      |-- Temperature-External channel:Temperature-External channel Injection alternating inversion routine 
-  |      |      |      |-- BKP:BKP routine
+  |      |      |      |-- APPLICATION
+  |      |      |      |      |-- WS2812_LED
+  |      |      |      |      |      |-- WS2812_LED：SPI\PWM Operates WS2812_LED routine
+  |      |      |      |-- BKP
+  |      |      |      |-- BKP:BKP routines
   |      |      |      |-- BLE ----for CH32F20x_D8W only
   |      |      |      |      |-- BackupUpgrade_IAP:Backup the wireless upgrade IAP routine, detect the current code flag, determine whether to carry the backup zone code to the user zone and run the user zone code  
   |      |      |      |      |-- BackupUpgrade_OTA:Backup wireless upgrade user routines, add OTA function on the basis of peripheral slave routines, save the upgrade firmware to the backup area and then jump to the IAP program for upgrade  
@@ -101,7 +105,8 @@ File Directory
   |      |      |      |      |-- Networking:CAN routines: normal mode, standard frame and extended frame data sending and receiving
   |      |      |      |      |-- TestMode:Test modes, including silent mode, loopback mode, loopback silent mode
   |      |      |      |      |-- Time-triggered:Time-triggered communication mode  
-  |      |      |      |-- CRC:CRC routine
+  |      |      |      |-- CRC
+  |      |      |      |-- CRC_Calculation:CRC routines  
   |      |      |      |-- DAC ----for CH32F20x_D8-CH32F20x_D8C only
   |      |      |      |      |-- DAC_DMA:DAC using DMA conversion routines
   |      |      |      |      |-- DAC_Exit_9_Trig:Externally triggered DAC conversion routines
@@ -133,30 +138,37 @@ File Directory
   |      |      |      |      |-- UdpClient:Demonstrate Udp Client receiving data and sending it back
   |      |      |      |      |-- UdpServer:Demonstrate Udp Server receiving data and sending it back
   |      |      |      |      |-- WebServer: Demonstrate the function of configuring WCHNET chip through web browser, WCHNET chip built-in web server, through the web page can realize the configuration of WCHNET network parameters, and password management      
-  |      |      |      |-- EXTI:External Interrupt Routine
-  |      |      |      |-- FLASH:FLASH erase/read/write, and fast programming 
+  |      |      |      |-- EXTI
+  |      |      |      |      |-- EXTI0:External Interrupt Routine  
+  |      |      |      |-- FLASH 
+  |      |      |      |      |-- FLASH_Program:FLASH erase/read/write, and fast programming  
   |      |      |      |-- FreeRTOS
   |      |      |      |      |-- FreeRTOS_Core:FreeRTOS migration routines ---- for CH32F20x_D8C only
   |      |      |      |-- FSMC ----for CH32F20x_D8-CH32F20x_D8C only
   |      |      |      |      |-- LCD:FSMC operating TFTLCD routines
   |      |      |      |      |-- NANDFLASH:FSMC operating NANDFLASH routines
   |      |      |      |      |-- SRAM:FSMC operating NOR_SRAM routines    
-  |      |      |      |-- GPIO:GPIO routines 
+  |      |      |      |-- GPIO 
+  |      |      |      |      |-- GPIO_Toggle:GPIO routines  
   |      |      |      |-- I2C
   |      |      |      |      |-- I2C_7bit_Mode:7-bit address mode, Master/Slave mode send/receive routines
   |      |      |      |      |-- I2C_10bit_Mode:10-bit address mode, Master/Slave mode send/receive routines
   |      |      |      |      |-- I2C_DMA:I2C using DMA, Master/Slave mode send/receive routines
   |      |      |      |      |-- I2C_EEPROM:I2C interface operation EEPROM peripheral routines
   |      |      |      |      |-- I2C_PEC:Master/Slave mode send/receive routines using PEC error checking
+  |      |      |      |      |-- I2C_7bit_Interrupt_Mode：Use interrupt to receive and send routine 
   |      |      |      |-- I2S ----for CH32F20x_D8-CH32F20x_D8C only
   |      |      |      |      |-- HostRx_SlaveTx:I2S master-receiver-slave routines
   |      |      |      |      |-- I2S_DMA:I2S master-receiver-slave DMA  routines
   |      |      |      |      |-- I2S_Interupt:I2S master-slave interrupt routines   
   |      |      |      |-- IAP:IAP Upgrade Routine - Built-in Hex to Bin Tool and IAP Upgrade Tool 
   |      |      |      |      |-- USB+UART:USB+UART IAP routines     
-  |      |      |      |-- IWDG:Independent Watchdog routine
-  |      |      |      |-- OPA:OPA4 as a voltage follower output routine
-  |      |      |      |-- LiteOS_M:LiteOS_M Porting Routine ----for CH32F20x_D8C only
+  |      |      |      |-- IWDG
+  |      |      |      |      |-- IWDG:Independent Watchdog routine 
+  |      |      |      |-- OPA
+  |      |      |      |      |-- OPA_Voltage_Follower:OPA4 as a voltage follower output routine 
+  |      |      |      |-- LiteOS_M
+  |      |      |      |      |-- LiteOS_M_Core：LiteOS_M Porting Routine ----for CH32F20x_D8C only
   |      |      |      |-- PWR
   |      |      |      |      |-- Sleep_Mode:Low-power consumption, Sleep mode routines
   |      |      |      |      |-- Standby_Mode:Low-power consumption, Standby mode routines
@@ -168,10 +180,14 @@ File Directory
   |      |      |      |      |-- MCO:MCO Pin Clock Output Routines
   |      |      |      |      |-- HSI_PLL_Source:HSI or HSI/2 as PLL input clock routines  
   |      |      |      |      |-- HSE_CLK:HSE frequency check routine
-  |      |      |      |-- RNG:Random Number Generator Routine   ----for CH32F20x_D8-CH32F20x_D8C only
-  |      |      |      |-- RTC:Calendar Routines  
-  |      |      |      |-- RT-Thread:RT-Thread porting routines ----for CH32F20x_D8C only
-  |      |      |      |-- SDIO:SDIO operation SD card routine ----for CH32F20x_D8-CH32F20x_D8C only
+  |      |      |      |-- RNG
+  |      |      |      |      |-- RNG：Random Number Generator Routine   ----for CH32F20x_D8-CH32F20x_D8C only
+  |      |      |      |-- RTC
+  |      |      |      |      |-- RTC_Calendar：Calendar Routines   
+  |      |      |      |-- RT-Thread
+  |      |      |      |      |-- RT_Thread_Core：RT-Thread porting routines ----for CH32F20x_D8C only
+  |      |      |      |-- SDIO
+  |      |      |      |      |-- SDIO_SD：SDIO operation SD card routine ----for CH32F20x_D8-CH32F20x_D8C only
   |      |      |      |-- SPI
   |      |      |      |      |-- 1Lines_half-duplex:Single-line half-duplex mode,Master/Slave mode data sending and receiving
   |      |      |      |      |-- 2Lines_FullDuplex:Dual-lines full-duplex mode, Master/Slave mode data sending and receiving
@@ -179,7 +195,11 @@ File Directory
   |      |      |      |      |-- SPI_CRC:Master/Slave mode send/receive routines using CRC error checks
   |      |      |      |      |-- SPI_DMA:SPI using DMA, Master/Slave mode send/receive routines
   |      |      |      |      |-- SPI_FLASH:SPI interface operation FLASH peripheral routines
-  |      |      |      |-- TencentOS_Tiny:TencentOS porting routines ----for CH32F20x_D8C only
+  |      |      |      |      |-- SPI_LCD:SPI interface operation FLASH  and LCD peripheral routines
+  |      |      |      |-- SYSTICK 
+  |      |      |      |      |-- SYSTICK_Interrupt：Systick timer routine    
+  |      |      |      |-- TencentOS_Tiny
+  |      |      |      |      |-- TencentOS_Tiny_Core：TencentOS porting routines ----for CH32F20x_D8C only
   |      |      |      |-- TIM
   |      |      |      |      |-- Clock_Select:Clock Source Selection Routine
   |      |      |      |      |-- ComplementaryOutput_DeadTime:Complementary output and deadband insertion mode routines
@@ -191,7 +211,8 @@ File Directory
   |      |      |      |      |-- Synchro_ExtTrigger:Slave mode routines, including reset mode, gated mode, trigger mode
   |      |      |      |      |-- Synchro_Timer:Timer synchronization mode
   |      |      |      |      |-- TIM_DMA:Timer using DMA routines
-  |      |      |      |-- TOUCHKEY:TouchKey Detection Routine      
+  |      |      |      |-- TOUCHKEY
+  |      |      |      |      |-- TKey：TouchKey Detection Routine  
   |      |      |      |-- USART
   |      |      |      |      |-- USART_DMA:USART using DMA, Master/Slave mode send/receive routines
   |      |      |      |      |-- USART_HalfDuplex:Single-wire half-duplex mode, Master/Slave mode send/receive routines
@@ -201,6 +222,8 @@ File Directory
   |      |      |      |      |-- USART_Polling:Polling transceiver mode, Master/Slave mode transceiver routines
   |      |      |      |      |-- USART_Printf:Serial port printing debugging routines
   |      |      |      |      |-- USART_SynchronousMode:Synchronous mode, Master/Slave mode send/receive routines
+  |      |      |      |      |-- USART_Printf:Serial port printing debugging routines
+  |      |      |      |      |-- USART_Idle_Recv：USART use DMA receiving indeterminate length data routines
   |      |      |      |-- USB
   |      |      |      |      |-- USBD ----for CH32F20x_D6-CH32F20x_D8_CH32F20x_D8W only
   |      |      |      |      |      |-- CH372:Simulates a custom USB device (CH372 device) with endpoints 1, 3 down and 2, 4 up. Data down from endpoint 1 is uploaded from endpoint 3 and not reversed, and data down from endpoint 2 is uploaded from endpoint 4 and reversed.
@@ -242,4 +265,5 @@ File Directory
   |      |      |      |      |      |-- HOST_MTP_FileSystem:Enumeration process of a USB host to a device that supports MTP and PTP protocols, supports MTP and PTP protocols, and reads its files
   |      |      |      |      |      |-- Host_Udisk:USB host operation USB disk routine 
   |      |      |      |      |      |-- Udisk_Lib:U disk file system library file   
-  |      |      |      |-- WWDG:Window Watchdog Routine
+  |      |      |      |-- WWDG
+  |      |      |      |      |-- WWDG：Window Watchdog Routine 
