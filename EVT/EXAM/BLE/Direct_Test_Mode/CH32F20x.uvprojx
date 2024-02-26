@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>CH32F20x_D8W,BLE_CALIBRATION_ENABLE=0</Define>
+              <Define>CH32F20x_D8W,BLE_CALIBRATION_ENABLE=0,DEBUG=DEBUG_UART2</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\SRC\StdPeriphDriver\inc;..\..\SRC\CMSIS;..\..\SRC\Debug;.\Profile\include;..\HAL\include;..\LIB;.\APP\include</IncludePath>
             </VariousControls>
@@ -652,14 +652,5 @@
     <components/>
     <files/>
   </RTE>
-
-  <LayerInfo>
-    <Layers>
-      <Layer>
-        <LayName>CH32F20x</LayName>
-        <LayPrjMark>1</LayPrjMark>
-      </Layer>
-    </Layers>
-  </LayerInfo>
 
 </Project>

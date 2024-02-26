@@ -64,8 +64,8 @@ int main(void)
 	Delay_Init();
 	USART_Printf_Init( 115200 );
 	printf("SystemClk:%d\r\n",SystemCoreClock);
-	printf("USBHD Compatibility HID Example\r\n");
-	/* USBOTG_FS device init */
+	printf("USBFS Compatibility HID Example\r\n");
+	/* USBFSD device init */
 	Delay_Ms(10);
 
 	/* Variables init */
@@ -75,7 +75,7 @@ int main(void)
 	UART2_Init();
 	UART2_DMA_Init();
 	
-	/* USBHD Device Init */
+	/* USBFS Device Init */
 	USBFS_RCC_Init( );
 	USBFS_Device_Init(ENABLE);
 

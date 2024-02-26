@@ -2,7 +2,7 @@
 ;* File Name          : startup_ch32f20x_D6.s
 ;* Author             : WCH
 ;* Version            : V1.0.0
-;* Date               : 2021/08/08
+;* Date               : 2024/01/31
 ;* Description        : CH32F203K8-CH32F203C6-CH32F203C8
 ;*                    vector table for MDK-ARM toolchain.
 ;*********************************************************************************
@@ -110,8 +110,8 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     EXTI15_10_IRQHandler       ; EXTI Line 15..10
                 DCD     RTCAlarm_IRQHandler        ; RTC Alarm through EXTI Line
                 DCD     USBWakeUp_IRQHandler       ; USB Wakeup from suspend
-                DCD     USBHD_IRQHandler           ; USBHD
-                DCD     USBHDWakeUp_IRQHandler     ; USBHD WakeUp
+                DCD     USBFS_IRQHandler           ; USBFS
+                DCD     USBFSWakeUp_IRQHandler     ; USBFS WakeUp
                 DCD     UART4_IRQHandler           ; UART4
                 DCD     DMA1_Channel8_IRQHandler   ; DMA1 Channel8 				
 				
@@ -223,8 +223,8 @@ Default_Handler PROC
                 EXPORT  EXTI15_10_IRQHandler       [WEAK]
                 EXPORT  RTCAlarm_IRQHandler        [WEAK]
                 EXPORT  USBWakeUp_IRQHandler       [WEAK]
-                EXPORT  USBHD_IRQHandler           [WEAK]
-                EXPORT  USBHDWakeUp_IRQHandler     [WEAK]
+                EXPORT  USBFS_IRQHandler           [WEAK]
+                EXPORT  USBFSWakeUp_IRQHandler     [WEAK]
                 EXPORT  UART4_IRQHandler           [WEAK]
                 EXPORT  DMA1_Channel8_IRQHandler   [WEAK] 
 
@@ -271,8 +271,8 @@ USART3_IRQHandler
 EXTI15_10_IRQHandler
 RTCAlarm_IRQHandler
 USBWakeUp_IRQHandler 
-USBHD_IRQHandler 
-USBHDWakeUp_IRQHandler 
+USBFS_IRQHandler 
+USBFSWakeUp_IRQHandler 
 UART4_IRQHandler 
 DMA1_Channel8_IRQHandler 
 

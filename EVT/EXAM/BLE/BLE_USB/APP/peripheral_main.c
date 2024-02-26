@@ -16,7 +16,7 @@
 #include "HAL.h"
 #include "gattprofile.h"
 #include "peripheral.h"
-#include "ch32v20x_usbotg_device.h"
+#include "ch32f20x_usbfs_device.h"
 
 /*********************************************************************
  * GLOBAL TYPEDEFS
@@ -63,7 +63,7 @@ int main(void)
     HAL_Init();
     GAPRole_PeripheralInit();
     Peripheral_Init();
-    USBOTG_Init( );
+    USBFS_Init( );
     Main_Circulation();
 }
 

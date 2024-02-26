@@ -2,7 +2,7 @@
 * File Name          : system_ch32f20x.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/08/08
+* Date               : 2024/01/30
 * Description        : CH32F20x Device Peripheral Access Layer System Source File.
 *                      For CH32F208 HSE = 32Mhz
 *                      For others   HSE = 8Mhz
@@ -120,15 +120,11 @@ void SystemInit( void )
 {
     RCC->CTLR |= ( uint32_t )0x00000001;
 
-#ifdef CH32F20x_D8C
-    RCC->CFGR0 &= ( uint32_t )0xF8FF0000;
-#else
     RCC->CFGR0 &= ( uint32_t )0xF0FF0000;
-#endif
 
     RCC->CTLR &= ( uint32_t )0xFEF6FFFF;
     RCC->CTLR &= ( uint32_t )0xFFFBFFFF;
-    RCC->CFGR0 &= ( uint32_t )0xFF80FFFF;
+    RCC->CFGR0 &= ( uint32_t )0xFF00FFFF;
 #ifdef CH32F20x_D8C
     RCC->CTLR &= ( uint32_t )0xEBFFFFFF;
     RCC->INTR = 0x00FF0000;

@@ -21,7 +21,7 @@
 
 #if defined(CH32F20x_D8C)	
  /* 1: interrupt 0: polling in RMII or RGMII mode */
-#define LINK_STAT_ACQUISITION_METHOD            1
+#define LINK_STAT_ACQUISITION_METHOD            0
 
 #define PHY_ADDRESS                             1
 

@@ -52,7 +52,7 @@ extern nand_attriute nand_dev;
 
 
 //NANDFLASH ID
-#define FS33ND01GS108TF             0xF1009542 //  0x429500F1
+#define W29N01HV             0xF1009500
 
 
 u8 NAND_Init( void );
@@ -65,5 +65,7 @@ void NAND_Delay( vu32 i );
 u8 NAND_ReadPage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToRead );
 u8 NAND_WritePage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToWrite );
 u8 NAND_EraseBlock( u32 BlockNum );
-
+u32 CheckEcc( u32  data);
+u8 NAND_WritePagewithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite);
+u8 NAND_ReadPageWithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead);
 #endif

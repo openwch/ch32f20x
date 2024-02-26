@@ -109,8 +109,8 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     EXTI15_10_IRQHandler       ; EXTI Line 15..10
                 DCD     RTCAlarm_IRQHandler        ; RTC Alarm through EXTI Line
 				DCD     USBWakeUp_IRQHandler       ; USB Wakeup
-                DCD     USBHD_IRQHandler           ; USB Host/Device 
-                DCD     USBHDWakeUp_IRQHandler     ; USB Host/Device Wakeup
+                DCD     USBFS_IRQHandler           ; USB Host/Device 
+                DCD     USBFSWakeUp_IRQHandler     ; USB Host/Device Wakeup
                 DCD     ETH_IRQHandler             ; ETH 
                 DCD     ETHWakeUp_IRQHandler       ; ETH Wakeup
                 DCD     BB_IRQHandler              ; BLE BB
@@ -229,8 +229,8 @@ Default_Handler PROC
                 EXPORT  EXTI15_10_IRQHandler       [WEAK]
                 EXPORT  RTCAlarm_IRQHandler        [WEAK]
                 EXPORT  USBWakeUp_IRQHandler       [WEAK]
-				EXPORT  USBHD_IRQHandler           [WEAK]
-                EXPORT  USBHDWakeUp_IRQHandler     [WEAK]
+				EXPORT  USBFS_IRQHandler           [WEAK]
+                EXPORT  USBFSWakeUp_IRQHandler     [WEAK]
                 EXPORT  ETH_IRQHandler             [WEAK]
                 EXPORT  ETHWakeUp_IRQHandler       [WEAK]
                 EXPORT  BB_IRQHandler              [WEAK]
@@ -285,8 +285,8 @@ USART3_IRQHandler
 EXTI15_10_IRQHandler
 RTCAlarm_IRQHandler
 USBWakeUp_IRQHandler
-USBHD_IRQHandler
-USBHDWakeUp_IRQHandler 
+USBFS_IRQHandler
+USBFSWakeUp_IRQHandler 
 ETH_IRQHandler
 ETHWakeUp_IRQHandler
 BB_IRQHandler

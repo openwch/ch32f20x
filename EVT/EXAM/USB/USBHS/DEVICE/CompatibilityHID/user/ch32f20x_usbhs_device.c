@@ -140,7 +140,7 @@ void USBHS_Device_Init ( FunctionalState sta )
 /*********************************************************************
  * @fn      USBHS_Endp_DataUp
  *
- * @brief   usbhd-hs device data upload
+ * @brief   usbhs device data upload
  *          input: endp  - end-point numbers
  *                 *pubf - data buffer
  *                 len   - load data length
@@ -869,6 +869,7 @@ void USBHS_IRQHandler( void )
     {
         /* usb suspend interrupt processing */
         USBHSD->INT_FG = USBHS_UIF_SUSPEND;
+				Delay_Us(10);
         if ( USBHSD->MIS_ST & USBHS_UMS_SUSPEND )
         {
             USBHS_DevSleepStatus |= 0x02;

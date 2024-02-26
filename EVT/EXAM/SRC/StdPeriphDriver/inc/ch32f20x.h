@@ -2,7 +2,7 @@
 * File Name          : ch32f20x.h
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/08/08
+* Date               : 2024/01/31
 * Description        : CH32F20x Device Peripheral Access Layer Header File.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -39,8 +39,8 @@
 #define HSI_VALUE    ((uint32_t)8000000) /* Value of the Internal oscillator in Hz */
 
 /* CH32F20x Standard Peripheral Library version number */
-#define __CH32F20x_STDPERIPH_VERSION_MAIN   (0x01) /* [15:8] main version */
-#define __CH32F20x_STDPERIPH_VERSION_SUB    (0x09) /* [7:0] sub version */
+#define __CH32F20x_STDPERIPH_VERSION_MAIN   (0x02) /* [15:8] main version */
+#define __CH32F20x_STDPERIPH_VERSION_SUB    (0x00) /* [7:0] sub version */
 #define __CH32F20x_STDPERIPH_VERSION        ( (__CH32F20x_STDPERIPH_VERSION_MAIN << 8)\
                                              |(__CH32F20x_STDPERIPH_VERSION_SUB << 0))
 
@@ -103,11 +103,14 @@ typedef enum IRQn
 
 #ifdef CH32F20x_D6
   USBWakeUp_IRQn              = 42,      /* USB Device WakeUp from suspend through EXTI Line Interrupt */
-  USBHD_IRQn		              = 43,      /* USBHD global Interrupt                               */
-  USBHDWakeUp_IRQn	          = 44,      /* USB Host/Device WakeUp Interrupt                     */
+  USBFS_IRQn		              = 43,      /* USBFS global Interrupt                               */
+  USBFSWakeUp_IRQn	          = 44,      /* USB Host/Device WakeUp Interrupt                     */
   UART4_IRQn		              = 45,      /* UART4 global Interrupt                               */
   DMA1_Channel8_IRQn          = 46,      /* DMA1 Channel 8 global Interrupt                      */
-	
+
+  #define USBHD_IRQn        USBFS_IRQn
+  #define USBHDWakeUp_IRQn  USBFSWakeUp_IRQn
+
 #elif defined(CH32F20x_D8)
   USBWakeUp_IRQn              = 42,      /* USB Device WakeUp from suspend through EXTI Line Interrupt */
   TIM8_BRK_IRQn               = 43,      /* TIM8 Break Interrupt                                 */
@@ -115,7 +118,6 @@ typedef enum IRQn
   TIM8_TRG_COM_IRQn           = 45,      /* TIM8 Trigger and Commutation Interrupt               */
   TIM8_CC_IRQn                = 46,      /* TIM8 Capture Compare Interrupt                       */
   RNG_IRQn                    = 47,      /* RNG global Interrupt                                 */
-  FSMC_IRQn                   = 48,      /* FSMC global Interrupt                                */
   SDIO_IRQn                   = 49,      /* SDIO global Interrupt                                */
   TIM5_IRQn                   = 50,      /* TIM5 global Interrupt                                */
   SPI3_IRQn                   = 51,      /* SPI3 global Interrupt                                */
@@ -152,7 +154,6 @@ typedef enum IRQn
   TIM8_TRG_COM_IRQn           = 45,      /* TIM8 Trigger and Commutation Interrupt               */
   TIM8_CC_IRQn                = 46,      /* TIM8 Capture Compare Interrupt                       */
   RNG_IRQn                    = 47,      /* RNG global Interrupt                                 */
-  FSMC_IRQn                   = 48,      /* FSMC global Interrupt                                */
   SDIO_IRQn                   = 49,      /* SDIO global Interrupt                                */
   TIM5_IRQn                   = 50,      /* TIM5 global Interrupt                                */
   SPI3_IRQn                   = 51,      /* SPI3 global Interrupt                                */
@@ -171,7 +172,7 @@ typedef enum IRQn
   CAN2_RX0_IRQn               = 64,      /* CAN2 RX0 Interrupts                                  */
   CAN2_RX1_IRQn               = 65,      /* CAN2 RX1 Interrupt                                   */
   CAN2_SCE_IRQn               = 66,      /* CAN2 SCE Interrupt                                   */
-  OTG_FS_IRQn                 = 67,      /* OTGFS global Interrupt                               */
+  USBFS_IRQn                  = 67,      /* USBFS global Interrupt                               */
   USBHSWakeup_IRQn            = 68,      /* USBHS WakeUp Interrupt                               */
   USBHS_IRQn                  = 69,      /* USBHS global Interrupt                               */
   DVP_IRQn                    = 70,      /* DVP global Interrupt                                 */
@@ -193,10 +194,13 @@ typedef enum IRQn
   DMA2_Channel10_IRQn         = 86,      /* DMA2 Channel 10 global Interrupt                     */
   DMA2_Channel11_IRQn         = 87,      /* DMA2 Channel 11 global Interrupt                     */
 
+  #define OTG_FS_IRQn         USBFS_IRQn
+  #define OTG_FS_IRQHandler   USBFS_IRQHandler
+
 #elif defined(CH32F20x_D8W)  
   USBWakeUp_IRQn              = 42,      /* USB Device WakeUp from suspend through EXTI Line Interrupt */
-  USBHD_IRQn               		= 43,      /* USBHD global Interrupt                               */
-  USBHDWakeUp_IRQn            = 44,      /* USB Host/Device WakeUp Interrupt                     */
+  USBFS_IRQn               		= 43,      /* USBFS global Interrupt                               */
+  USBFSWakeUp_IRQn            = 44,      /* USB Host/Device WakeUp Interrupt                     */
   ETH_IRQn           					= 45,      /* ETH global Interrupt               									 */
   ETHWakeUp_IRQn              = 46,      /* ETH WakeUp Interrupt                       					 */
   BB_IRQn                     = 47,      /* BLE BB global Interrupt                              */
@@ -207,8 +211,16 @@ typedef enum IRQn
   OSC32KCal_IRQn              = 52,      /* OSC32K global Interrupt                              */
   OSCWakeUp_IRQn              = 53,      /* OSC32K WakeUp Interrupt                              */
 
+  #define USBHD_IRQn          USBFS_IRQn
+  #define USBHDWakeUp_IRQn    USBFSWakeUp_IRQn
+
 #endif  
 } IRQn_Type;
+
+#define USBHD_IRQHandler         USBFS_IRQHandler    
+#define USBHDWakeUp_IRQHandler   USBFSWakeUp_IRQHandler  
+#define USBOTG_FS                USBFSD
+#define USBOTG_H_FS              USBFSH
 
 
 #include <stdint.h>
@@ -1069,7 +1081,7 @@ typedef struct  __attribute__((packed))
 } USBHSH_TypeDef;
 
 
-/* USBOTG_FS Registers */
+/* USBFSD Registers */
 typedef struct
 {
    __IO uint8_t  BASE_CTRL;
@@ -1121,7 +1133,7 @@ typedef struct
    __IO uint32_t Reserve2;
    __IO uint32_t OTG_CR;
    __IO uint32_t OTG_SR;
-}USBOTG_FS_TypeDef;
+}USBFSD_TypeDef;
 
 typedef struct  __attribute__((packed))
 {
@@ -1163,7 +1175,7 @@ typedef struct  __attribute__((packed))
    __IO uint32_t  Reserve19;
    __IO uint32_t  OTG_CR;
    __IO uint32_t  OTG_SR;
-}USBOTGH_FS_TypeDef;
+}USBFSH_TypeDef;
 
 #if defined (CH32F20x_D8C) 
 /* Ethernet MAC */
@@ -1500,8 +1512,8 @@ typedef struct
 #define CRC                 ((CRC_TypeDef *) CRC_BASE)
 #define USBHSD              ((USBHSD_TypeDef *) USBHS_BASE)
 #define USBHSH              ((USBHSH_TypeDef *) USBHS_BASE)
-#define USBOTG_FS           ((USBOTG_FS_TypeDef *)USBFS_BASE)
-#define USBOTG_H_FS         ((USBOTGH_FS_TypeDef *)USBFS_BASE)
+#define USBFSD              ((USBFSD_TypeDef *)USBFS_BASE)
+#define USBFSH              ((USBFSH_TypeDef *)USBFS_BASE)
 #define EXTEN               ((EXTEN_TypeDef *) EXTEN_BASE)
 #define OPA                 ((OPA_TypeDef *) OPA_BASE)
 #define RNG                 ((RNG_TypeDef *) RNG_BASE)
@@ -5115,7 +5127,8 @@ typedef struct
 #define  RCC_SRAMEN                      ((uint16_t)0x0004)            /* SRAM interface clock enable */
 #define  RCC_FLITFEN                     ((uint16_t)0x0010)            /* FLITF clock enable */
 #define  RCC_CRCEN                       ((uint16_t)0x0040)            /* CRC clock enable */
-#define  RCC_USBHD                       ((uint16_t)0x1000)
+#define  RCC_USBFS                       ((uint16_t)0x1000)
+#define  RCC_USBHD                       RCC_USBFS
 
 /******************  Bit definition for RCC_APB2PCENR register  *****************/
 #define  RCC_AFIOEN                      ((uint32_t)0x00000001)         /* Alternate Function I/O clock enable */

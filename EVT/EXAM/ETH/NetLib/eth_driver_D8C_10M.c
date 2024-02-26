@@ -418,6 +418,31 @@ void ETH_SetClock(void)
 }
 
 /*********************************************************************
+ * @fn      ETH_LinkUpCfg
+ *
+ * @brief   When the PHY is connected, configure the relevant functions.
+ *
+ * @param   regval  BMSR register value
+ *
+ * @return  none.
+ */
+void ETH_LinkUpCfg(uint16_t regval)
+{
+    WCHNET_PhyStatus( regval );
+    ETH->MACCR &= ~(ETH_Speed_100M|ETH_Speed_1000M);
+    phyStatus = PHY_Linked_Status;
+
+    /* disable Filter function */
+    ETH->MACFFR |= (ETH_ReceiveAll_Enable | ETH_PromiscuousMode_Enable);
+
+    ETH->MMCCR |= ETH_MMCCR_CR;             //Counters Reset
+    while(ETH->MMCCR & ETH_MMCCR_CR);       //Wait for counters reset to complete
+    PhyPolarityDetect = 1;
+    LinkSuccTime = LocalTime;
+    ETH_Start( );
+}
+
+/*********************************************************************
  * @fn      ETH_PHYLink
  *
  * @brief   Configure MAC parameters after the PHY Link is successful.
@@ -428,52 +453,63 @@ void ETH_SetClock(void)
  */
 void ETH_PHYLink( void )
 {
-    u32 phy_stat;
-    u16 phy_anlpar;
+    u16 phy_bsr, phy_stat, phy_anlpar, phy_bcr;
 
+    phy_bsr = ETH_ReadPHYRegister( gPHYAddress, PHY_BSR);
+    phy_bcr = ETH_ReadPHYRegister( gPHYAddress, PHY_BCR);
     phy_anlpar = ETH_ReadPHYRegister( gPHYAddress, PHY_ANLPAR);
-    phy_stat = ETH_ReadPHYRegister( gPHYAddress, PHY_BSR);
 
-    if((phy_stat&(PHY_Linked_Status))&&(phy_anlpar == 0)){           /* restart negotiation */
-        EXTEN->EXTEN_CTR &= ~EXTEN_ETH_10M_EN;
-        phyLinkReset = 1;
-        phyLinkTime = LocalTime;
-        return;
-    }
-    WCHNET_PhyStatus( phy_stat );
-
-    if( (phy_stat&PHY_Linked_Status) && (phy_stat&PHY_AutoNego_Complete) )
+    if(phy_bsr & PHY_Linked_Status)   //LinkUp
     {
-        phy_stat = ETH_ReadPHYRegister( gPHYAddress, PHY_STATUS );
-        if( phy_stat & (1<<2) )
+        if(phy_bcr & PHY_AutoNegotiation)   //determine whether auto-negotiation is enable
         {
-            ETH->MACCR |= ETH_Mode_FullDuplex;
-        }
-        else
-        {
-            if( (phy_anlpar&PHY_ANLPAR_SELECTOR_FIELD) != PHY_ANLPAR_SELECTOR_VALUE )
+            if(phy_anlpar == 0)
             {
-                ETH->MACCR |= ETH_Mode_FullDuplex;
+                if(phy_bsr & PHY_AutoNego_Complete)
+                {
+                    ETH->MACCR &= ~ETH_Mode_FullDuplex;
+                    ETH_LinkUpCfg(phy_bsr);
+                }
+                else{
+                    PHY_LINK_RESET();
+                }
             }
-            else
-            {
-                ETH->MACCR &= ~ETH_Mode_FullDuplex;
+            else {
+                if(phy_bsr & PHY_AutoNego_Complete)
+                {
+                    phy_stat = ETH_ReadPHYRegister( gPHYAddress, PHY_STATUS );
+                    if( phy_stat & (1<<2) )
+                    {
+                        ETH->MACCR |= ETH_Mode_FullDuplex;
+                    }
+                    else
+                    {
+                        if( (phy_anlpar&PHY_ANLPAR_SELECTOR_FIELD) != PHY_ANLPAR_SELECTOR_VALUE )
+                        {
+                            ETH->MACCR |= ETH_Mode_FullDuplex;
+                        }
+                        else
+                        {
+                            ETH->MACCR &= ~ETH_Mode_FullDuplex;
+                        }
+                    }
+                    ETH_LinkUpCfg(phy_bsr);
+                }
+                else{
+                    WCHNET_PhyStatus( phy_bsr );
+                    EXTEN->EXTEN_CTR &= ~EXTEN_ETH_10M_EN;
+                    phyLinkReset = 1;
+                    phyLinkTime = LocalTime;
+                }
             }
         }
-        ETH->MACCR &= ~(ETH_Speed_100M|ETH_Speed_1000M);
-        phyStatus = PHY_Linked_Status;
-
-        /* disable Filter function */
-        ETH->MACFFR |= (ETH_ReceiveAll_Enable | ETH_PromiscuousMode_Enable);
-
-        ETH->MMCCR |= ETH_MMCCR_CR;             //Counters Reset
-        while(ETH->MMCCR & ETH_MMCCR_CR);       //Wait for counters reset to complete
-        PhyPolarityDetect = 1;
-        LinkSuccTime = LocalTime;
-        ETH_Start( );
+        else {
+            ETH->MACCR &= ~ETH_Mode_FullDuplex;
+            ETH_LinkUpCfg(phy_bsr);
+        }
     }
-    else
-    {
+    else {                              //LinkDown
+        WCHNET_PhyStatus( phy_bsr );
         EXTEN->EXTEN_CTR &= ~EXTEN_ETH_10M_EN;
         phyLinkReset = 1;
         phyLinkTime = LocalTime;

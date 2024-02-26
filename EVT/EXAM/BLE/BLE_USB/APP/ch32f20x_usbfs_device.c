@@ -1,15 +1,15 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : ch32v30x_usbotg_device.c
+ * File Name          : ch32v30x_usbfs_device.c
  * Author             : WCH
  * Version            : V1.0.0
  * Date               : 2021/06/06
- * Description        : This file provides all the USBOTG firmware functions.
+ * Description        : This file provides all the USBFS firmware functions.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * Attention: This software (modified or not) and binary are used for 
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
-#include "ch32v20x_usbotg_device.h"
+#include "ch32f20x_usbfs_device.h"
 #include "CONFIG.h"
 #include "peripheral.h"
 #include "RingMem.h"
@@ -46,27 +46,27 @@ PUINT8 pEP6_RAM_Addr; //ep6_out(64)+ep6_in(64)
 PUINT8 pEP7_RAM_Addr; //ep7_out(64)+ep7_in(64)
 
 const UINT8    *pDescr;
-volatile UINT8  USBHD_Dev_SetupReqCode = 0xFF;   /* USB2.0 full-speed device setup package command */
-volatile UINT16 USBHD_Dev_SetupReqLen = 0x00;    /* USB2.0 full-speed device setup package length */
-volatile UINT8  USBHD_Dev_SetupReqValueH = 0x00; /* USB2.0 full-speed device setup package value high byte */
-volatile UINT8  USBHD_Dev_Config = 0x00;         /* USB2.0 full-speed device configuration value */
-volatile UINT8  USBHD_Dev_Address = 0x00;        /* USB2.0 full-speed device address value */
-volatile UINT8  USBHD_Dev_SleepStatus = 0x00;    /* USB2.0 full-speed device sleep state */
-volatile UINT8  USBHD_Dev_EnumStatus = 0x00;     /* USB2.0 full-speed device enumeration status */
-volatile UINT8  USBHD_Dev_Endp0_Tog = 0x01;      /* USB2.0 Full-speed device endpoint 0 sync flag*/
-volatile UINT8  USBHD_Dev_Speed = 0x01;          /* USB2.0 Full-speed device speed */
+volatile UINT8  USBFS_Dev_SetupReqCode = 0xFF;   /* USB2.0 full-speed device setup package command */
+volatile UINT16 USBFS_Dev_SetupReqLen = 0x00;    /* USB2.0 full-speed device setup package length */
+volatile UINT8  USBFS_Dev_SetupReqValueH = 0x00; /* USB2.0 full-speed device setup package value high byte */
+volatile UINT8  USBFS_Dev_Config = 0x00;         /* USB2.0 full-speed device configuration value */
+volatile UINT8  USBFS_Dev_Address = 0x00;        /* USB2.0 full-speed device address value */
+volatile UINT8  USBFS_Dev_SleepStatus = 0x00;    /* USB2.0 full-speed device sleep state */
+volatile UINT8  USBFS_Dev_EnumStatus = 0x00;     /* USB2.0 full-speed device enumeration status */
+volatile UINT8  USBFS_Dev_Endp0_Tog = 0x01;      /* USB2.0 Full-speed device endpoint 0 sync flag*/
+volatile UINT8  USBFS_Dev_Speed = 0x01;          /* USB2.0 Full-speed device speed */
 
-volatile UINT16 USBHD_Endp1_Up_Flag = 0x00;   /* USB2.0 full-speed device endpoint 1 data upload status: 0: free; 1: upload; */
-volatile UINT8  USBHD_Endp1_Down_Flag = 0x00; /* USB2.0 full-speed device endpoint 1 Pass successful logo */
-volatile UINT8  USBHD_Endp1_Down_Len = 0x00;  /* USB2.0 full-speed device endpoint 1 download length */
-volatile BOOL   USBHD_Endp1_T_Tog = 0;        /* USB2.0 full speed device endpoint 1 sends tog bit flip */
-volatile BOOL   USBHD_Endp1_R_Tog = 0;
+volatile UINT16 USBFS_Endp1_Up_Flag = 0x00;   /* USB2.0 full-speed device endpoint 1 data upload status: 0: free; 1: upload; */
+volatile UINT8  USBFS_Endp1_Down_Flag = 0x00; /* USB2.0 full-speed device endpoint 1 Pass successful logo */
+volatile UINT8  USBFS_Endp1_Down_Len = 0x00;  /* USB2.0 full-speed device endpoint 1 download length */
+volatile BOOL   USBFS_Endp1_T_Tog = 0;        /* USB2.0 full speed device endpoint 1 sends tog bit flip */
+volatile BOOL   USBFS_Endp1_R_Tog = 0;
 
-volatile UINT16 USBHD_Endp2_Up_Flag = 0x00;    /* USB2.0 full-speed device endpoint 2 Data upload status: 0: free; 1: upload; */
-volatile UINT16 USBHD_Endp2_Up_LoadPtr = 0x00; /* USB2.0 full-speed device endpoint 2 Data upload loading offset */
-volatile UINT8  USBHD_Endp2_Down_Flag = 0x00;  /* USB2.0 full-speed device endpoint 2 download success flag */
-volatile BOOL   USBHD_Endp2_T_Tog = 0;         /* USB2.0 full speed device endpoint 2 sends tog bit flip */
-volatile BOOL   USBHD_Endp2_R_Tog = 0;
+volatile UINT16 USBFS_Endp2_Up_Flag = 0x00;    /* USB2.0 full-speed device endpoint 2 Data upload status: 0: free; 1: upload; */
+volatile UINT16 USBFS_Endp2_Up_LoadPtr = 0x00; /* USB2.0 full-speed device endpoint 2 Data upload loading offset */
+volatile UINT8  USBFS_Endp2_Down_Flag = 0x00;  /* USB2.0 full-speed device endpoint 2 download success flag */
+volatile BOOL   USBFS_Endp2_T_Tog = 0;         /* USB2.0 full speed device endpoint 2 sends tog bit flip */
+volatile BOOL   USBFS_Endp2_R_Tog = 0;
 
 volatile UINT32V Endp2_send_seq = 0x00;
 volatile UINT8   DevConfig;
@@ -119,7 +119,7 @@ const uint8_t Return3[2] = {0x9F, 0xEE};
 
 
 /*********************************************************************
- * @fn      USBOTG_FS_DeviceInit
+ * @fn      USBFSD_DeviceInit
  *
  * @brief   Initializes USB device.
  *
@@ -127,78 +127,78 @@ const uint8_t Return3[2] = {0x9F, 0xEE};
  */
 void USBDeviceInit(void)
 {
-    USBOTG_FS->BASE_CTRL = 0x00;
+    USBFSD->BASE_CTRL = 0x00;
 
-    USBOTG_FS->UEP4_1_MOD = USBHD_UEP4_RX_EN | USBHD_UEP4_TX_EN | USBHD_UEP1_RX_EN | USBHD_UEP1_TX_EN;
-    USBOTG_FS->UEP2_3_MOD = USBHD_UEP2_RX_EN | USBHD_UEP2_TX_EN | USBHD_UEP3_RX_EN | USBHD_UEP3_TX_EN;
-    USBOTG_FS->UEP5_6_MOD = USBHD_UEP5_RX_EN | USBHD_UEP5_TX_EN | USBHD_UEP6_RX_EN | USBHD_UEP6_TX_EN;
-    USBOTG_FS->UEP7_MOD = USBHD_UEP7_RX_EN | USBHD_UEP7_TX_EN;
+    USBFSD->UEP4_1_MOD = USBFS_UEP4_RX_EN | USBFS_UEP4_TX_EN | USBFS_UEP1_RX_EN | USBFS_UEP1_TX_EN;
+    USBFSD->UEP2_3_MOD = USBFS_UEP2_RX_EN | USBFS_UEP2_TX_EN | USBFS_UEP3_RX_EN | USBFS_UEP3_TX_EN;
+    USBFSD->UEP5_6_MOD = USBFS_UEP5_RX_EN | USBFS_UEP5_TX_EN | USBFS_UEP6_RX_EN | USBFS_UEP6_TX_EN;
+    USBFSD->UEP7_MOD = USBFS_UEP7_RX_EN | USBFS_UEP7_TX_EN;
 
-    USBOTG_FS->UEP0_DMA = (UINT32)pEP0_RAM_Addr;
-    USBOTG_FS->UEP1_DMA = (UINT32)pEP1_RAM_Addr;
-    USBOTG_FS->UEP2_DMA = (UINT32)pEP2_RAM_Addr;
-    USBOTG_FS->UEP3_DMA = (UINT32)pEP3_RAM_Addr;
-    USBOTG_FS->UEP4_DMA = (UINT32)pEP4_RAM_Addr;
-    USBOTG_FS->UEP5_DMA = (UINT32)pEP5_RAM_Addr;
-    USBOTG_FS->UEP6_DMA = (UINT32)pEP6_RAM_Addr;
-    USBOTG_FS->UEP7_DMA = (UINT32)pEP7_RAM_Addr;
+    USBFSD->UEP0_DMA = (UINT32)pEP0_RAM_Addr;
+    USBFSD->UEP1_DMA = (UINT32)pEP1_RAM_Addr;
+    USBFSD->UEP2_DMA = (UINT32)pEP2_RAM_Addr;
+    USBFSD->UEP3_DMA = (UINT32)pEP3_RAM_Addr;
+    USBFSD->UEP4_DMA = (UINT32)pEP4_RAM_Addr;
+    USBFSD->UEP5_DMA = (UINT32)pEP5_RAM_Addr;
+    USBFSD->UEP6_DMA = (UINT32)pEP6_RAM_Addr;
+    USBFSD->UEP7_DMA = (UINT32)pEP7_RAM_Addr;
 
-    USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP1_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP2_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP3_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP4_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP5_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP6_RX_CTRL = USBHD_UEP_R_RES_ACK;
-    USBOTG_FS->UEP7_RX_CTRL = USBHD_UEP_R_RES_ACK;
+    USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP1_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP2_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP3_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP4_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP5_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP6_RX_CTRL = USBFS_UEP_R_RES_ACK;
+    USBFSD->UEP7_RX_CTRL = USBFS_UEP_R_RES_ACK;
 
-    USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_RES_NAK;
-    USBOTG_FS->UEP1_TX_LEN = RepDataLoadLen;
-    USBOTG_FS->UEP2_TX_LEN = RepDataLoadLen;
-    USBOTG_FS->UEP3_TX_LEN = RepDataLoadLen;
-    USBOTG_FS->UEP4_TX_LEN = RepDataLoadLen;
-    USBOTG_FS->UEP5_TX_LEN = RepDataLoadLen;
-    USBOTG_FS->UEP6_TX_LEN = RepDataLoadLen;
-    USBOTG_FS->UEP7_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
+    USBFSD->UEP1_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP2_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP3_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP4_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP5_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP6_TX_LEN = RepDataLoadLen;
+    USBFSD->UEP7_TX_LEN = RepDataLoadLen;
 
-    USBOTG_FS->UEP1_TX_CTRL = USBHD_UEP_T_RES_ACK;
-    USBOTG_FS->UEP2_TX_CTRL = USBHD_UEP_T_RES_ACK | USBHD_UEP_AUTO_TOG;
-    USBOTG_FS->UEP3_TX_CTRL = USBHD_UEP_T_RES_ACK | USBHD_UEP_AUTO_TOG;
-    USBOTG_FS->UEP4_TX_CTRL = USBHD_UEP_T_RES_ACK | USBHD_UEP_AUTO_TOG;
-    USBOTG_FS->UEP5_TX_CTRL = USBHD_UEP_T_RES_ACK | USBHD_UEP_AUTO_TOG;
-    USBOTG_FS->UEP6_TX_CTRL = USBHD_UEP_T_RES_ACK | USBHD_UEP_AUTO_TOG;
-    USBOTG_FS->UEP7_TX_CTRL = USBHD_UEP_T_RES_ACK | USBHD_UEP_AUTO_TOG;
+    USBFSD->UEP1_TX_CTRL = USBFS_UEP_T_RES_ACK;
+    USBFSD->UEP2_TX_CTRL = USBFS_UEP_T_RES_ACK | USBFS_UEP_AUTO_TOG;
+    USBFSD->UEP3_TX_CTRL = USBFS_UEP_T_RES_ACK | USBFS_UEP_AUTO_TOG;
+    USBFSD->UEP4_TX_CTRL = USBFS_UEP_T_RES_ACK | USBFS_UEP_AUTO_TOG;
+    USBFSD->UEP5_TX_CTRL = USBFS_UEP_T_RES_ACK | USBFS_UEP_AUTO_TOG;
+    USBFSD->UEP6_TX_CTRL = USBFS_UEP_T_RES_ACK | USBFS_UEP_AUTO_TOG;
+    USBFSD->UEP7_TX_CTRL = USBFS_UEP_T_RES_ACK | USBFS_UEP_AUTO_TOG;
 
-    USBOTG_FS->INT_FG = 0xFF;
-    USBOTG_FS->INT_EN = USBHD_UIE_SUSPEND | USBHD_UIE_BUS_RST | USBHD_UIE_TRANSFER;
-    USBOTG_FS->DEV_ADDR = 0x00;
+    USBFSD->INT_FG = 0xFF;
+    USBFSD->INT_EN = USBFS_UIE_SUSPEND | USBFS_UIE_BUS_RST | USBFS_UIE_TRANSFER;
+    USBFSD->DEV_ADDR = 0x00;
 
-    USBOTG_FS->BASE_CTRL = USBHD_UC_DEV_PU_EN | USBHD_UC_INT_BUSY | USBHD_UC_DMA_EN;
-    USBOTG_FS->UDEV_CTRL = USBHD_UD_PD_DIS | USBHD_UD_PORT_EN;
+    USBFSD->BASE_CTRL = USBFS_UC_DEV_PU_EN | USBFS_UC_INT_BUSY | USBFS_UC_DMA_EN;
+    USBFSD->UDEV_CTRL = USBFS_UD_PD_DIS | USBFS_UD_PORT_EN;
 }
 
 /*********************************************************************
- * @fn      USBOTG_RCC_Init
+ * @fn      USBFS_RCC_Init
  *
- * @brief   Initializes the usbotg clock configuration.
+ * @brief   Initializes the usbfs clock configuration.
  *
  * @return  none
  */
-void USBOTG_RCC_Init(void)
+void USBFS_RCC_Init(void)
 {
-    RCC->CFGR2 &= ~RCC_USBFS_CLK_SRC; //usbotg clock selection: 0 = systick, 1 = usb20_phy
+    RCC->CFGR2 &= ~RCC_USBFS_CLK_SRC; //usbfs clock selection: 0 = systick, 1 = usb20_phy
     RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_Div2);
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_OTG_FS, ENABLE);
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBFS, ENABLE);
 }
 
 /*********************************************************************
- * @fn      USBOTG_Init
+ * @fn      USBFS_Init
  *
- * @brief   Initializes the USBOTG full speed device.
+ * @brief   Initializes the USBFS full speed device.
  *
  * @return  none
  */
-void USBOTG_Init(void)
+void USBFS_Init(void)
 {
     /* Endpoint buffer initialization */
     pEP0_RAM_Addr = EP0_DatabufHD;
@@ -210,37 +210,37 @@ void USBOTG_Init(void)
     pEP6_RAM_Addr = EP6_DatabufHD;
     pEP7_RAM_Addr = EP7_DatabufHD;
     /* Enable USB clock */
-    USBOTG_RCC_Init();
+    USBFS_RCC_Init();
     Delay_Us(100);
     /* USB device initialization */
     USBDeviceInit();
     /* Enable USB interrupt */
-    NVIC_EnableIRQ(USBHD_IRQn);
+    NVIC_EnableIRQ(USBFS_IRQn);
 }
 
 /*********************************************************************
- * @fn      USBHD_IRQHandler
+ * @fn      USBFS_IRQHandler
  *
- * @brief   This function handles OTG_FS exception.
+ * @brief   This function handles FS exception.
  *
  * @return  none
  */
-void USBHD_IRQHandler(void)
+void USBFS_IRQHandler(void)
 {
     UINT8 len, chtype;
     UINT8 intflag, errflag = 0;
 
-    intflag = USBOTG_FS->INT_FG;
+    intflag = USBFSD->INT_FG;
 
-    if(intflag & USBHD_UIF_TRANSFER)
+    if(intflag & USBFS_UIF_TRANSFER)
     {
-        switch(USBOTG_FS->INT_ST & USBHD_UIS_TOKEN_MASK)
+        switch(USBFSD->INT_ST & USBFS_UIS_TOKEN_MASK)
         {
             /* Setup package processing */
-            case USBHD_UIS_TOKEN_SETUP:
+            case USBFS_UIS_TOKEN_SETUP:
 
-                USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_TOG | USBHD_UEP_T_RES_NAK;
-                USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_TOG | USBHD_UEP_R_RES_ACK;
+                USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_NAK;
+                USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_TOG | USBFS_UEP_R_RES_ACK;
                 SetupReqLen = pSetupReqPakHD->wLength;
                 SetupReqCode = pSetupReqPakHD->bRequest;
                 chtype = pSetupReqPakHD->bRequestType;
@@ -379,19 +379,19 @@ void USBHD_IRQHandler(void)
                                 switch((pSetupReqPakHD->wIndex) & 0xff)
                                 {
                                     case 0x82:
-                                        USBOTG_FS->UEP2_TX_CTRL = (USBOTG_FS->UEP2_TX_CTRL & ~(USBHD_UEP_T_TOG | USBHD_UEP_T_RES_MASK)) | USBHD_UEP_T_RES_NAK;
+                                        USBFSD->UEP2_TX_CTRL = (USBFSD->UEP2_TX_CTRL & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK)) | USBFS_UEP_T_RES_NAK;
                                         break;
 
                                     case 0x02:
-                                        USBOTG_FS->UEP2_RX_CTRL = (USBOTG_FS->UEP2_RX_CTRL & ~(USBHD_UEP_R_TOG | USBHD_UEP_R_RES_MASK)) | USBHD_UEP_R_RES_ACK;
+                                        USBFSD->UEP2_RX_CTRL = (USBFSD->UEP2_RX_CTRL & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK)) | USBFS_UEP_R_RES_ACK;
                                         break;
 
                                     case 0x81:
-                                        USBOTG_FS->UEP1_TX_CTRL = (USBOTG_FS->UEP1_TX_CTRL & ~(USBHD_UEP_T_TOG | USBHD_UEP_T_RES_MASK)) | USBHD_UEP_T_RES_NAK;
+                                        USBFSD->UEP1_TX_CTRL = (USBFSD->UEP1_TX_CTRL & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK)) | USBFS_UEP_T_RES_NAK;
                                         break;
 
                                     case 0x01:
-                                        USBOTG_FS->UEP1_RX_CTRL = (USBOTG_FS->UEP1_RX_CTRL & ~(USBHD_UEP_R_TOG | USBHD_UEP_R_RES_MASK)) | USBHD_UEP_R_RES_ACK;
+                                        USBFSD->UEP1_RX_CTRL = (USBFSD->UEP1_RX_CTRL & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK)) | USBFS_UEP_R_RES_ACK;
                                         break;
 
                                     default:
@@ -413,7 +413,7 @@ void USBHD_IRQHandler(void)
                                     if(MyCfgDescrHD[7] & 0x20)
                                     {
                                         /* Set wake-up enable flag */
-                                        USBHD_Dev_SleepStatus = 0x01;
+                                        USBFS_Dev_SleepStatus = 0x01;
                                     }
                                     else
                                     {
@@ -435,25 +435,25 @@ void USBHD_IRQHandler(void)
                                     {
                                         case 0x82:
                                             /* Set endpoint 2 IN STALL */
-                                            USBOTG_FS->UEP2_TX_CTRL = (USBOTG_FS->UEP2_TX_CTRL &= ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_STALL;
+                                            USBFSD->UEP2_TX_CTRL = (USBFSD->UEP2_TX_CTRL &= ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_STALL;
                                             //USBHS->UEP2_CTRL  = ( USBHS->UEP2_CTRL & ~USBHS_EP_T_RES_MASK ) | USBHS_EP_T_RES_STALL;
                                             break;
 
                                         case 0x02:
                                             /* Set endpoint 2 OUT Stall */
-                                            USBOTG_FS->UEP2_RX_CTRL = (USBOTG_FS->UEP2_RX_CTRL &= ~USBHD_UEP_R_RES_MASK) | USBHD_UEP_R_RES_STALL;
+                                            USBFSD->UEP2_RX_CTRL = (USBFSD->UEP2_RX_CTRL &= ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_STALL;
                                             //USBHS->UEP2_CTRL  = ( USBHS->UEP2_CTRL & ~USBHS_EP_R_RES_MASK ) | USBHS_EP_R_RES_STALL;
                                             break;
 
                                         case 0x81:
                                             /* Set endpoint 1 IN STALL */
-                                            USBOTG_FS->UEP1_TX_CTRL = (USBOTG_FS->UEP1_TX_CTRL &= ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_STALL;
+                                            USBFSD->UEP1_TX_CTRL = (USBFSD->UEP1_TX_CTRL &= ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_STALL;
                                             //USBHS->UEP1_CTRL  = ( USBHS->UEP1_CTRL & ~USBHS_EP_T_RES_MASK ) | USBHS_EP_T_RES_STALL;
                                             break;
 
                                         case 0x01:
                                             /* Set endpoint 1 OUT STALL */
-                                            USBOTG_FS->UEP1_RX_CTRL = (USBOTG_FS->UEP1_RX_CTRL &= ~USBHD_UEP_R_RES_MASK) | USBHD_UEP_R_RES_STALL;
+                                            USBFSD->UEP1_RX_CTRL = (USBFSD->UEP1_RX_CTRL &= ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_STALL;
                                             //USBHS->UEP1_CTRL  = ( USBHS->UEP1_CTRL & ~USBHS_EP_R_RES_MASK ) | USBHS_EP_R_RES_STALL;
                                             break;
 
@@ -483,9 +483,9 @@ void USBHD_IRQHandler(void)
                         case USB_SET_INTERFACE:
                             /* Set interface */
                             EP0_DatabufHD[0] = 0x00;
-                            if(USBHD_Dev_SetupReqLen > 1)
+                            if(USBFS_Dev_SetupReqLen > 1)
                             {
-                                USBHD_Dev_SetupReqLen = 1;
+                                USBFS_Dev_SetupReqLen = 1;
                             }
                             break;
 
@@ -495,35 +495,35 @@ void USBHD_IRQHandler(void)
                             EP0_DatabufHD[1] = 0x00;
                             if(pMySetupReqPakHD->wIndex == 0x81)
                             {
-                                if((USBOTG_FS->UEP1_TX_CTRL & USBHD_UEP_T_RES_MASK) == USBHD_UEP_T_RES_STALL)
+                                if((USBFSD->UEP1_TX_CTRL & USBFS_UEP_T_RES_MASK) == USBFS_UEP_T_RES_STALL)
                                 {
                                     EP0_DatabufHD[0] = 0x01;
                                 }
                             }
                             else if(pMySetupReqPakHD->wIndex == 0x01)
                             {
-                                if((USBOTG_FS->UEP1_RX_CTRL & USBHD_UEP_R_RES_MASK) == USBHD_UEP_R_RES_STALL)
+                                if((USBFSD->UEP1_RX_CTRL & USBFS_UEP_R_RES_MASK) == USBFS_UEP_R_RES_STALL)
                                 {
                                     EP0_DatabufHD[0] = 0x01;
                                 }
                             }
                             else if(pMySetupReqPakHD->wIndex == 0x82)
                             {
-                                if((USBOTG_FS->UEP2_TX_CTRL & USBHD_UEP_T_RES_MASK) == USBHD_UEP_T_RES_STALL)
+                                if((USBFSD->UEP2_TX_CTRL & USBFS_UEP_T_RES_MASK) == USBFS_UEP_T_RES_STALL)
                                 {
                                     EP0_DatabufHD[0] = 0x01;
                                 }
                             }
                             else if(pMySetupReqPakHD->wIndex == 0x02)
                             {
-                                if((USBOTG_FS->UEP2_RX_CTRL & USBHD_UEP_R_RES_MASK) == USBHD_UEP_R_RES_STALL)
+                                if((USBFSD->UEP2_RX_CTRL & USBFS_UEP_R_RES_MASK) == USBFS_UEP_R_RES_STALL)
                                 {
                                     EP0_DatabufHD[0] = 0x01;
                                 }
                             }
-                            if(USBHD_Dev_SetupReqLen > 2)
+                            if(USBFS_Dev_SetupReqLen > 2)
                             {
-                                USBHD_Dev_SetupReqLen = 2;
+                                USBFS_Dev_SetupReqLen = 2;
                             }
                             break;
 
@@ -534,8 +534,8 @@ void USBHD_IRQHandler(void)
                 }
                 if(errflag == 0xff)
                 {
-                    USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_TOG | USBHD_UEP_T_RES_STALL;
-                    USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_TOG | USBHD_UEP_R_RES_STALL;
+                    USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_STALL;
+                    USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_TOG | USBFS_UEP_R_RES_STALL;
                 }
                 else
                 {
@@ -547,16 +547,16 @@ void USBHD_IRQHandler(void)
                     else
                         len = 0;
 
-                    USBOTG_FS->UEP0_TX_LEN = len;
-                    USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_TOG | USBHD_UEP_T_RES_ACK;
-                    USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_TOG | USBHD_UEP_R_RES_ACK;
+                    USBFSD->UEP0_TX_LEN = len;
+                    USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_ACK;
+                    USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_TOG | USBFS_UEP_R_RES_ACK;
                 }
                 break;
 
-            case USBHD_UIS_TOKEN_IN:
-                switch(USBOTG_FS->INT_ST & (USBHD_UIS_TOKEN_MASK | USBHD_UIS_ENDP_MASK))
+            case USBFS_UIS_TOKEN_IN:
+                switch(USBFSD->INT_ST & (USBFS_UIS_TOKEN_MASK | USBFS_UIS_ENDP_MASK))
                 {
-                    case USBHD_UIS_TOKEN_IN:
+                    case USBFS_UIS_TOKEN_IN:
                         switch(SetupReqCode)
                         {
                             case USB_GET_DESCRIPTOR:
@@ -564,58 +564,58 @@ void USBHD_IRQHandler(void)
                                 memcpy(pEP0_DataBuf, pDescr, len);
                                 SetupReqLen -= len;
                                 pDescr += len;
-                                USBOTG_FS->UEP0_TX_LEN = len;
-                                USBOTG_FS->UEP0_TX_CTRL ^= USBHD_UEP_T_TOG;
+                                USBFSD->UEP0_TX_LEN = len;
+                                USBFSD->UEP0_TX_CTRL ^= USBFS_UEP_T_TOG;
                                 break;
 
                             case USB_SET_ADDRESS:
-                                USBOTG_FS->DEV_ADDR = (USBOTG_FS->DEV_ADDR & USBHD_UDA_GP_BIT) | SetupReqLen;
-                                USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_RES_NAK;
-                                USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_RES_ACK;
+                                USBFSD->DEV_ADDR = (USBFSD->DEV_ADDR & USBFS_UDA_GP_BIT) | SetupReqLen;
+                                USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
+                                USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_ACK;
                                 break;
 
                             default:
-                                USBOTG_FS->UEP0_TX_LEN = 0;
-                                USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_RES_NAK;
-                                USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_RES_ACK;
+                                USBFSD->UEP0_TX_LEN = 0;
+                                USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
+                                USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_ACK;
                                 break;
                         }
                         break;
                         /* Back to NCK by default */
-                    case USBHD_UIS_TOKEN_IN | 1:
-                        USBOTG_FS->UEP1_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP1_TX_CTRL = (USBOTG_FS->UEP1_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                    case USBFS_UIS_TOKEN_IN | 1:
+                        USBFSD->UEP1_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP1_TX_CTRL = (USBFSD->UEP1_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
-                    case USBHD_UIS_TOKEN_IN | 2:
+                    case USBFS_UIS_TOKEN_IN | 2:
 
-                        USBOTG_FS->UEP2_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP2_TX_CTRL = (USBOTG_FS->UEP2_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                        USBFSD->UEP2_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP2_TX_CTRL = (USBFSD->UEP2_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
-                    case USBHD_UIS_TOKEN_IN | 3:
-                        USBOTG_FS->UEP3_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP3_TX_CTRL = (USBOTG_FS->UEP3_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                    case USBFS_UIS_TOKEN_IN | 3:
+                        USBFSD->UEP3_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP3_TX_CTRL = (USBFSD->UEP3_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
-                    case USBHD_UIS_TOKEN_IN | 4:
-                        USBOTG_FS->UEP4_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP4_TX_CTRL = (USBOTG_FS->UEP4_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                    case USBFS_UIS_TOKEN_IN | 4:
+                        USBFSD->UEP4_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP4_TX_CTRL = (USBFSD->UEP4_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
-                    case USBHD_UIS_TOKEN_IN | 5:
-                        USBOTG_FS->UEP5_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP5_TX_CTRL = (USBOTG_FS->UEP5_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                    case USBFS_UIS_TOKEN_IN | 5:
+                        USBFSD->UEP5_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP5_TX_CTRL = (USBFSD->UEP5_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
-                    case USBHD_UIS_TOKEN_IN | 6:
-                        USBOTG_FS->UEP6_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP6_TX_CTRL = (USBOTG_FS->UEP6_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                    case USBFS_UIS_TOKEN_IN | 6:
+                        USBFSD->UEP6_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP6_TX_CTRL = (USBFSD->UEP6_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
-                    case USBHD_UIS_TOKEN_IN | 7:
-                        USBOTG_FS->UEP7_TX_CTRL ^= USBHD_UEP_T_TOG;
-                        USBOTG_FS->UEP7_TX_CTRL = (USBOTG_FS->UEP7_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_NAK;
+                    case USBFS_UIS_TOKEN_IN | 7:
+                        USBFSD->UEP7_TX_CTRL ^= USBFS_UEP_T_TOG;
+                        USBFSD->UEP7_TX_CTRL = (USBFSD->UEP7_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
                         break;
 
                     default:
@@ -623,116 +623,112 @@ void USBHD_IRQHandler(void)
                 }
                 break;
 
-            case USBHD_UIS_TOKEN_OUT:
-                switch(USBOTG_FS->INT_ST & (USBHD_UIS_TOKEN_MASK | USBHD_UIS_ENDP_MASK))
+            case USBFS_UIS_TOKEN_OUT:
+                switch(USBFSD->INT_ST & (USBFS_UIS_TOKEN_MASK | USBFS_UIS_ENDP_MASK))
                 {
-                    case USBHD_UIS_TOKEN_OUT:
-                        len = USBOTG_FS->RX_LEN;
+                    case USBFS_UIS_TOKEN_OUT:
+                        len = USBFSD->RX_LEN;
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 1:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 1:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP1_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP1_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
 
                             DevEP1_OUT_Deal(len);
                         }
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 2:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 2:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP2_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP2_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
                             DevEP2_OUT_Deal(len);
                         }
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 3:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 3:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP3_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP3_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
                             DevEP3_OUT_Deal(len);
                         }
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 4:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 4:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP4_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP4_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
                             DevEP4_OUT_Deal(len);
                         }
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 5:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 5:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP5_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP5_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
                             DevEP5_OUT_Deal(len);
                         }
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 6:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 6:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP6_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP6_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
                             DevEP6_OUT_Deal(len);
                         }
                         break;
 
-                    case USBHD_UIS_TOKEN_OUT | 7:
-                        if(USBOTG_FS->INT_ST & USBHD_UIS_TOG_OK)
+                    case USBFS_UIS_TOKEN_OUT | 7:
+                        if(USBFSD->INT_ST & USBFS_UIS_TOG_OK)
                         {
-                            USBOTG_FS->UEP7_RX_CTRL ^= USBHD_UEP_R_TOG;
-                            len = USBOTG_FS->RX_LEN;
+                            USBFSD->UEP7_RX_CTRL ^= USBFS_UEP_R_TOG;
+                            len = USBFSD->RX_LEN;
                             DevEP7_OUT_Deal(len);
                         }
                         break;
                 }
                 break;
 
-            case USBHD_UIS_TOKEN_SOF:
-
-                break;
-
             default:
                 break;
         }
 
-        USBOTG_FS->INT_FG = USBHD_UIF_TRANSFER;
+        USBFSD->INT_FG = USBFS_UIF_TRANSFER;
     }
-    else if(intflag & USBHD_UIF_BUS_RST)
+    else if(intflag & USBFS_UIF_BUS_RST)
     {
-        USBOTG_FS->DEV_ADDR = 0;
+        USBFSD->DEV_ADDR = 0;
 
-        USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP1_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP2_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP3_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP4_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP5_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP6_RX_CTRL = USBHD_UEP_R_RES_ACK;
-        USBOTG_FS->UEP7_RX_CTRL = USBHD_UEP_R_RES_ACK;
+        USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP1_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP2_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP3_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP4_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP5_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP6_RX_CTRL = USBFS_UEP_R_RES_ACK;
+        USBFSD->UEP7_RX_CTRL = USBFS_UEP_R_RES_ACK;
 
-        USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP1_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP2_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP3_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP4_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP5_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP6_TX_CTRL = USBHD_UEP_T_RES_NAK;
-        USBOTG_FS->UEP7_TX_CTRL = USBHD_UEP_T_RES_NAK;
+        USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP1_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP2_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP3_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP4_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP5_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP6_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP7_TX_CTRL = USBFS_UEP_T_RES_NAK;
 
-        USBOTG_FS->INT_FG |= USBHD_UIF_BUS_RST;
+        USBFSD->INT_FG |= USBFS_UIF_BUS_RST;
     }
-    else if(intflag & USBHD_UIF_SUSPEND)
+    else if(intflag & USBFS_UIF_SUSPEND)
     {
-        if(USBOTG_FS->MIS_ST & USBHD_UMS_SUSPEND)
+        if(USBFSD->MIS_ST & USBFS_UMS_SUSPEND)
         {
             ;
         }
@@ -740,11 +736,11 @@ void USBHD_IRQHandler(void)
         {
             ;
         }
-        USBOTG_FS->INT_FG = USBHD_UIF_SUSPEND;
+        USBFSD->INT_FG = USBFS_UIF_SUSPEND;
     }
     else
     {
-        USBOTG_FS->INT_FG = intflag;
+        USBFSD->INT_FG = intflag;
     }
 }
 
@@ -757,7 +753,7 @@ void USBHD_IRQHandler(void)
  */
 uint8_t USBSendData(void)
 {
-    if(USBOTG_FS->UEP2_TX_CTRL & USBHD_UEP_T_RES_MASK == USBHD_UEP_T_RES_ACK)
+    if(USBFSD->UEP2_TX_CTRL & USBFS_UEP_T_RES_MASK == USBFS_UEP_T_RES_ACK)
     {
         return FAILURE;
     }
@@ -786,8 +782,8 @@ uint8_t USBSendData(void)
  */
 void DevEP1_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP1_TX_LEN = l;
-    USBOTG_FS->UEP1_TX_CTRL = (USBOTG_FS->UEP1_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP1_TX_LEN = l;
+    USBFSD->UEP1_TX_CTRL = (USBFSD->UEP1_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************
@@ -801,8 +797,8 @@ void DevEP1_IN_Deal(UINT8 l)
  */
 void DevEP2_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP2_TX_LEN = l;
-    USBOTG_FS->UEP2_TX_CTRL = (USBOTG_FS->UEP2_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP2_TX_LEN = l;
+    USBFSD->UEP2_TX_CTRL = (USBFSD->UEP2_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************
@@ -816,8 +812,8 @@ void DevEP2_IN_Deal(UINT8 l)
  */
 void DevEP3_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP3_TX_LEN = l;
-    USBOTG_FS->UEP3_TX_CTRL = (USBOTG_FS->UEP3_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP3_TX_LEN = l;
+    USBFSD->UEP3_TX_CTRL = (USBFSD->UEP3_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************
@@ -831,8 +827,8 @@ void DevEP3_IN_Deal(UINT8 l)
  */
 void DevEP4_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP4_TX_LEN = l;
-    USBOTG_FS->UEP4_TX_CTRL = (USBOTG_FS->UEP4_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP4_TX_LEN = l;
+    USBFSD->UEP4_TX_CTRL = (USBFSD->UEP4_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************
@@ -846,8 +842,8 @@ void DevEP4_IN_Deal(UINT8 l)
  */
 void DevEP5_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP5_TX_LEN = l;
-    USBOTG_FS->UEP5_TX_CTRL = (USBOTG_FS->UEP5_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP5_TX_LEN = l;
+    USBFSD->UEP5_TX_CTRL = (USBFSD->UEP5_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************
@@ -861,8 +857,8 @@ void DevEP5_IN_Deal(UINT8 l)
  */
 void DevEP6_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP6_TX_LEN = l;
-    USBOTG_FS->UEP6_TX_CTRL = (USBOTG_FS->UEP6_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP6_TX_LEN = l;
+    USBFSD->UEP6_TX_CTRL = (USBFSD->UEP6_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************
@@ -876,8 +872,8 @@ void DevEP6_IN_Deal(UINT8 l)
  */
 void DevEP7_IN_Deal(UINT8 l)
 {
-    USBOTG_FS->UEP7_TX_LEN = l;
-    USBOTG_FS->UEP7_TX_CTRL = (USBOTG_FS->UEP7_TX_CTRL & ~USBHD_UEP_T_RES_MASK) | USBHD_UEP_T_RES_ACK;
+    USBFSD->UEP7_TX_LEN = l;
+    USBFSD->UEP7_TX_CTRL = (USBFSD->UEP7_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;
 }
 
 /*********************************************************************

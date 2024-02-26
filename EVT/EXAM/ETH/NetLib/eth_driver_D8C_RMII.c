@@ -43,13 +43,15 @@ __attribute__((__aligned__(4)))uint8_t Mem_Heap_Memory[WCHNET_RAM_HEAP_SIZE];
 __attribute__((__aligned__(4)))uint8_t Mem_ArpTable[WCHNET_RAM_ARP_TABLE_SIZE];
 
 uint16_t gPHYAddress;
+uint32_t ChipId = 0;
 uint32_t volatile LocalTime;
 
 ETH_DMADESCTypeDef *pDMARxSet;
 ETH_DMADESCTypeDef *pDMATxSet;
 
-u32 ChipId = 0;
-#if !LINK_STAT_ACQUISITION_METHOD
+#if LINK_STAT_ACQUISITION_METHOD
+uint8_t PhyWaitNegotiationSuc = 0;
+#else
 u16 LastPhyStat = 0;
 u32 LastQueryPhyTime = 0;
 #endif
@@ -92,9 +94,15 @@ void WCHNET_TimeIsr( uint16_t timperiod )
  *
  * @return  none.
  */
-#if !LINK_STAT_ACQUISITION_METHOD
+
 void WCHNET_QueryPhySta(void)
 {
+#if LINK_STAT_ACQUISITION_METHOD
+    if(PhyWaitNegotiationSuc)
+    {
+        ETH_PHYLink();
+    }
+#else
     u16 phy_stat;
     if(QUERY_STAT_FLAG){                                         /* Query the PHY link status every 1s */
         LastQueryPhyTime = LocalTime / 1000;
@@ -103,8 +111,9 @@ void WCHNET_QueryPhySta(void)
             ETH_PHYLink();
         }
     }
-}
 #endif
+}
+
 
 /*********************************************************************
  * @fn      WCHNET_MainTask
@@ -119,10 +128,7 @@ void WCHNET_MainTask(void)
 {
     WCHNET_NetInput( );                     /* Ethernet data input */
     WCHNET_PeriodicHandle( );               /* Protocol stack time-related task processing */
-
-#if !LINK_STAT_ACQUISITION_METHOD
     WCHNET_QueryPhySta();                   /* Query external PHY status */
-#endif
 }
 
 /*********************************************************************
@@ -204,13 +210,9 @@ void PHY_InterruptInit(void)
     uint16_t RegValue;
 
     ETH_WritePHYRegister(gPHYAddress, 0x1F, 0x07 );
-    /* Configure RMII mode */
-    RegValue = ETH_ReadPHYRegister(gPHYAddress, 0x10);
-    RegValue |= 0x01 << 3;
-    ETH_WritePHYRegister(gPHYAddress, 0x10, RegValue );
     /* Configure interrupt function */
     RegValue = ETH_ReadPHYRegister(gPHYAddress, 0x13);
-    RegValue |= 0x0f << 11;
+    RegValue |= 0x01 << 13;
     ETH_WritePHYRegister(gPHYAddress, 0x13, RegValue );
     /* Clear the Interrupt status */
     ETH_WritePHYRegister(gPHYAddress, 0x1F, 0x00 );
@@ -235,9 +237,8 @@ void ETH_PHYLink( void )
     phy_stat = ETH_ReadPHYRegister( PHY_ADDRESS, PHY_BSR );
 #if !LINK_STAT_ACQUISITION_METHOD
     LastPhyStat = phy_stat;
-#endif
     WCHNET_PhyStatus( phy_stat );
-    if( (phy_stat&PHY_Linked_Status) && (phy_stat&PHY_AutoNego_Complete) )
+    if( (phy_stat & PHY_Linked_Status) && (phy_stat & PHY_AutoNego_Complete) )
     {
         phy_stat = ETH_ReadPHYRegister( PHY_ADDRESS, PHY_BCR );
         /* PHY negotiation result */
@@ -260,6 +261,42 @@ void ETH_PHYLink( void )
         }
         ETH_Start( );
     }
+#else
+    if( (phy_stat & PHY_Linked_Status) && (phy_stat & PHY_AutoNego_Complete) )
+    {
+        PhyWaitNegotiationSuc = 0;
+        WCHNET_PhyStatus( phy_stat );
+        phy_stat = ETH_ReadPHYRegister( PHY_ADDRESS, PHY_BCR );
+        /* PHY negotiation result */
+        if(phy_stat & (1<<13))                                  /* 100M */
+        {
+            ETH->MACCR &= ~(ETH_Speed_100M|ETH_Speed_1000M);
+            ETH->MACCR |= ETH_Speed_100M;
+        }
+        else                                                    /* 10M */
+        {
+            ETH->MACCR &= ~(ETH_Speed_100M|ETH_Speed_1000M);
+        }
+        if(phy_stat & (1<<8))                                   /* full duplex */
+        {
+            ETH->MACCR |= ETH_Mode_FullDuplex;
+        }
+        else                                                    /* half duplex */
+        {
+            ETH->MACCR &= ~ETH_Mode_FullDuplex;
+        }
+        ETH_Start( );
+    }
+    else if(phy_stat & PHY_Linked_Status)
+    {
+        PhyWaitNegotiationSuc = 1;
+    }
+    else
+    {
+        PhyWaitNegotiationSuc = 0;
+        WCHNET_PhyStatus( phy_stat );
+    }
+#endif
     phy_stat = ETH_ReadPHYRegister( gPHYAddress, 0x1E);   /* Clear the Interrupt status */
 }
 
@@ -434,18 +471,14 @@ void ETH_Configuration( uint8_t *macAddr )
                 ETH_DMA_IT_RBU,\
                 ENABLE);
 
-#if !LINK_STAT_ACQUISITION_METHOD
-    uint16_t RegValue;
-    ETH_WritePHYRegister(gPHYAddress, 0x1F, 0x07 );
-    /* Configure RMII mode */
-    RegValue = ETH_ReadPHYRegister(gPHYAddress, 0x10);
-    RegValue |= 0x01 << 3;
-    ETH_WritePHYRegister(gPHYAddress, 0x10, RegValue );
-#else
+#if LINK_STAT_ACQUISITION_METHOD
     /* Configure the PHY interrupt function, the supported chip is: CH182H RMII */
     PHY_InterruptInit( );
     /* Configure EXTI Line7. */
     EXTI_Line_Init( );
+#else
+    /*Reads the default value of the PHY_BSR register*/
+    LastPhyStat = ETH_ReadPHYRegister( PHY_ADDRESS, PHY_BSR );
 #endif
 }
 

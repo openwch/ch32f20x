@@ -16,7 +16,7 @@
 #include "iap.h"
 #include "usb_istr.h"
 #include "usb_desc.h"
-#include "ch32f20x_usbotg_device.h"
+#include "ch32f20x_usbfs_device.h"
 #include "ch32f20x_usbhs_device.h"
 
 extern u8 End_Flag;
@@ -49,11 +49,11 @@ extern u8 End_Flag;
  */
 void IAP_2_APP(void) {
     USB_Port_Set(DISABLE, DISABLE);
-    USBOTG_H_FS->HOST_CTRL = 0x00;
-    USBOTG_FS->BASE_CTRL = 0x00;
-    USBOTG_FS->INT_EN = 0x00;
-    USBOTG_FS->UEP2_3_MOD = 0x00;
-    USBOTG_FS->BASE_CTRL |= (1 << 1) | (1 << 2);
+    USBFSH->HOST_CTRL = 0x00;
+    USBFSD->BASE_CTRL = 0x00;
+    USBFSD->INT_EN = 0x00;
+    USBFSD->UEP2_3_MOD = 0x00;
+    USBFSD->BASE_CTRL |= (1 << 1) | (1 << 2);
 	#if defined (CH32F20x_D8C) 
 	  NVIC_DisableIRQ( USBHS_IRQn );
 	#endif
@@ -85,7 +85,7 @@ int main(void)
 #if defined (CH32F20x_D6) || defined (CH32F20x_D8) || defined (CH32F20x_D8W)	
  	USBD_CFG();
 #endif	
-	USBOTG_Init( );  
+	USBFS_Init( );  
 #if defined (CH32F20x_D8C) 
   USBHS_RCC_Init( );
  USBHS_Device_Init( ENABLE );

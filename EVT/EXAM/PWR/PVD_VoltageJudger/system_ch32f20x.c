@@ -1,16 +1,16 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : system_ch32f20x.c
- * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2021/08/08
- * Description        : CH32F20x Device Peripheral Access Layer System Source File.
- *                      For CH32F208 HSE = 32Mhz
- *                      For others   HSE = 8Mhz
- *********************************************************************************
- * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
- * Attention: This software (modified or not) and binary are used for 
- * microcontroller manufactured by Nanjing Qinheng Microelectronics.
- *******************************************************************************/
+* File Name          : system_ch32f20x.c
+* Author             : WCH
+* Version            : V1.0.0
+* Date               : 2021/08/08
+* Description        : CH32F20x Device Peripheral Access Layer System Source File.
+*                      For CH32F208 HSE = 32Mhz
+*                      For others   HSE = 8Mhz
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
+*******************************************************************************/
 #include "ch32f20x.h"
 
 /*
@@ -120,15 +120,11 @@ void SystemInit( void )
 {
     RCC->CTLR |= ( uint32_t )0x00000001;
 
-#ifdef CH32F20x_D8C
-    RCC->CFGR0 &= ( uint32_t )0xF8FF0000;
-#else
     RCC->CFGR0 &= ( uint32_t )0xF0FF0000;
-#endif
 
     RCC->CTLR &= ( uint32_t )0xFEF6FFFF;
     RCC->CTLR &= ( uint32_t )0xFFFBFFFF;
-    RCC->CFGR0 &= ( uint32_t )0xFF80FFFF;
+    RCC->CFGR0 &= ( uint32_t )0xFF00FFFF;
 #ifdef CH32F20x_D8C
     RCC->CTLR &= ( uint32_t )0xEBFFFFFF;
     RCC->INTR = 0x00FF0000;
@@ -358,7 +354,7 @@ static void SetSysClockToHSE( void )
         /* PCLK1 = HCLK */
         RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV1;
 
-        /* Select HSE as system clock source 
+         /* Select HSE as system clock source 
           *   CH32F20x_D6 (HSE=8Mhz)
           *   CH32F20x_D8 (HSE=8Mhz)
           *   CH32F20x_D8W (HSE=32Mhz) 
@@ -420,7 +416,7 @@ static void SetSysClockTo48_HSE( void )
         /* PCLK1 = HCLK */
         RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
 
-       /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 6 = 48 MHz (HSE=8Mhz)
+        /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 6 = 48 MHz (HSE=8Mhz)
          *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 6 = 48 MHz (HSE=8Mhz)
          *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/4 * 6 = 48 MHz(HSE=32Mhz) 
          */
@@ -496,7 +492,6 @@ static void SetSysClockTo56_HSE( void )
         /* PCLK1 = HCLK */
         RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
 
-        
         /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 7 = 56 MHz (HSE=8Mhz)
          *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 7 = 56 MHz (HSE=8Mhz)
          *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/4 * 7 = 56 MHz(HSE=32Mhz) 
@@ -574,7 +569,6 @@ static void SetSysClockTo72_HSE( void )
         /* PCLK1 = HCLK */
         RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
 
-        
          /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 9 = 72 MHz (HSE=8Mhz)
           *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 9 = 72 MHz (HSE=8Mhz)
           *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/4 * 9 = 72 MHz(HSE=32Mhz) 
@@ -653,7 +647,6 @@ static void SetSysClockTo96_HSE( void )
         /* PCLK1 = HCLK */
         RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
 
-        
         /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 12 = 96 MHz (HSE=8Mhz)
          *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 12 = 96 MHz (HSE=8Mhz)
          *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/4 * 12 = 96 MHz(HSE=32Mhz) 
@@ -738,11 +731,10 @@ static void SetSysClockTo120_HSE(void)
     /* PCLK1 = HCLK */
     RCC->CFGR0 |= (uint32_t)RCC_PPRE1_DIV2;
 
-    
-     /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
-      *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
-      *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/2 * 15 = 240 MHz(HSE=32Mhz) 
-      */
+		 /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
+		  *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
+		  *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/2 * 15 = 240 MHz(HSE=32Mhz) 
+		  */
     RCC->CFGR0 &= (uint32_t)((uint32_t)~(RCC_PLLSRC | RCC_PLLXTPRE |
                                         RCC_PLLMULL));
 
@@ -818,7 +810,6 @@ static void SetSysClockTo144_HSE( void )
         /* PCLK1 = HCLK */
         RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
 
-        
         /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 18 = 144 MHz (HSE=8Mhz)
          *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 18 = 144 MHz (HSE=8Mhz)
          *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/4 * 18 = 144 MHz(HSE=32Mhz) 

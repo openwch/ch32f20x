@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>CH32F207VC</Device>
           <Vendor>WCH</Vendor>
-          <PackID>Keil.WCH32F2xx_DFP.1.0.2</PackID>
+          <PackID>Keil.WCH32F2xx_DFP.1.0.3</PackID>
           <PackURL>http://www.wch.cn/</PackURL>
           <Cpu>IRAM(0x20000000,0x10000) IROM(0x08000000,0x40000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -403,9 +403,9 @@
           <GroupName>startup</GroupName>
           <Files>
             <File>
-              <FileName>startup_ch32f20x_D8C.s</FileName>
+              <FileName>startup_ch32f20x_D8W.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\SRC\Startup\startup_ch32f20x_D8C.s</FilePath>
+              <FilePath>..\..\..\SRC\Startup\startup_ch32f20x_D8W.s</FilePath>
             </File>
           </Files>
         </Group>
