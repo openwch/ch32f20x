@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>CH32F20x_D8W</Define>
+              <Define>CH32F20x_D8W,HAL_KEY=1</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\SRC\StdPeriphDriver\inc;..\..\..\SRC\CMSIS;..\..\..\SRC\Debug;.\APP\include;.\Profile\include;..\..\HAL\include;..\..\LIB;..\MESH_LIB</IncludePath>
             </VariousControls>

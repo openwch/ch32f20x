@@ -49,7 +49,7 @@ __attribute__ ((aligned(4))) uint8_t USBHS_EP2_TX_Buf[ DEF_USB_EP2_HS_SIZE ];   
 volatile uint8_t  USBHS_Endp_Busy[ DEF_UEP_NUM ];
 
 /*********************************************************************
- * @fn      USBHD_ClockCmd
+ * @fn      USBHS_ClockCmd
  *
  * @brief   Set USB clock.
  *
@@ -135,7 +135,7 @@ void USBHS_Device_Init( FunctionalState sta )
 /*********************************************************************
  * @fn      USBHS_Endp_DataUp
  *
- * @brief   usbhd-fs device data upload
+ * @brief   usbhs device data upload
  *          input:
  *
  * @para    endp: end-point numbers
@@ -797,7 +797,7 @@ void USBHS_IRQHandler( void )
     else if( intflag & USBHS_UIF_SUSPEND )
     {
         USBHSD->INT_FG = USBHS_UIF_SUSPEND;
-
+				Delay_Us(10);
         /* usb suspend interrupt processing */
         if( USBHSD->MIS_ST & USBHS_UMS_SUSPEND )
         {

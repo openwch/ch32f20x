@@ -1,17 +1,17 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : ch32f20x_usbotg_device.h
+* File Name          : ch32f20x_usbfs_device.h
 * Author             : WCH
 * Version            : V1.0.0
 * Date               : 2022/08/20
 * Description        : This file contains all the functions prototypes for the
-*                      USBOTG firmware library.
+*                      USBFS firmware library.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
 * Attention: This software (modified or not) and binary are used for 
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
-#ifndef __CH32F20X_USBOTG_DEVICE_H_
-#define __CH32F20X_USBOTG_DEVICE_H_
+#ifndef __CH32F20X_USBFS_DEVICE_H_
+#define __CH32F20X_USBFS_DEVICE_H_
 
 #include "debug.h"
 #include "string.h"

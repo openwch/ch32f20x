@@ -410,7 +410,7 @@
           <Files>
             <File>
               <FileName>startup_ch32f20x_D8C.s</FileName>
-              <FileType>2</FileType>
+              <FileType>1</FileType>
               <FilePath>..\..\SRC\Startup\startup_ch32f20x_D8C.s</FilePath>
             </File>
             <File>
@@ -629,5 +629,14 @@
     <components/>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>CH32F20x</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

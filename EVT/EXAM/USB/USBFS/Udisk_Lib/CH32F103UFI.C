@@ -15,7 +15,6 @@
 //#define NO_DEFAULT_ACCESS_SECTOR	    1		/* 禁止默认的磁盘扇区读写子程序,下面用自行编写的程序代替它 */
 //#define NO_DEFAULT_DISK_CONNECT		1		/* 禁止默认的检查磁盘连接子程序,下面用自行编写的程序代替它 */
 //#define NO_DEFAULT_FILE_ENUMER		1		/* 禁止默认的文件名枚举回调程序,下面用自行编写的程序代替它 */
-
 #include "CH32F103UFI.H"
 
 uint8_t USBHostTransact( uint8_t endp_pid, uint8_t tog, uint32_t timeout )
@@ -23,37 +22,37 @@ uint8_t USBHostTransact( uint8_t endp_pid, uint8_t tog, uint32_t timeout )
 #if DEF_USB_PORT_FS_EN
     uint8_t  r, trans_rerty;
     uint16_t i;
-    USBOTG_H_FS->HOST_TX_CTRL = USBOTG_H_FS->HOST_RX_CTRL = 0;
+    USBFSH->HOST_TX_CTRL = USBFSH->HOST_RX_CTRL = 0;
     if( tog & 0x80 )
     {
-        USBOTG_H_FS->HOST_RX_CTRL = 1<<2;
+        USBFSH->HOST_RX_CTRL = 1<<2;
     }
     if( tog & 0x40 )
     {
-        USBOTG_H_FS->HOST_TX_CTRL = 1<<2;
+        USBFSH->HOST_TX_CTRL = 1<<2;
     }
     trans_rerty = 0;
     do
     {
-        USBOTG_H_FS->HOST_EP_PID = endp_pid;       // Specify token PID and endpoint number
-        USBOTG_H_FS->INT_FG = USBFS_UIF_TRANSFER;  // Allow transmission
-        for( i = DEF_WAIT_USB_TOUT_200US; ( i != 0 ) && ( ( USBOTG_H_FS->INT_FG & USBFS_UIF_TRANSFER ) == 0 ); i-- )
+        USBFSH->HOST_EP_PID = endp_pid;       // Specify token PID and endpoint number
+        USBFSH->INT_FG = USBFS_UIF_TRANSFER;  // Allow transmission
+        for( i = DEF_WAIT_USB_TOUT_200US; ( i != 0 ) && ( ( USBFSH->INT_FG & USBFS_UIF_TRANSFER ) == 0 ); i-- )
         {
             Delay_Us( 1 );
         }
-        USBOTG_H_FS->HOST_EP_PID = 0x00;  // Stop USB transfer
-        if( ( USBOTG_H_FS->INT_FG & USBFS_UIF_TRANSFER ) == 0 )
+        USBFSH->HOST_EP_PID = 0x00;  // Stop USB transfer
+        if( ( USBFSH->INT_FG & USBFS_UIF_TRANSFER ) == 0 )
         {
             return ERR_USB_UNKNOWN;
         }
         else
         {
             /* Complete transfer */
-            if( USBOTG_H_FS->INT_ST & USBFS_UIS_TOG_OK )
+            if( USBFSH->INT_ST & USBFS_UIS_TOG_OK )
             {
                 return ERR_SUCCESS;
             }
-            r = USBOTG_H_FS->INT_ST & USBFS_UIS_H_RES_MASK;  // USB device answer status
+            r = USBFSH->INT_ST & USBFS_UIS_H_RES_MASK;  // USB device answer status
             if( r == USB_PID_STALL )
             {
                 return ( r | ERR_USB_TRANSFER );
@@ -94,7 +93,7 @@ uint8_t USBHostTransact( uint8_t endp_pid, uint8_t tog, uint32_t timeout )
             }
         }
         Delay_Us( 15 );
-        if( USBOTG_H_FS->INT_FG & USBFS_UIF_DETECT )
+        if( USBFSH->INT_FG & USBFS_UIF_DETECT )
         {
             Delay_Us( 200 );
             if( USBFSH_CheckRootHubPortEnable( ) == 0 )
@@ -337,7 +336,6 @@ uint8_t	DISK_BASE_BUF[ DISK_BASE_BUF_LEN ] __attribute__((aligned (4)));	/* 外部
 //    CH103vSectorSize=512;  // 设置实际的扇区大小,必须是512的倍数,该值是磁盘的扇区大小
 //    CH103vSectorSizeB=9;   // 设置实际的扇区大小的位移数,512则对应9,1024对应10,2048对应11
 //    CH103DiskStatus=DISK_MOUNTED;  // 强制块设备连接成功(只差分析文件系统)
-//}
 
 uint8_t CH103ReadSector( uint8_t SectCount, uint8_t *DataBuf )  /* 从磁盘读取多个扇区的数据到缓冲区中 */
 {
@@ -410,16 +408,16 @@ uint8_t CH103WriteSector( uint8_t SectCount, uint8_t *DataBuf )  /* 将缓冲区中的
 #endif  // NO_DEFAULT_ACCESS_SECTOR
 
 #if DEF_USB_PORT_FS_EN
-#define		UHUB_DEV_ADDR	(USBOTG_H_FS->DEV_ADDR)
-#define		UHUB_MIS_STAT	(USBOTG_H_FS->MIS_ST)
-#define		UHUB_HOST_CTRL	(USBOTG_H_FS->HOST_CTRL)
-#define		UHUB_INT_FLAG	(USBOTG_H_FS->INT_FG)
+#define		UHUB_DEV_ADDR	(USBFSH->DEV_ADDR)
+#define		UHUB_MIS_STAT	(USBFSH->MIS_ST)
+#define		UHUB_HOST_CTRL	(USBFSH->HOST_CTRL)
+#define		UHUB_INT_FLAG	(USBFSH->INT_FG)
 #define		bUMS_ATTACH		USBFS_UMS_DEV_ATTACH
 #define		bUMS_SUSPEND	USBFS_UMS_SUSPEND
 #define     DEF_ADR_OFFSET  0
 #elif DEF_USB_PORT_HS_EN
 #define     UHUB_DEV_ADDR   (USBHSH->DEV_AD)
-#define     UHUB_MIS_STAT   (USBHSH->MIS_ST)ds
+#define     UHUB_MIS_STAT   (USBHSH->MIS_ST)
 #define     UHUB_HOST_CTRL  (USBHSH->HOST_CTRL)
 #define     UHUB_INT_FLAG   (USBHSH->INT_FG)
 #define     bUMS_ATTACH     USBHS_UMS_DEV_ATTACH

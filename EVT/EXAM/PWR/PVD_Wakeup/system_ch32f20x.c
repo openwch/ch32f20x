@@ -120,15 +120,11 @@ void SystemInit( void )
 {
     RCC->CTLR |= ( uint32_t )0x00000001;
 
-#ifdef CH32F20x_D8C
-    RCC->CFGR0 &= ( uint32_t )0xF8FF0000;
-#else
     RCC->CFGR0 &= ( uint32_t )0xF0FF0000;
-#endif
 
     RCC->CTLR &= ( uint32_t )0xFEF6FFFF;
     RCC->CTLR &= ( uint32_t )0xFFFBFFFF;
-    RCC->CFGR0 &= ( uint32_t )0xFF80FFFF;
+    RCC->CFGR0 &= ( uint32_t )0xFF00FFFF;
 #ifdef CH32F20x_D8C
     RCC->CTLR &= ( uint32_t )0xEBFFFFFF;
     RCC->INTR = 0x00FF0000;
@@ -735,10 +731,10 @@ static void SetSysClockTo120_HSE(void)
     /* PCLK1 = HCLK */
     RCC->CFGR0 |= (uint32_t)RCC_PPRE1_DIV2;
 
-     /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
-      *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
-      *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/2 * 15 = 240 MHz(HSE=32Mhz) 
-      */
+		 /*  CH32F20x_D6-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
+		  *  CH32F20x_D8-PLL configuration: PLLCLK = HSE * 15 = 120 MHz (HSE=8Mhz)
+		  *  CH32F20x_D8W-PLL configuration: PLLCLK = HSE/2 * 15 = 240 MHz(HSE=32Mhz) 
+		  */
     RCC->CFGR0 &= (uint32_t)((uint32_t)~(RCC_PLLSRC | RCC_PLLXTPRE |
                                         RCC_PLLMULL));
 

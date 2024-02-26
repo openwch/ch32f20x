@@ -415,9 +415,9 @@
               <FilePath>.\user\ch32f20x_usbhs_device.c</FilePath>
             </File>
             <File>
-              <FileName>ch32f20x_usbotg_device.c</FileName>
+              <FileName>ch32f20x_usbfs_device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\user\ch32f20x_usbotg_device.c</FilePath>
+              <FilePath>.\user\ch32f20x_usbfs_device.c</FilePath>
             </File>
           </Files>
         </Group>

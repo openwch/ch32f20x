@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>CH32F203C8</Device>
           <Vendor>WCH</Vendor>
-          <PackID>Keil.WCH32F2xx_DFP.1.0.2</PackID>
+          <PackID>Keil.WCH32F2xx_DFP.1.0.3</PackID>
           <PackURL>http://www.wch.cn/</PackURL>
           <Cpu>IRAM(0x20000000,0x5000) IROM(0x08000000,0x10000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>

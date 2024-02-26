@@ -13,6 +13,9 @@
 /*
  *@Note
  *HSE frequency check routine:
+ *Checking the frequency value of HSE by using of HSI.
+ * When HSE is 3 ~ 25M,the HSE clock is effective ,When CH32F20x_D8 and CH32F20x_D6 used. 
+ * When HSE is 32M,the HSE clock is effective ,When CH32F20x_D8C and CH32F20x_D8W used. 
  *HSE value -the frequency of HSE
  *MCO(PA8)	- outputs the HSE clock
  *	 
@@ -42,20 +45,32 @@ uint8_t HSE_FrequencyCheck(void) {
     uint32_t tick_val;
     uint32_t HSEFrequency, HSEFrequency_x,RTC_DIV_VAL;
     uint8_t count;
-	  RTC_DIV_VAL=512;
+	
 #if defined (CH32F20x_D6)
         if(((*(uint32_t *) 0x40022030) & 0x0F000000) != 0)
         { 
             RTC_DIV_VAL=128;
         }
-
+	      else{
+	        RTC_DIV_VAL=512;
+	      }
+#elif defined (CH32F20x_D8) || defined (CH32F20x_D8C)
+	    RTC_DIV_VAL=128;
+#else
+		   RTC_DIV_VAL=512;
 #endif
 
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
     PWR_BackupAccessCmd(ENABLE);
     BKP_DeInit();
+#if defined (CH32F20x_D8W)
+   RCC_RTCCLKConfig(RCC_RTCCLKSource_HSE_Div512);
+#else
+
     RCC_RTCCLKConfig(RCC_RTCCLKSource_HSE_Div128);
+#endif
+    
     RCC_RTCCLKCmd(ENABLE);
     RTC_WaitForLastTask();
     RTC_WaitForSynchro();
@@ -144,104 +159,6 @@ return HSEFrequencyMhz;
 }
 
 
-void SetSysClockTo48_HSE( void )
-{
-    __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
-
-    RCC->CTLR |= ( ( uint32_t )RCC_HSEON );
-    /* Wait till HSE is ready and if Time out is reached exit */
-    do
-    {
-        HSEStatus = RCC->CTLR & RCC_HSERDY;
-        StartUpCounter++;
-    }
-    while( ( HSEStatus == 0 ) && ( StartUpCounter != HSE_STARTUP_TIMEOUT ) );
-
-    if( ( RCC->CTLR & RCC_HSERDY ) != RESET )
-    {
-			  value=0;
-        HSEStatus = (uint32_t) 0x00;
-        value = HSE_FrequencyCheck();
-        if ((value >= 3) && (value <= 25)) {
-        HSEStatus = (uint32_t) 0x01;
-        }
-    }
-    else
-    {
-        HSEStatus = ( uint32_t )0x00;
-    }
-
-    if( HSEStatus == ( uint32_t )0x01 )
-    {
-        /* HCLK = SYSCLK */
-        RCC->CFGR0 |= ( uint32_t )RCC_HPRE_DIV1;
-        /* PCLK2 = HCLK */
-        RCC->CFGR0 |= ( uint32_t )RCC_PPRE2_DIV1;
-        /* PCLK1 = HCLK */
-        RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
-
-        /*  PLL configuration: PLLCLK = HSE * 6 = 48 MHz */
-        RCC->CFGR0 &= ( uint32_t )( ( uint32_t )~( RCC_PLLSRC | RCC_PLLXTPRE | RCC_PLLMULL ) );
-
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8) || defined (CH32F20x_D8W)
-        RCC->CFGR0 |= ( uint32_t )( RCC_PLLSRC_HSE | RCC_PLLXTPRE_HSE | RCC_PLLMULL6 );
-#else
-        RCC->CFGR0 |= ( uint32_t )( RCC_PLLSRC_HSE | RCC_PLLXTPRE_HSE | RCC_PLLMULL6_EXTEN );
-#endif
-
-        /* Enable PLL */
-        RCC->CTLR |= RCC_PLLON;
-        /* Wait till PLL is ready */
-        while( ( RCC->CTLR & RCC_PLLRDY ) == 0 )
-        {
-        }
-        /* Select PLL as system clock source */
-        RCC->CFGR0 &= ( uint32_t )( ( uint32_t )~( RCC_SW ) );
-        RCC->CFGR0 |= ( uint32_t )RCC_SW_PLL;
-        /* Wait till PLL is used as system clock source */
-        while( ( RCC->CFGR0 & ( uint32_t )RCC_SWS ) != ( uint32_t )0x08 )
-        {
-        }
-    }
-    else
-    {
-		EXTEN->EXTEN_CTR |= EXTEN_PLL_HSI_PRE;
-
-		/* HCLK = SYSCLK */
-		RCC->CFGR0 |= ( uint32_t )RCC_HPRE_DIV1;
-		/* PCLK2 = HCLK */
-		RCC->CFGR0 |= ( uint32_t )RCC_PPRE2_DIV1;
-		/* PCLK1 = HCLK */
-		RCC->CFGR0 |= ( uint32_t )RCC_PPRE1_DIV2;
-
-		/*  PLL configuration: PLLCLK = HSI * 6 = 48 MHz */
-		RCC->CFGR0 &= ( uint32_t )( ( uint32_t )~( RCC_PLLSRC | RCC_PLLXTPRE | RCC_PLLMULL ) );
-
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8) || defined (CH32F20x_D8W)
-		RCC->CFGR0 |= ( uint32_t )( RCC_PLLSRC_HSI_Div2 | RCC_PLLMULL6 );
-#else
-		RCC->CFGR0 |= ( uint32_t )( RCC_PLLSRC_HSI_Div2 | RCC_PLLMULL6_EXTEN );
-#endif
-
-		/* Enable PLL */
-		RCC->CTLR |= RCC_PLLON;
-		/* Wait till PLL is ready */
-		while( ( RCC->CTLR & RCC_PLLRDY ) == 0 )
-		{
-		}
-		/* Select PLL as system clock source */
-		RCC->CFGR0 &= ( uint32_t )( ( uint32_t )~( RCC_SW ) );
-		RCC->CFGR0 |= ( uint32_t )RCC_SW_PLL;
-		/* Wait till PLL is used as system clock source */
-		while( ( RCC->CFGR0 & ( uint32_t )RCC_SWS ) != ( uint32_t )0x08 )
-		{
-		}
-    }
-}
-
-
-
-
 /*********************************************************************
  * @fn      SetSysClockTo72_HSE
  *
@@ -252,8 +169,9 @@ void SetSysClockTo48_HSE( void )
 void SetSysClockTo72_HSE( void )
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
+	  USART_Printf_Init(115200);
     RCC->CTLR |= ( ( uint32_t )RCC_HSEON );
-
+    
     /* Wait till HSE is ready and if Time out is reached exit */
     do
     {
@@ -267,9 +185,15 @@ void SetSysClockTo72_HSE( void )
 			  value=0;
         HSEStatus = (uint32_t) 0x00;
         value = HSE_FrequencyCheck();
+#if defined (CH32F20x_D8W)
+        if (value ==32) {
+        HSEStatus = (uint32_t) 0x01;
+    }
+#else
         if ((value >= 3) && (value <= 25)) {
         HSEStatus = (uint32_t) 0x01;
     }
+#endif
     else
     {
         HSEStatus = ( uint32_t )0x00;

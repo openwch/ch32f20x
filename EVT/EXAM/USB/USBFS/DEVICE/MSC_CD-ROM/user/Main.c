@@ -51,11 +51,7 @@ int main(void)
     /* Usb Init */
     USBFS_RCC_Init( );
     USBFS_Device_Init( ENABLE );
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-    NVIC_EnableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-    NVIC_EnableIRQ( OTG_FS_IRQn );
-#endif
+    NVIC_EnableIRQ( USBFS_IRQn );
 
 	while(1)
 	{

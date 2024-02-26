@@ -71,12 +71,12 @@ int main( void )
 	TIM3_Init( 1, SystemCoreClock / 10000 - 1 );
 	printf( "TIM3 Init OK!\r\n" );
 
-	/* Initialize OTG_FS interface to communicate with the host  */
+	/* Initialize USBFS interface to communicate with the host  */
 	USBFS_RCC_Init( );
 	USBFS_Device_Init( ENABLE );
 	USB_Sleep_Wakeup_CFG( );
     
-	printf("USBHD Composite KM Device Test\r\n");
+	printf("USBFS Composite KM Device Test\r\n");
 
 	while( 1 )
     {

@@ -227,12 +227,12 @@ void UART2_Rx_Service( void )
             /* Upload packet via USB. */
             if (pkg_len)
             {
-                USBOTG_FS->UEP2_DMA = (uint16_t)(uint32_t)USBFS_EP2_Buf;
+                USBFSD->UEP2_DMA = (uint16_t)(uint32_t)USBFS_EP2_Buf;
                 USBFS_EP2_Buf[0] = pkg_len;
                 memcpy(USBFS_EP2_Buf + 1,&UART2_RxBuffer[UART2_Rx_Deal_Ptr],pkg_len);
-                USBOTG_FS->UEP2_TX_LEN = pkg_len + 1;
+                USBFSD->UEP2_TX_LEN = pkg_len + 1;
                 USBFS_Endp_Busy[DEF_UEP2] = 1;
-                USBOTG_FS->UEP2_TX_CTRL = (USBOTG_FS->UEP2_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;            // Start Upload
+                USBFSD->UEP2_TX_CTRL = (USBFSD->UEP2_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK;            // Start Upload
                 UART2_Rx_RemainLen -= pkg_len;
                 UART2_Rx_Deal_Ptr += pkg_len;
 
@@ -267,11 +267,7 @@ void UART2_Tx_Service( void )
             USART_DMACmd(USART2, USART_DMAReq_Tx, DISABLE);
             UART2_Tx_Flag = 0;
             // Disable USB interrupts
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W) || defined (CH32F20x_D8)
-            NVIC_DisableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-            NVIC_DisableIRQ( OTG_FS_IRQn );
-#endif                                           
+            NVIC_DisableIRQ( USBFS_IRQn );                                       
             RingBuffer_Comm.RemainPack--;
             RingBuffer_Comm.DealPtr++;
             if(RingBuffer_Comm.DealPtr == DEF_Ring_Buffer_Max_Blks)
@@ -279,11 +275,7 @@ void UART2_Tx_Service( void )
                 RingBuffer_Comm.DealPtr = 0;
             }
             // Enable USB interrupts
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-            NVIC_EnableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-            NVIC_EnableIRQ( OTG_FS_IRQn );
-#endif                                                 
+            NVIC_EnableIRQ( USBFS_IRQn );                                            
         }
     }
     else
@@ -305,22 +297,14 @@ void UART2_Tx_Service( void )
             else
             {
                 /* drop out */
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W) || defined (CH32F20x_D8)
-                NVIC_DisableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-                NVIC_DisableIRQ( OTG_FS_IRQn );
-#endif 
+                NVIC_DisableIRQ( USBFS_IRQn );
                 RingBuffer_Comm.RemainPack--;
                 RingBuffer_Comm.DealPtr++;
                 if(RingBuffer_Comm.DealPtr == DEF_Ring_Buffer_Max_Blks)
                 {
                     RingBuffer_Comm.DealPtr = 0;
                 }
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-                NVIC_EnableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-                NVIC_EnableIRQ( OTG_FS_IRQn );
-#endif
+                NVIC_EnableIRQ( USBFS_IRQn );
             }
         }
     }
@@ -332,7 +316,7 @@ void UART2_Tx_Service( void )
         {
             printf("USB ring buffer full, stop receiving further data.\r\n");
             RingBuffer_Comm.StopFlag = 0;
-            USBOTG_FS->UEP1_RX_CTRL = (USBOTG_FS->UEP1_RX_CTRL & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+            USBFSD->UEP1_RX_CTRL = (USBFSD->UEP1_RX_CTRL & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
         }
     }
 
@@ -357,8 +341,8 @@ void HID_Set_Report_Deal()
         }
         printf("\r\n");
         HID_Set_Report_Flag = SET_REPORT_DEAL_OVER;
-        USBOTG_FS->UEP0_TX_LEN  = 0;
-        USBOTG_FS->UEP0_TX_CTRL =  USBFS_UEP_T_RES_ACK | USBFS_UEP_T_TOG;
+        USBFSD->UEP0_TX_LEN  = 0;
+        USBFSD->UEP0_TX_CTRL =  USBFS_UEP_T_RES_ACK | USBFS_UEP_T_TOG;
 
     }
 }

@@ -58,22 +58,18 @@ int main(void)
     USART_Printf_Init( 115200 );
     printf("SystemClk:%d\r\n",SystemCoreClock);
 
-    /* USBOTG_FS device init */
-    printf( "CH372Device Running On USBHD(FS) Controller\r\n" );
+    /* USBFSD device init */
+    printf( "CH372Device Running On USBFS Controller\r\n" );
     Delay_Ms(10);
 
     /* Variables init */
     Var_Init( );
     
-    /* USBHD Device Init */
+    /* USBFS Device Init */
     /* Usb Init */
     USBFS_RCC_Init( );
     USBFS_Device_Init( ENABLE );
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-    NVIC_EnableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-    NVIC_EnableIRQ( OTG_FS_IRQn );
-#endif
+    NVIC_EnableIRQ( USBFS_IRQn );
 
 	while(1)
 	{
@@ -86,22 +82,14 @@ int main(void)
                 ret = USBFS_Endp_DataUp( DEF_UEP2, &Data_Buffer[(RingBuffer_Comm.DealPtr) * DEF_USBD_FS_PACK_SIZE], RingBuffer_Comm.PackLen[RingBuffer_Comm.DealPtr], DEF_UEP_DMA_LOAD );
                 if( ret == 0 )
                 {
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-                    NVIC_DisableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-                    NVIC_DisableIRQ( OTG_FS_IRQn );
-#endif
+                    NVIC_DisableIRQ( USBFS_IRQn );
                     RingBuffer_Comm.RemainPack--;
                     RingBuffer_Comm.DealPtr++;
                     if(RingBuffer_Comm.DealPtr == DEF_Ring_Buffer_Max_Blks)
                     {
                         RingBuffer_Comm.DealPtr = 0;
                     }
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-                    NVIC_EnableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-                    NVIC_EnableIRQ( OTG_FS_IRQn );
-#endif
+                    NVIC_EnableIRQ( USBFS_IRQn );
                 }
             }
 
@@ -110,18 +98,10 @@ int main(void)
             {
                 if(RingBuffer_Comm.StopFlag)
                 {
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-                    NVIC_DisableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-                    NVIC_DisableIRQ( OTG_FS_IRQn );
-#endif
+                    NVIC_DisableIRQ( USBFS_IRQn );
                     RingBuffer_Comm.StopFlag = 0;
-#if defined (CH32F20x_D6) || defined (CH32F20x_D8W)
-                    NVIC_EnableIRQ( USBHD_IRQn );
-#elif defined (CH32F20x_D8C)
-                    NVIC_EnableIRQ( OTG_FS_IRQn );
-#endif
-                    USBOTG_FS->UEP1_RX_CTRL = (USBOTG_FS->UEP1_RX_CTRL & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+                    NVIC_EnableIRQ( USBFS_IRQn );
+                    USBFSD->UEP1_RX_CTRL = (USBFSD->UEP1_RX_CTRL & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
                 }
             }
         }

@@ -115,7 +115,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     TIM8_TRG_COM_IRQHandler    ; TIM8 Trigger and Commutation
                 DCD     TIM8_CC_IRQHandler         ; TIM8 Capture Compare
                 DCD     RNG_IRQHandler             ; RNG
-                DCD     FSMC_IRQHandler            ; FSMC
+                DCD     0
                 DCD     SDIO_IRQHandler            ; SDIO
                 DCD     TIM5_IRQHandler            ; TIM5
                 DCD     SPI3_IRQHandler            ; SPI3
@@ -269,7 +269,6 @@ Default_Handler PROC
                 EXPORT  TIM8_TRG_COM_IRQHandler    [WEAK] 
                 EXPORT  TIM8_CC_IRQHandler         [WEAK] 
                 EXPORT  RNG_IRQHandler             [WEAK] 
-                EXPORT  FSMC_IRQHandler            [WEAK] 
                 EXPORT  SDIO_IRQHandler            [WEAK] 
                 EXPORT  TIM5_IRQHandler            [WEAK] 
                 EXPORT  SPI3_IRQHandler            [WEAK] 
@@ -348,7 +347,6 @@ TIM8_UP_IRQHandler
 TIM8_TRG_COM_IRQHandler     
 TIM8_CC_IRQHandler          
 RNG_IRQHandler              
-FSMC_IRQHandler             
 SDIO_IRQHandler             
 TIM5_IRQHandler             
 SPI3_IRQHandler             

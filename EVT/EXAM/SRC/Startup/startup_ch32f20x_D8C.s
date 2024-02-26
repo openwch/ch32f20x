@@ -114,7 +114,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     TIM8_TRG_COM_IRQHandler    ; TIM8 Trigger and Commutation
                 DCD     TIM8_CC_IRQHandler         ; TIM8 Capture Compare
                 DCD     RNG_IRQHandler             ; RNG
-                DCD     FSMC_IRQHandler            ; FSMC
+                DCD     0
                 DCD     SDIO_IRQHandler            ; SDIO
                 DCD     TIM5_IRQHandler            ; TIM5
                 DCD     SPI3_IRQHandler            ; SPI3
@@ -133,7 +133,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
 				DCD     CAN2_RX0_IRQHandler        ; CAN2 RX0 
 				DCD     CAN2_RX1_IRQHandler        ; CAN2 RX1 
 				DCD     CAN2_SCE_IRQHandler        ; CAN2 SCE 
-				DCD     OTG_FS_IRQHandler          ; OTGFS 
+				DCD     USBFS_IRQHandler           ; USBFS 
 				DCD     USBHSWakeup_IRQHandler     ; USBHS Wakeup 
 				DCD     USBHS_IRQHandler           ; USBHS 
 				DCD     DVP_IRQHandler             ; DVP 
@@ -267,7 +267,6 @@ Default_Handler PROC
                 EXPORT  TIM8_TRG_COM_IRQHandler    [WEAK] 
                 EXPORT  TIM8_CC_IRQHandler         [WEAK] 
                 EXPORT  RNG_IRQHandler             [WEAK] 
-                EXPORT  FSMC_IRQHandler            [WEAK] 
                 EXPORT  SDIO_IRQHandler            [WEAK] 
                 EXPORT  TIM5_IRQHandler            [WEAK] 
                 EXPORT  SPI3_IRQHandler            [WEAK] 
@@ -286,7 +285,7 @@ Default_Handler PROC
 				EXPORT  CAN2_RX0_IRQHandler        [WEAK] 
 				EXPORT  CAN2_RX1_IRQHandler        [WEAK] 
 				EXPORT  CAN2_SCE_IRQHandler        [WEAK]  
-				EXPORT  OTG_FS_IRQHandler          [WEAK] 
+				EXPORT  USBFS_IRQHandler           [WEAK] 
 				EXPORT  USBHSWakeup_IRQHandler     [WEAK] 
 				EXPORT  USBHS_IRQHandler           [WEAK] 
 				EXPORT  DVP_IRQHandler             [WEAK] 
@@ -355,7 +354,6 @@ TIM8_UP_IRQHandler
 TIM8_TRG_COM_IRQHandler     
 TIM8_CC_IRQHandler          
 RNG_IRQHandler              
-FSMC_IRQHandler             
 SDIO_IRQHandler             
 TIM5_IRQHandler             
 SPI3_IRQHandler             
@@ -374,7 +372,7 @@ CAN2_TX_IRQHandler
 CAN2_RX0_IRQHandler         
 CAN2_RX1_IRQHandler         
 CAN2_SCE_IRQHandler          
-OTG_FS_IRQHandler           
+USBFS_IRQHandler           
 USBHSWakeup_IRQHandler      
 USBHS_IRQHandler            
 DVP_IRQHandler              

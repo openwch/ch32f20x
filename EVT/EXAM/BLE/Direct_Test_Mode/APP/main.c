@@ -55,7 +55,7 @@ int main(void)
 {
     SystemCoreClockUpdate();
     Delay_Init();
-#ifdef DEBUG
+#ifdef DEBUG            // Default serial port 1 for testing, serial port 2 for printing
     USART_Printf_Init( 115200 );
 #endif
     PRINT("%s\n", VER_LIB);

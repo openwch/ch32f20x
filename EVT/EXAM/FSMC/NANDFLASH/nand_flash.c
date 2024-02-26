@@ -13,7 +13,8 @@
 #include "string.h"
 
 nand_attriute nand_dev;
-
+u32 WriteEccData[4];
+u32 ReadEccData[4];
 
 /*********************************************************************
  * @fn      NAND_Init
@@ -74,8 +75,7 @@ u8 NAND_Init( void )
     nand_dev.id = NAND_ReadID();
 
     printf( "id:%08x\n", nand_dev.id );
-
-    if( nand_dev.id == FS33ND01GS108TF )
+		if(nand_dev.id==W29N01HV)
     {
         nand_dev.page_totalsize = 2112;
         nand_dev.page_mainsize = 2048;
@@ -274,6 +274,102 @@ u8 NAND_ReadPage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToRead )
 }
 
 /*********************************************************************
+ * @fn      NAND_ReadPageWithEcc
+ *
+ * @brief   Read the data of the specified page and column of NAND flash with ECC
+ *
+ * @param   PageNum - page number
+ *          ColNum - column number
+ *          pBuffer - data
+ *          NumByteToRead - data number
+ *
+ * @return  0 - success
+ *          1 - ERR
+ */
+
+u8 NAND_ReadPageWithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
+{
+    vu16 i=0,j=0,p=0,k=0;
+    u8 n=0;
+    u8 errsta=0;
+    u32 Eccdata,data;
+    u16 EccColNum=0;
+    u8 SpareBuf[4];
+    n=NumByteToRead/512;
+    switch (ColNum)
+    {
+        case 0:
+            EccColNum=2048;
+            break;
+        case 512:
+            EccColNum=2064;
+            break;
+        case 1024:
+            EccColNum=2080;
+            break;
+        case 1536:
+            EccColNum=2096;
+            break;
+        default:
+            break;
+    }
+
+    for(i=0;i<n;i++)
+      {
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_AREA_A;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)ColNum;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(ColNum>>8);
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)PageNum;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(PageNum>>8);
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_AREA_TRUE1;
+        FSMC_NANDECCCmd(FSMC_Bank2_NAND, DISABLE);
+        Delay_Ms(10);
+        FSMC_NANDECCCmd(FSMC_Bank2_NAND, ENABLE);
+        for(j=0; j<512; j++)
+        {
+            *(vu8*)pBuffer++ = *(vu8*)NAND_ADDRESS;
+        }
+        while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
+        ReadEccData[i]=FSMC_GetECC(FSMC_Bank2_NAND);
+        FSMC_NANDECCCmd(FSMC_Bank2_NAND, DISABLE);
+        if(NAND_WaitForReady()!=NSTA_READY)errsta=NSTA_ERROR;
+        ColNum+=512;
+      }
+
+
+    for(k=0;k<n;k++)
+    {
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_AREA_A;
+           *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)EccColNum;
+           *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(EccColNum>>8);
+           *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)PageNum;
+           *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(PageNum>>8);
+           *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_AREA_TRUE1;
+           Delay_Ms(10);
+           for (p= 0;  p < 4; p++)
+           {
+               SpareBuf[p] = *(vu8*)(NAND_ADDRESS+2*i);
+
+        }
+           Eccdata=SpareBuf[0]+(SpareBuf[1]<<8)+(SpareBuf[2]<<16)+(SpareBuf[3]<<24);
+           data=Eccdata^ReadEccData[k];
+           if(data==0)
+           {
+               printf("no errors-%d\r\n",k);
+           }
+           else
+           {
+               CheckEcc(data);
+           }
+           while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
+           if(NAND_WaitForReady()!=NSTA_READY)errsta=NSTA_ERROR;
+           EccColNum+=16;
+    }
+    return errsta;
+}
+
+
+/*********************************************************************
  * @fn      NAND_WritePage
  *
  * @brief   Write the data of the specified page and column of NAND flash
@@ -318,6 +414,93 @@ u8 NAND_WritePage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToWrite )
 }
 
 /*********************************************************************
+ * @fn      NAND_WritePagewithEcc
+ *
+ * @brief   Write the data of the specified page and column of NAND flash with ECC
+ *
+ * @param   PageNum - page number
+ *          ColNum - column number
+ *          pBuffer - data
+ *          NumByteToRead - data number
+ *
+ * @return  0 - success
+ *          1 - ERR
+ */
+
+u8 NAND_WritePagewithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
+{
+    int i=0,j=0,p=0,k=0;
+    u8 buf[16];
+    u8 n=0;
+    u16 EccColNum=0;
+    n=NumByteToWrite/512;
+    switch (ColNum) {
+        case 0:
+            EccColNum=2048;
+            break;
+        case 512:
+            EccColNum=2064;
+            break;
+        case 1024:
+            EccColNum=2080;
+            break;
+        case 1536:
+            EccColNum=2096;
+            break;
+        default:
+            break;
+    }
+// save data
+    for(i=0;i<n;i++)
+    {
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE0;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)ColNum;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(ColNum>>8);
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)PageNum;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(PageNum>>8);
+        NAND_Delay(30);
+        FSMC_NANDECCCmd(FSMC_Bank2_NAND, ENABLE);
+        for(j=0;j<512;j++)
+        {
+            *(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
+        }
+        while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
+        WriteEccData[i]=FSMC_GetECC(FSMC_Bank2_NAND);
+        FSMC_NANDECCCmd(FSMC_Bank2_NAND, DISABLE);
+
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE_TURE1;
+        if(NAND_WaitForReady()!=NSTA_READY)return NSTA_ERROR;
+        ColNum+=512;
+    }
+
+// write Ecc data
+    for(k=0;k<n;k++)
+    {
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE0;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)EccColNum;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(EccColNum>>8);
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)PageNum;
+        *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(PageNum>>8);
+        NAND_Delay(30);
+        buf[0]=WriteEccData[k]&0xFF;
+        buf[1]=(WriteEccData[k]>>8)&0xFF;
+        buf[2]=(WriteEccData[k]>>16)&0xFF;
+        buf[3]=(WriteEccData[k]>>24)&0xFF;
+        for(p=0;p<4;p++)
+        {
+            *(vu8*)(NAND_ADDRESS+2*i)=buf[p];
+        }
+        while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
+        *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE_TURE1;
+        if(NAND_WaitForReady()!=NSTA_READY)return NSTA_ERROR;
+        EccColNum+=16;
+    }
+    return 0;
+}
+
+
+
+/*********************************************************************
  * @fn      NAND_EraseBlock
  *
  * @brief   Erase NANDFLASH block
@@ -329,7 +512,7 @@ u8 NAND_WritePage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToWrite )
  */
 u8  NAND_EraseBlock( u32 BlockNum )
 {
-    if( nand_dev.id == FS33ND01GS108TF )
+    if( nand_dev.id == W29N01HV )
     {
         BlockNum <<= 6;
     }
@@ -344,6 +527,47 @@ u8  NAND_EraseBlock( u32 BlockNum )
     }
 
     return 0;
+}
+
+
+/*********************************************************************
+ * @fn      CheckEcc
+ *
+ * @brief   Check ECC result
+ *
+ * @param   data - ECC XOR calculation results for reading and writing
+ *
+ * @return  error location
+ */
+
+u32 CheckEcc( u32  data)
+{
+  u32 temp;
+  int i,p=0;
+  u8 eccdata;
+  u32 location=0;
+  for(p=0;p<4;p++)
+  {
+      temp=data&0xffffff;
+      for(i=0;i<24/2;i++)
+      {
+          eccdata=(temp>>(i*2))&0x3;
+          if(eccdata==0x01)
+          {
+              //01
+              }
+          else if(eccdata==0x02)
+          {
+              // 10
+              location|=(1<<i);
+          }
+          else {
+              return 0;
+          }
+          printf("Error location: %d\r\n",location);
+      }
+  }
+  return location;
 }
 
 

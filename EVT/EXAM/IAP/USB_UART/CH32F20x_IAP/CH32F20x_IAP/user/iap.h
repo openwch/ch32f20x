@@ -15,7 +15,7 @@
 #include "ch32f20x.h"
 #include "stdio.h"
 #include "usb_desc.h"
-#include "ch32f20x_usbotg_device.h"
+#include "ch32f20x_usbfs_device.h"
 #include "ch32f20x_usbhs_device.h"
 #define BUILD_UINT16(loByte, hiByte) ((uint16_t)(((loByte) & 0x00FF) | (((hiByte) & 0x00FF) << 8)))
 #define BUILD_UINT32(Byte0, Byte1, Byte2, Byte3) \

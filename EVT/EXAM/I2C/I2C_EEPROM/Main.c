@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/08/08
+* Date               : 2023/12/28
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -79,8 +79,6 @@ void IIC_Init( u32 bound, u16 address )
     I2C_Init( I2C2, &I2C_InitTSturcture );
 
     I2C_Cmd( I2C2, ENABLE );
-
-    I2C_AcknowledgeConfig( I2C2, ENABLE );
 }
 
 /*********************************************************************
