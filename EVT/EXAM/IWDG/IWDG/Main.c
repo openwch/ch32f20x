@@ -14,7 +14,7 @@
  *@Note
  *Independent watchdog routine:
  *This routine demonstrates the pull-down input of the PA0 pin. When the input is high, 
- *it will feed the dog. If you don't feed the dog,Then trigger independent watchdog reset after 3.2s.
+ *it will feed the dog. If you don't feed the dog,Then trigger independent watchdog reset after 3.2 s.
  *
  */
 
@@ -105,7 +105,7 @@ int main( void )
     printf( "IWDG test...\r\n" );
     Delay_Ms( 1000 );
 
-    IWDG_Feed_Init( IWDG_Prescaler_32, 4000 );   // 3.2s IWDG reset
+    IWDG_Feed_Init( IWDG_Prescaler_32, 4000 );   // 3.2 s IWDG reset
 
     while( 1 )
     {

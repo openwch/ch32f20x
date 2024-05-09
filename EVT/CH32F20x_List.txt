@@ -1,5 +1,5 @@
 
-南京沁恒微电子股份有限公司 2024.02
+南京沁恒微电子股份有限公司 2024.03
 最新资料请到我们的网站上查询
 https://wch.cn
 
@@ -192,6 +192,7 @@ https://wch.cn
   |      |      |      |      |-- RT_Thread_Core：RT-Thread移植例程 ——仅适用于CH32F20x_D8C
   |      |      |      |-- SDIO
   |      |      |      |      |-- SDIO_SD：SDIO操作SD卡例程 ——CH32F20x_D8-CH32F20x_D8C
+  |      |      |      |      |-- SDIO_eMMC：SDIO操作eMMC卡例程 ——CH32F20x_D8-CH32F20x_D8C
   |      |      |      |-- SPI
   |      |      |      |      |-- 1Lines_half-duplex：单线半双工模式，Master/Slave 模式数据收发
   |      |      |      |      |-- 2Lines_FullDuplex：双线全双工模式，Master/Slave 模式数据收发

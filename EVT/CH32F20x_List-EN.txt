@@ -1,5 +1,5 @@
 
-Nanjing WCH Microelectronics Co. 2024.01
+Nanjing WCH Microelectronics Co. 2024.03
 For the latest information, please go to our website.
 https://wch.cn
 
@@ -192,6 +192,7 @@ File Directory
   |      |      |      |      |-- RT_Thread_Core：RT-Thread porting routines ----for CH32F20x_D8C only
   |      |      |      |-- SDIO
   |      |      |      |      |-- SDIO_SD：SDIO operation SD card routine ----for CH32F20x_D8-CH32F20x_D8C only
+  |      |      |      |      |-- SDIO_eMMC：SDIO operation eMMC card routine ----for CH32F20x_D8-CH32F20x_D8C only
   |      |      |      |-- SPI
   |      |      |      |      |-- 1Lines_half-duplex:Single-line half-duplex mode,Master/Slave mode data sending and receiving
   |      |      |      |      |-- 2Lines_FullDuplex:Dual-lines full-duplex mode, Master/Slave mode data sending and receiving
