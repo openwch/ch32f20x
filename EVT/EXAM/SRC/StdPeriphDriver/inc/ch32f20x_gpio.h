@@ -105,7 +105,7 @@ typedef enum
 #define GPIO_Remap_ETH              ((uint32_t)0x00200020)  /* Ethernet remapping (only for Connectivity line devices) */
 #define GPIO_Remap_CAN2             ((uint32_t)0x00200040)  /* CAN2 remapping (only for Connectivity line devices) */
 #define GPIO_Remap_MII_RMII_SEL     ((uint32_t)0x00200080)  /* MII or RMII selection */
-#define GPIO_Remap_SWJ_Disable      ((uint32_t)0x00300400)  /* Full SWJ Disabled (JTAG-DP + SW-DP) */
+#define GPIO_Remap_SWJ_Disable      ((uint32_t)0x00300400)  /* Full SWJ Disabled */
 #define GPIO_Remap_SPI3             ((uint32_t)0x00201000)  /* SPI3/I2S3 Alternate Function mapping (only for Connectivity line devices) */
 #define GPIO_Remap_TIM2ITR1_PTP_SOF ((uint32_t)0x00202000)  /* Ethernet PTP output or USB OTG SOF (Start of Frame) connected
                                                                to TIM2 Internal Trigger 1 for calibration

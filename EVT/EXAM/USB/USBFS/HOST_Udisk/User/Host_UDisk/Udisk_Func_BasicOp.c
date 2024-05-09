@@ -38,7 +38,7 @@ void UDisk_USBH_ByteOperation( void )
         UDisk_Opeation_Flag = 0;
         printf("CH103DiskStatus:%02x\r\n", CH103DiskStatus);
         /* 读文件 */
-        strcpy((char *)mCmdParam.Open.mPathName, "/C51/NEWFILE.C");         //设置将要操作的文件路径和文件名/NEWFILE.C
+        strcpy((char *)mCmdParam.Open.mPathName, "/NEWFILE.C");         //设置将要操作的文件路径和文件名/NEWFILE.C
         s = CH103FileOpen();                                               //打开文件
         if(s == ERR_MISS_DIR || s == ERR_MISS_FILE)                        //没有找到文件
         {
@@ -105,6 +105,15 @@ void UDisk_USBH_ByteOperation( void )
                 mStopIfError(s);
                 printf("WriteIn Success %02X times\r\n", (uint16_t)c);
             }
+						
+						//演示修改文件属性
+            printf("Modify\r\n");
+            mCmdParam.Modify.mFileAttr = 0xff;                               //输入参数: 新的文件属性,为0FFH则不修改
+            mCmdParam.Modify.mFileTime = 0xffff;                             //输入参数: 新的文件时间,为0FFFFH则不修改,使用新建文件产生的默认时间
+            mCmdParam.Modify.mFileDate = MAKE_FILE_DATE(2015, 5, 18);        //输入参数: 新的文件日期: 2015.05.18
+            mCmdParam.Modify.mFileSize = 0xffffffff;                         // 输入参数: 新的文件长度,以字节为单位写文件应该由程序库关闭文件时自动更新长度,所以此处不修改
+            i = CH103FileModify();                                           //修改当前文件的信息,修改日期
+            mStopIfError(i);
 
             //读取文件前N字节
             TotalCount = 60;                                                 //设置准备读取总长度100字节

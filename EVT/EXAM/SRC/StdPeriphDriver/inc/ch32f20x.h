@@ -40,7 +40,7 @@
 
 /* CH32F20x Standard Peripheral Library version number */
 #define __CH32F20x_STDPERIPH_VERSION_MAIN   (0x02) /* [15:8] main version */
-#define __CH32F20x_STDPERIPH_VERSION_SUB    (0x00) /* [7:0] sub version */
+#define __CH32F20x_STDPERIPH_VERSION_SUB    (0x01) /* [7:0] sub version */
 #define __CH32F20x_STDPERIPH_VERSION        ( (__CH32F20x_STDPERIPH_VERSION_MAIN << 8)\
                                              |(__CH32F20x_STDPERIPH_VERSION_SUB << 0))
 
