@@ -2,7 +2,7 @@
 * File Name          : system_ch32f20x.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/08/08
+* Date               : 2024/06/26
 * Description        : CH32F20x Device Peripheral Access Layer System Source File.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -16,8 +16,8 @@
 */
 
 //#define SYSCLK_FREQ_24MHz  24000000
-//#define SYSCLK_FREQ_48MHz  48000000
-#define SYSCLK_FREQ_72MHz  72000000
+#define SYSCLK_FREQ_48MHz  48000000
+//#define SYSCLK_FREQ_72MHz  72000000
 
 
 /* Uncomment the following line if you need to relocate your vector Table in Internal SRAM */

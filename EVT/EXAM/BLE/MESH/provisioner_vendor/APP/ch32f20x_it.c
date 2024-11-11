@@ -37,6 +37,7 @@ void NMI_Handler(void)
  */
 void HardFault_Handler(void)
 {
+  NVIC_SystemReset();  
   while (1)
   {
 		PRINT("%s\n",__FUNCTION__);

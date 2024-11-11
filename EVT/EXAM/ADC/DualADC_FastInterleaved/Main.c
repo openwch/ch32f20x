@@ -21,7 +21,7 @@
 
 /* Global Variable */
 u16 Adc_Val[2];
-u32 temp;
+vu32 temp;
 s16 Calibrattion_Val1 = 0;
 s16 Calibrattion_Val2 = 0;
 

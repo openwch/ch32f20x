@@ -186,9 +186,38 @@ void USBDeviceInit(void)
  */
 void USBFS_RCC_Init(void)
 {
-    RCC->CFGR2 &= ~RCC_USBFS_CLK_SRC; //usbfs clock selection: 0 = systick, 1 = usb20_phy
-    RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_Div2);
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBFS, ENABLE);
+#if defined CH32F20x_D8C
+    RCC_USBCLK48MConfig( RCC_USBCLK48MCLKSource_USBPHY );
+    RCC_USBHSPLLCLKConfig( RCC_HSBHSPLLCLKSource_HSE );
+    RCC_USBHSConfig( RCC_USBPLL_Div2 );
+    RCC_USBHSPLLCKREFCLKConfig( RCC_USBHSPLLCKREFCLK_4M );
+    RCC_USBHSPHYPLLALIVEcmd( ENABLE );
+    RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBHS, ENABLE );
+#endif
+#if defined (CH32F20x_D8W) || defined (CH32F20x_D6)
+    RCC_ClocksTypeDef RCC_ClocksStatus={0};
+    RCC_GetClocksFreq(&RCC_ClocksStatus);
+
+    if( RCC_ClocksStatus.SYSCLK_Frequency == 144000000 )
+    {
+        RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div3 );
+    }
+    else if( RCC_ClocksStatus.SYSCLK_Frequency == 96000000 ) 
+    {
+        RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div2 );
+    }
+    else if( RCC_ClocksStatus.SYSCLK_Frequency == 48000000 ) 
+    {
+        RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div1 );
+    }
+#endif
+#if defined (CH32F20x_D8W)
+    else if ( RCC_ClocksStatus.SYSCLK_Frequency == 240000000 )
+    {
+        RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div5 );
+    }
+#endif
+    RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBFS, ENABLE );
 }
 
 /*********************************************************************

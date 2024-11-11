@@ -19,7 +19,7 @@
  *
  *
  *    Hardware connection:PA2--PB11
- *                          PA3--PB10
+ *                        PA3--PB10
  *
  */
 

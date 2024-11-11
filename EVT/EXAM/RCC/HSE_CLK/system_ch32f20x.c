@@ -6,8 +6,10 @@
 * Description        : CH32F20x Device Peripheral Access Layer System Source File.
 *                      For CH32F208 HSE = 32Mhz
 *                      For others   HSE = 8Mhz
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *********************************************************************************/
 #include "ch32f20x.h"
 #include "debug.h"

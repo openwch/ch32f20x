@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/08/08
+* Date               : 2024/10/25
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -253,8 +253,8 @@ int main(void)
 	printf( "Rx Mode\r\n" );
 	
 #endif	
-/* Bps = 333Kbps */	
-	CAN_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 12, CAN_Mode_Normal );
+/* Bps = 250Kbps */	
+	CAN_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 16, CAN_Mode_Normal );
 
 	while(1)
 	{	

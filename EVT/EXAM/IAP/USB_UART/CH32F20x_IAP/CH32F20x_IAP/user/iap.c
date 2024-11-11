@@ -2,7 +2,7 @@
 * File Name          : iap.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2020/12/16
+* Date               : 2024/06/07
 * Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -17,7 +17,6 @@
 
 
 /******************************************************************************/
-/* 常、变量定义 */
 #define FLASH_Base   0x08005000   
 
 iapfun jump2app; 
@@ -76,14 +75,16 @@ u8 RecData_Deal(void)
 
 					if (Verity_Star_flag == 0) {
 							Verity_Star_flag = 1;
-
-							for (i = 0; i < (256 - CodeLen); i++) {
-									Fast_Program_Buf[CodeLen + i] = 0xff;
+						if(CodeLen != 0)
+						{
+							for (i = 0; i < (256 - CodeLen); i++) 
+							{
+								Fast_Program_Buf[CodeLen + i] = 0xff;
 							}
-
 							FLASH_ErasePage_Fast(Program_addr);
 							CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
 							CodeLen = 0;
+						}
 					}
 
 					s = ERR_SCUESS;
@@ -173,10 +174,10 @@ void GPIO_Cfg_init(void)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);	    
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);	    
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;              
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;           
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;           
+	GPIO_Init(GPIOA, &GPIO_InitStructure); 
 }
 
 
@@ -219,9 +220,9 @@ __asm void MSR_MSP(u32 addr)
  */
 void iap_load_app(u32 appxaddr)
 {
-		jump2app=(iapfun)*(vu32*)(appxaddr+4);		
-		MSR_MSP(*(vu32*)appxaddr);					
-		jump2app();									
+	jump2app=(iapfun)*(vu32*)(appxaddr+4);		
+	MSR_MSP(*(vu32*)appxaddr);					
+	jump2app();									
 }	
 
 /*********************************************************************
@@ -240,7 +241,7 @@ void USBD_CFG(void)
 	Delay_Ms(700);
 	USB_Port_Set(ENABLE, ENABLE);
 	
- 	USB_Interrupts_Config();   	
+	USB_Interrupts_Config();   	
 }
 
 /*********************************************************************
@@ -256,17 +257,16 @@ void USART3_CFG(u32 baudrate)
 	USART_InitTypeDef USART_InitStructure;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);	
 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10; 
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10; 
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; 
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	USART_InitStructure.USART_BaudRate = baudrate;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -275,7 +275,7 @@ void USART3_CFG(u32 baudrate)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
 	
-  USART_Init(USART3, &USART_InitStructure); 
+	USART_Init(USART3, &USART_InitStructure); 
 	
 	USART_Cmd(USART3, ENABLE); 
 }

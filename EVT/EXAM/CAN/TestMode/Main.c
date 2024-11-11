@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2024/04/08
+* Date               : 2024/10/25
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -123,7 +123,7 @@ void CAN_Test_Mode_Init( u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode )
     CAN_FilterInitSturcture.CAN_FilterFIFOAssignment = CAN_Filter_FIFO1;
     CAN_FilterInitSturcture.CAN_FilterActivation = ENABLE;
     CAN_FilterInit( &CAN_FilterInitSturcture );
-		CAN_SlaveStartBank(9);
+	CAN_SlaveStartBank(9);
 #endif		
 
 }
@@ -305,17 +305,17 @@ int main( void )
     printf( "SystemClk:%d\r\n", SystemCoreClock );
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
-    /* Bps = 333Kbps */
+    /* Bps = 250Kbps */
 #if (TEST_MODE == SILENT_MODE)
-    CAN_Test_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 12, CAN_Mode_Silent );
+    CAN_Test_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 16, CAN_Mode_Silent );
     printf( "Slient Mode\r\n" );
 
 #elif (TEST_MODE == LOOPBACK_MODE)
-    CAN_Test_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 12, CAN_Mode_LoopBack );
+    CAN_Test_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 16, CAN_Mode_LoopBack );
     printf( "LoopBack Mode\r\n" );
 
 #elif (TEST_MODE == SILENT_LOOPBACK_MODE)
-    CAN_Test_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 12, CAN_Mode_Silent_LoopBack );
+    CAN_Test_Mode_Init( CAN_SJW_1tq, CAN_BS2_5tq, CAN_BS1_6tq, 16, CAN_Mode_Silent_LoopBack );
     printf( "Silent_LoopBack Mode\r\n" );
 
 #endif
