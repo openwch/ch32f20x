@@ -54,18 +54,28 @@ void USBFS_RCC_Init(void)
     RCC_USBHSPLLCKREFCLKConfig( RCC_USBHSPLLCKREFCLK_4M );
     RCC_USBHSPHYPLLALIVEcmd( ENABLE );
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBHS, ENABLE );
-#elif defined (CH32F20x_D8W) || defined (CH32F20x_D6)
-    if( SystemCoreClock == 144000000 )
+#endif
+#if defined (CH32F20x_D8W) || defined (CH32F20x_D6)
+    RCC_ClocksTypeDef RCC_ClocksStatus={0};
+    RCC_GetClocksFreq(&RCC_ClocksStatus);
+
+    if( RCC_ClocksStatus.SYSCLK_Frequency == 144000000 )
     {
         RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div3 );
     }
-    else if( SystemCoreClock == 96000000 ) 
+    else if( RCC_ClocksStatus.SYSCLK_Frequency == 96000000 ) 
     {
         RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div2 );
     }
-    else if( SystemCoreClock == 48000000 ) 
+    else if( RCC_ClocksStatus.SYSCLK_Frequency == 48000000 ) 
     {
         RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div1 );
+    }
+#endif
+#if defined (CH32F20x_D8W)
+    else if ( RCC_ClocksStatus.SYSCLK_Frequency == 240000000 )
+    {
+        RCC_USBCLKConfig( RCC_USBCLKSource_PLLCLK_Div5 );
     }
 #endif
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBFS, ENABLE );

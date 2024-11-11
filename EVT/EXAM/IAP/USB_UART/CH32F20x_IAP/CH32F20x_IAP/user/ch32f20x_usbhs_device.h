@@ -5,8 +5,10 @@
 * Date               : 2021/08/08
 * Description        : This file contains all the functions prototypes for the
 *                      USBHS firmware library.
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #ifndef __CH32F20X_USBHS_DEVICE_H__
 #define __CH32F20X_USBHS_DEVICE_H__

@@ -90,7 +90,7 @@ void SPI_FullDuplex_Init( void )
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init( GPIOA, &GPIO_InitStructure );
-
+    
 #endif
 
     SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;

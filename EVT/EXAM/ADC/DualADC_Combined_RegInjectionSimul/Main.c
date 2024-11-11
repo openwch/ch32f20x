@@ -27,7 +27,7 @@
 u32 TxBuf[1];
 u16 Adc_Val[2];
 u16 ADC_Val1, ADC_Val2;
-u8 Injected_IT_Flag, DMA_IT_Flag;
+vu8 Injected_IT_Flag, DMA_IT_Flag;
 s16 Calibrattion_Val1 = 0;
 s16 Calibrattion_Val2 = 0;
 

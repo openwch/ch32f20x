@@ -151,6 +151,8 @@
     PHY_NEGOTIATION_PARAM_INIT();\
 }while(0)
 
+#define LAST_NEGO_STAT      1   //0:auto-negotiate  1:Parallel detection
+#define TURN_PN_POLARITY    (1<<1)   //0:P polarity  1:N polarity
 extern ETH_DMADESCTypeDef *DMATxDescToSet;
 extern ETH_DMADESCTypeDef *DMARxDescToGet;
 extern SOCK_INF SocketInf[ ];

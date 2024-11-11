@@ -81,15 +81,15 @@ int main(void)
 		IAP_2_APP();
 		while(1);
 	}
-  USART3_CFG(57600);
+	USART3_CFG(57600);
 #if defined (CH32F20x_D6) || defined (CH32F20x_D8) || defined (CH32F20x_D8W)	
- 	USBD_CFG();
+	USBD_CFG();
 #endif	
 	USBFS_Init( );  
 #if defined (CH32F20x_D8C) 
-  USBHS_RCC_Init( );
- USBHS_Device_Init( ENABLE );
-  NVIC_EnableIRQ( USBHS_IRQn );
+	USBHS_RCC_Init( );
+	USBHS_Device_Init( ENABLE );
+	NVIC_EnableIRQ( USBHS_IRQn );
 
 #endif
 
