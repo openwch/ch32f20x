@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/04/08
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -29,9 +29,9 @@
 #define PWM_MODE PWM_MODE2
 
 /*********************************************************************
- * @fn      TIM1_OutCompare_Init
+ * @fn      TIM1_PWMOut_Init
  *
- * @brief   Initializes TIM1 output compare.
+ * @brief   Initializes TIM1 PWM output.
  *
  * @param   arr - the period value.
  *          psc - the prescaler value.

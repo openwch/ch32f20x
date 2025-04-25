@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : ch32v20x_usbfs_device.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2021/06/06
+ * Version            : V1.0.1
+ * Date               : 2025/04/14
  * Description        : This file provides all the USBFS firmware functions.
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * SPDX-License-Identifier: Apache-2.0
@@ -145,9 +145,10 @@ void USBFS_Init( void )
     USBFS_RCC_Init( );
     Delay_Us(100);
     USBDeviceInit( );
+#if defined (CH32F20x_D6) || defined (CH32F20x_D8C) || defined (CH32F20x_D8W)	
     NVIC_EnableIRQ( USBFS_IRQn );		
+#endif
 }
-
 /*********************************************************************
  * @fn      USBFS_IRQHandler
  *

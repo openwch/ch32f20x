@@ -2,7 +2,7 @@
  * File Name          : multiCentral.c
  * Author             : WCH
  * Version            : V1.0
- * Date               : 2022/03/18
+ * Date               : 2025/04/08
  * Description        : Multi-connection routine, actively scan the surrounding device
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -302,7 +302,7 @@ uint16_t Central_ProcessEvent(uint8_t task_id, uint16_t events)
     {
         uint8_t *pMsg;
 
-        if((pMsg = tmos_msg_receive(centralTaskId)) != NULL)
+        if((pMsg = tmos_msg_receive(task_id)) != NULL)
         {
             central_ProcessTMOSMsg((tmos_event_hdr_t *)pMsg);
             // Release the TMOS message

@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : ch32f20x_dbgmcu.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/04/09
 * Description        : This file provides all the DBGMCU firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -22,7 +22,7 @@
  */
 uint32_t DBGMCU_GetREVID( void )
 {
-    return( DBGMCU->IDCODE >> 16 );
+    return( DBGMCU->IDCODE & IDCODE_DEVID_MASK );
 }
 
 /*********************************************************************
@@ -34,7 +34,7 @@ uint32_t DBGMCU_GetREVID( void )
  */
 uint32_t DBGMCU_GetDEVID( void )
 {
-    return( DBGMCU->IDCODE & IDCODE_DEVID_MASK );
+    return( DBGMCU->IDCODE >> 16 );
 }
 
 /*********************************************************************
@@ -61,15 +61,8 @@ uint32_t DBGMCU_GetDEVID( void )
  *                    DBGMCU_TIM7_STOP - TIM7 counter stopped when Core is halted
  *                    DBGMCU_TIM8_STOP - TIM8 counter stopped when Core is halted
  *                    DBGMCU_CAN2_STOP - Debug CAN2 stopped when Core is halted
- *                    DBGMCU_TIM15_STOP - TIM15 counter stopped when Core is halted
- *                    DBGMCU_TIM16_STOP - TIM16 counter stopped when Core is halted
- *                    DBGMCU_TIM17_STOP - TIM17 counter stopped when Core is halted
  *                    DBGMCU_TIM9_STOP - TIM9 counter stopped when Core is halted
  *                    DBGMCU_TIM10_STOP - TIM10 counter stopped when Core is halted
- *                    DBGMCU_TIM11_STOP - TIM11 counter stopped when Core is halted
- *                    DBGMCU_TIM12_STOP - TIM12 counter stopped when Core is halted
- *                    DBGMCU_TIM13_STOP - TIM13 counter stopped when Core is halted
- *                    DBGMCU_TIM14_STOP - TIM14 counter stopped when Core is halted
  *                  NewState - ENABLE or DISABLE.
  *
  * @return  none
