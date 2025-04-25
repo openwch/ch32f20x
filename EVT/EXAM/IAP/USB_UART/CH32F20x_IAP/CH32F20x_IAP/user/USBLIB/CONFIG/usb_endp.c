@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : usb_endp.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/04/08
 * Description        : Endpoint routines
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -20,7 +20,7 @@
 
 /* Private variables */
 //RX
-u8 EP2_Rx_Buffer[USBD_DATA_SIZE];
+u8 EP2_Rx_Buffer[USBD_DATA_SIZE+4];
 u16 EP2_Rx_Cnt=0; 
 
 //TX;

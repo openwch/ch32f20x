@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : iap.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2024/06/07
+* Version            : V1.0.1
+* Date               : 2025/01/09
 * Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -15,45 +15,41 @@
 #include "string.h"
 #include "flash.h"
 
-
 /******************************************************************************/
-#define FLASH_Base   0x08005000   
-
 iapfun jump2app; 
 u32 Program_addr = FLASH_Base; 
-u32 Verity_addr = FLASH_Base; 
+u32 Verify_addr = FLASH_Base; 
 u32 User_APP_Addr_offset = 0x5000;  
-u8 Verity_Star_flag = 0;   
+u8 Verify_Star_flag = 0;   
 u8 Fast_Program_Buf[390];
 u16 CodeLen = 0;
 u8 End_Flag = 0;  
-
 #define  isp_cmd_t   ((isp_cmd  *)EP2_Rx_Buffer)
 
 /*********************************************************************
  * @fn      RecData_Deal
  *
- * @brief   UART-USB deal date
+ * @brief   USB deal data
  *
  * @return  ERR_ERROR - ERROR
- *          ERR_SCUESS - SCUESS
+ *          ERR_SUCCESS - SUCCESS
  *          ERR_End - End
  */
 u8 RecData_Deal(void)
 {
     u8 i, s, Lenth;
 
-    Lenth = isp_cmd_t->Len;
+    Lenth = isp_cmd_t->other.buf[1];
 
-    switch ( isp_cmd_t->Cmd) {
+    switch ( isp_cmd_t->other.buf[0]) {
 			case CMD_IAP_ERASE:
 					FLASH_Unlock_Fast();
-					s = ERR_SCUESS;
+					s = ERR_SUCCESS;
 					break;
 
 			case CMD_IAP_PROM:
 					for (i = 0; i < Lenth; i++) {
-							Fast_Program_Buf[CodeLen + i] = isp_cmd_t->data[i];
+							Fast_Program_Buf[CodeLen + i] = isp_cmd_t->program.data[i];
 					}
 					CodeLen += Lenth;
 					if (CodeLen >= 256) {
@@ -68,13 +64,13 @@ u8 RecData_Deal(void)
 							Program_addr += 0x100;
 
 					}
-					s = ERR_SCUESS;
+					s = ERR_SUCCESS;
 					break;
 
 			case CMD_IAP_VERIFY:
 
-					if (Verity_Star_flag == 0) {
-							Verity_Star_flag = 1;
+					if (Verify_Star_flag == 0) {
+							Verify_Star_flag = 1;
 						if(CodeLen != 0)
 						{
 							for (i = 0; i < (256 - CodeLen); i++) 
@@ -87,32 +83,131 @@ u8 RecData_Deal(void)
 						}
 					}
 
-					s = ERR_SCUESS;
+					s = ERR_SUCCESS;
 					for (i = 0; i < Lenth; i++) {
-							if (isp_cmd_t->data[i] != *(u8*) (Verity_addr + i)) {
+							if (isp_cmd_t->verify.data[i] != *(u8*) (Verify_addr + i)) {
 									s = ERR_ERROR;
 									break;
 							}
 					}
 
-					Verity_addr += Lenth;
+					Verify_addr += Lenth;
 					
 					break;
 
 			case CMD_IAP_END:
-					Verity_Star_flag = 0;
+					Verify_Star_flag = 0;
 					End_Flag = 1;
 					Program_addr = FLASH_Base;
-					Verity_addr = FLASH_Base;		
-			
+					Verify_addr = FLASH_Base;					
 					s = ERR_End;
+			
+			    FLASH_ErasePage_Fast(CalAddr & 0xFFFFFF00);
 					FLASH->CTLR |= ((uint32_t)0x00008000);
 					FLASH->CTLR |= ((uint32_t)0x00000080);
 					break;
+			
+    case CMD_JUMP_IAP:
 
+        s = ERR_SUCCESS;
+        break;
+		
 			default:
 					s = ERR_ERROR;
 					break;
+    }
+
+    return s;
+}
+
+/*********************************************************************
+ * @fn      UART_RecData_Deal
+ *
+ * @brief   uart deal data
+ *
+ * @return  ERR_ERROR - ERROR
+ *          ERR_SUCCESS - SUCCESS
+ *          ERR_End - End
+ */
+u8 UART_RecData_Deal(void)
+{
+    u8 i, s, Lenth;
+
+    Lenth = isp_cmd_t->UART.Len;
+    switch ( isp_cmd_t->UART.Cmd) {
+    case CMD_IAP_ERASE:
+
+        FLASH_Unlock_Fast();
+        s = ERR_SUCCESS;
+        break;
+
+    case CMD_IAP_PROM:
+        for (i = 0; i < Lenth; i++) {
+            Fast_Program_Buf[CodeLen + i] = isp_cmd_t->UART.data[i];
+        }
+        CodeLen += Lenth;
+        if (CodeLen >= 256) {
+            FLASH_Unlock_Fast();
+            FLASH_ErasePage_Fast(Program_addr);
+            CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
+            CodeLen -= 256;
+            for (i = 0; i < CodeLen; i++) {
+                Fast_Program_Buf[i] = Fast_Program_Buf[256 + i];
+            }
+
+            Program_addr += 0x100;
+
+        }
+        s = ERR_SUCCESS;
+        break;
+
+    case CMD_IAP_VERIFY:
+
+        if (Verify_Star_flag == 0)
+        {
+        Verify_Star_flag = 1;
+          if(CodeLen != 0)
+          {
+            for (i = 0; i < (256 - CodeLen); i++)
+            {
+                Fast_Program_Buf[CodeLen + i] = 0xff;
+            }
+            FLASH_ErasePage_Fast(Program_addr);
+            CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
+            CodeLen = 0;
+          }
+        }
+        s = ERR_SUCCESS;
+        for (i = 0; i < Lenth; i++) {
+            if (isp_cmd_t->UART.data[i] != *(u8*) (Verify_addr + i)) {
+                s = ERR_ERROR;
+                break;
+            }
+        }
+
+        Verify_addr += Lenth;
+        break;
+
+    case CMD_IAP_END:
+        Verify_Star_flag = 0;
+        End_Flag = 1;
+        Program_addr = FLASH_Base;
+        Verify_addr = FLASH_Base;
+        s = ERR_End;
+
+        FLASH_ErasePage_Fast(CalAddr & 0xFFFFFF00);
+        FLASH->CTLR |= ((uint32_t)0x00008000);
+        FLASH->CTLR |= ((uint32_t)0x00000080);
+
+        break;
+
+    case CMD_JUMP_IAP:
+
+        s = ERR_SUCCESS;
+        break;
+    default:
+        s = ERR_ERROR;
+        break;
     }
 
     return s;
@@ -159,9 +254,7 @@ void EP2_RecData_Deal(void)
 		
 		SetEPRxStatus(ENDP2, EP_RX_VALID);
 	}
-	
 }
-
 
 /*********************************************************************
  * @fn      GPIO_Cfg_init
@@ -179,7 +272,6 @@ void GPIO_Cfg_init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;           
 	GPIO_Init(GPIOA, &GPIO_InitStructure); 
 }
-
 
 /*********************************************************************
  * @fn      PA0_Check
@@ -203,7 +295,6 @@ u8 PA0_Check(void)
     if(cnt>6) return 0;
     else return 1;
 }
-
 
 __asm void MSR_MSP(u32 addr) 
 {
@@ -314,7 +405,6 @@ void UART3_SendData(u8 data)
 {
 	while(USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);  
 	USART_SendData(USART3, data);
-			
 }
 
 /*********************************************************************
@@ -339,38 +429,66 @@ u8 Uart3_Rx( void )
  */
 void UART_Rx_Deal(void)
 {
-	u8 i,s;
-	u8 Data_add=0;
-	
-	if(Uart3_Rx() == Uart_Sync_Head1){
-		if(Uart3_Rx() == Uart_Sync_Head2){	
-			isp_cmd_t->Cmd = Uart3_Rx();Data_add += isp_cmd_t->Cmd;
-			isp_cmd_t->Len = Uart3_Rx();Data_add += isp_cmd_t->Len;
-			isp_cmd_t->Rev[0] = Uart3_Rx();Data_add += isp_cmd_t->Rev[0];
-			isp_cmd_t->Rev[1] = Uart3_Rx();Data_add += isp_cmd_t->Rev[1];
-			
-			if((isp_cmd_t->Cmd == CMD_IAP_PROM) || (isp_cmd_t->Cmd == CMD_IAP_VERIFY)){  
-				for(i=0; i<isp_cmd_t->Len; i++){
-					isp_cmd_t->data[i] = Uart3_Rx();Data_add += isp_cmd_t->data[i];		
-				}
-			}
-							
-			if(Uart3_Rx() == Data_add){  
-				s = RecData_Deal();			
-							
-				if(s!=ERR_End){		
-						UART3_SendData(0x00);     					
-						if(s==ERR_ERROR){
-							UART3_SendData(0x01);    
-						}
-						else{
-							UART3_SendData(0x00);    
-						}							
-				}		
-			}
-		}			
-	}
+    u8 i, s;
+    u16 Data_add = 0;
+
+    if (Uart3_Rx() == Uart_Sync_Head1)
+    {
+        if (Uart3_Rx() == Uart_Sync_Head2)
+        {
+            isp_cmd_t->UART.Cmd = Uart3_Rx();
+            Data_add += isp_cmd_t->UART.Cmd;
+            isp_cmd_t->UART.Len = Uart3_Rx();
+            Data_add += isp_cmd_t->UART.Len;
+
+            if(isp_cmd_t->UART.Cmd == CMD_IAP_ERASE ||isp_cmd_t->UART.Cmd == CMD_IAP_VERIFY)
+            {
+                isp_cmd_t->other.buf[2] = Uart3_Rx();
+                Data_add += isp_cmd_t->other.buf[2];
+                isp_cmd_t->other.buf[3] = Uart3_Rx();
+                Data_add += isp_cmd_t->other.buf[3];
+                isp_cmd_t->other.buf[4] = Uart3_Rx();
+                Data_add += isp_cmd_t->other.buf[4];
+                isp_cmd_t->other.buf[5] = Uart3_Rx();
+                Data_add += isp_cmd_t->other.buf[5];
+            }
+            if ((isp_cmd_t->other.buf[0] == CMD_IAP_PROM) || (isp_cmd_t->other.buf[0] == CMD_IAP_VERIFY))
+            {
+                for (i = 0; i < isp_cmd_t->UART.Len; i++) {
+                    isp_cmd_t->UART.data[i] = Uart3_Rx();
+                    Data_add += isp_cmd_t->UART.data[i];
+                }
+            }
+            if (Uart3_Rx() == (uint8_t)(Data_add & 0xFF))
+            {
+                if(Uart3_Rx() == (uint8_t)(Data_add >>8))
+                {
+                    if (Uart3_Rx() == Uart_Sync_Head2)
+                    {
+                        if (Uart3_Rx() == Uart_Sync_Head1)
+                        {
+                            s = UART_RecData_Deal();
+
+                            if (s != ERR_End)
+                            {
+                                UART3_SendData(Uart_Sync_Head1);
+                                UART3_SendData(Uart_Sync_Head2);
+                                UART3_SendData(0x00);
+                                if (s == ERR_ERROR)
+                                {
+                                    UART3_SendData(0x01);
+                                }
+                                else
+                                {
+                                    UART3_SendData(0x00);
+                                }
+                                UART3_SendData(Uart_Sync_Head2);
+                                UART3_SendData(Uart_Sync_Head1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
-
-
-

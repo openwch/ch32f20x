@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : iap.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2020/12/16
+* Version            : V1.0.1
+* Date               : 2025/02/06
 * Description        : FLASH program
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -24,6 +24,3 @@ void CH32_IAP_Program(u32 adr, u32* buf)
 {
 	FLASH_ProgramPage_Fast(adr,buf);
 }
-
-
-

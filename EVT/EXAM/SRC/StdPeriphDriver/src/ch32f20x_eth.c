@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : ch32f20x_eth.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/04/22
 * Description        : This file provides all the ETH firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -2522,6 +2522,7 @@ void RGMII_TXC_Delay( uint8_t clock_polarity, uint8_t delay_time )
     }
     if( delay_time <= 7 )
     {
+		ETH->MACCR &= ~( uint32_t )(( uint32_t )7 << 29);
         ETH->MACCR |= ( uint32_t )( ( uint32_t )delay_time << 29 );
     }
 }

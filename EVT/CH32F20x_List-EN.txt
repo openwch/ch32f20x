@@ -1,5 +1,5 @@
 
-Nanjing WCH Microelectronics Co. 2024.03
+Nanjing WCH Microelectronics Co. 2025.04
 For the latest information, please go to our website.
 https://wch.cn
 
@@ -66,8 +66,6 @@ File Directory
   |      |      |      |      |-- MultiCentPeri:Multi-host multi-slave routines, supporting simultaneous connection of three hosts and three slaves
   |      |      |      |      |-- MultiCentral:The host multi-connection routine actively scans the surrounding devices, connects to the given three slave device addresses, looks for custom services and features, and executes read and write commands, and needs to be used with the slave routine, and modifies the slave device address to be the target address of the routine, the three slave device addresses are (84:C2:E4:03:02:02), (84:C2:E4:03:02:03) by default (84:C2:E4:03:02:04), (84:C2:E4:03:02:04), (84:C2:E4:03:02:04)
   |      |      |      |      |-- Observer:Observer role routine that scans at regular intervals and prints the scanned broadcast address if the scan result is not empty
-  |      |      |      |      |-- OnlyUpdateApp_IAP:Fixed library wireless upgrade IAP routine with OTA function to receive the upgrade firmware and upgrade the user area code
-  |      |      |      |      |-- OnlyUpdateApp_Peripheral:Fixed library wireless upgrade user routines, peripheral slave routines based on adding the ability to jump to the IAP program for subsequent upgrades 
   |      |      |      |      |-- PAwR_ADV：periodic advertising with responses routine in advertising
   |      |      |      |      |-- PAwR_RSP：periodic advertising with responses routine in responses
   |      |      |      |      |-- Peripheral:Peripheral slave role routines, customized to include five different attributes of the service, including readable, writable, notification, readable-writable, and secure readable
@@ -217,6 +215,10 @@ File Directory
   |      |      |      |      |-- Synchro_Timer:Timer synchronization mode
   |      |      |      |      |-- TIM_DMA:Timer using DMA routines
   |      |      |      |      |-- Encode:Timer encoder mode routines
+  |      |      |      |      |-- TIM_INT:Timer interput mode routines
+  |      |      |      |      |-- TIM_Continuous：Timer continuous routines
+  |      |      |      |      |-- PWM_Phase-shifted：Timer PWM Phase shifted routines
+  |      |      |      |      |-- PWM_6_Step：Timer 6_Step PWM routines
   |      |      |      |-- TOUCHKEY
   |      |      |      |      |-- TKey：TouchKey Detection Routine  
   |      |      |      |-- USART

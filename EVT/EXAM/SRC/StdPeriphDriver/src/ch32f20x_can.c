@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : ch32f20x_can.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/04/14
 * Description        : This file provides all the CAN firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -87,99 +87,180 @@ void CAN_DeInit( CAN_TypeDef *CANx )
 *             CAN_InitStatus_Failed.
 *             CAN_InitStatus_Success.
  */
-uint8_t CAN_Init( CAN_TypeDef *CANx, CAN_InitTypeDef *CAN_InitStruct )
+uint8_t CAN_Init(CAN_TypeDef *CANx, CAN_InitTypeDef *CAN_InitStruct)
 {
-    uint8_t InitStatus = CAN_InitStatus_Failed;
+    uint8_t  InitStatus = CAN_InitStatus_Failed;
     uint32_t wait_ack = 0x00000000;
+#if defined(CH32F20x_D8) || defined(CH32F20x_D8C)
+    uint32_t chipid = DBGMCU_GetCHIPID();
+	uint32_t chippackid = (chipid >> 4) & 0xf;
+    if(chippackid >= 4 && chippackid <= 7)
+	{
+        if(CAN1 == CANx)
+        {
+            (*(__IO uint32_t *)(0x40021010)) |= 0x2000000;
+            (*(__IO uint32_t *)(0x40021010)) &= ~(0x2000000);
+        }else if(CAN2 == CANx)
+        {
+            (*(__IO uint32_t *)(0x40021010)) |= 0x4000000;
+            (*(__IO uint32_t *)(0x40021010)) &= ~(0x4000000);
+        }
+        
+        CANx->CTLR &= ~0x2;
+        CANx->CTLR |= 0x1;
+        
+        while(!(CANx->STATR & 0x1) && (wait_ack != 0x0000FFFF))
+        {
+            wait_ack++;
+        }
 
-    CANx->CTLR &= ( ~( uint32_t )CAN_CTLR_SLEEP );
-    CANx->CTLR |= CAN_CTLR_INRQ ;
+        if((CANx->STATR & 0x1))
+        {
+            CANx->BTIMR = ( uint32_t)0xC1100000| \
+                                    ((uint32_t)SystemCoreClock/(((((*(__IO uint32_t *)(0x40021004)) >> 8) & 0x7) < 0x4) ? 1 : (uint32_t)0x2<<(((*(__IO uint32_t *)(0x40021004)) >> 8) & 0x3))/4000000 - 1);
+        }
+        else
+        {
+            return CAN_InitStatus_Failed;
+        }
+        CANx->CTLR &= ~0x1;
+        wait_ack = 0;
+        while((CANx->STATR & 0x1) && (wait_ack != 0x0000FFFF))
+        {
+            wait_ack++;
+        }
 
-    while( ( ( CANx->STATR & CAN_STATR_INAK ) != CAN_STATR_INAK ) && ( wait_ack != INAK_TIMEOUT ) )
+        if((CANx->STATR & 0x1)){
+            return CAN_InitStatus_Failed;
+        }
+
+        (*(__IO uint32_t *)(0x4000660C)) |= 0x3;
+        (*(__IO uint32_t *)(0x40006640)) = 0x0;
+        (*(__IO uint32_t *)(0x40006644)) = 0x0;
+        (*(__IO uint32_t *)(0x40006648)) = 0x0;
+        (*(__IO uint32_t *)(0x4000664C)) = 0x0;
+        (*(__IO uint32_t *)(0x4000661C)) |= 0x3;	
+        (*(__IO uint32_t *)(0x40006600)) &= ~0x1; 	
+        CAN_SlaveStartBank(1);
+        if(CAN1 == CANx)
+        {
+            (*(__IO uint32_t *)(0x40006580)) |= 0x3;
+            while(!((*(__IO uint32_t *)(0x4000640C)) & 0x3));
+            (*(__IO uint32_t *)(0x4000640C)) = 0x38;
+        }else if (CAN2 == CANx)
+        {
+            (*(__IO uint32_t *)(0x40006980)) |= 0x3;
+            while(!((*(__IO uint32_t *)(0x4000680C)) & 0x3));
+            (*(__IO uint32_t *)(0x4000680C)) = 0x38;
+        }
+        
+        if(CAN1 == CANx)
+        {
+            (*(__IO uint32_t *)(0x40021010)) |= 0x2000000;
+            (*(__IO uint32_t *)(0x40021010)) &= ~(0x2000000);
+        }else if(CAN2 == CANx)
+        {
+            (*(__IO uint32_t *)(0x40021010)) |= 0x4000000;
+            (*(__IO uint32_t *)(0x40021010)) &= ~(0x4000000);
+        }
+
+        (*(__IO uint32_t *)(0x40006600)) |= 0x1; 	
+        (*(__IO uint32_t *)(0x4000660C)) |= 0x3;	
+        (*(__IO uint32_t *)(0x4000661C)) |= 0x3;	
+        (*(__IO uint32_t *)(0x40006600)) &= ~0x1; 	
+        CAN_SlaveStartBank(1);
+        wait_ack = 0;
+	}
+#endif
+
+    CANx->CTLR &= (~(uint32_t)CAN_CTLR_SLEEP);
+    CANx->CTLR |= CAN_CTLR_INRQ;
+
+    while(((CANx->STATR & CAN_STATR_INAK) != CAN_STATR_INAK) && (wait_ack != INAK_TIMEOUT))
     {
         wait_ack++;
     }
 
-    if( ( CANx->STATR & CAN_STATR_INAK ) != CAN_STATR_INAK )
+    if((CANx->STATR & CAN_STATR_INAK) != CAN_STATR_INAK)
     {
         InitStatus = CAN_InitStatus_Failed;
     }
     else
     {
-        if( CAN_InitStruct->CAN_TTCM == ENABLE )
+        if(CAN_InitStruct->CAN_TTCM == ENABLE)
         {
             CANx->CTLR |= CAN_CTLR_TTCM;
         }
         else
         {
-            CANx->CTLR &= ~( uint32_t )CAN_CTLR_TTCM;
+            CANx->CTLR &= ~(uint32_t)CAN_CTLR_TTCM;
         }
 
-        if( CAN_InitStruct->CAN_ABOM == ENABLE )
+        if(CAN_InitStruct->CAN_ABOM == ENABLE)
         {
             CANx->CTLR |= CAN_CTLR_ABOM;
         }
         else
         {
-            CANx->CTLR &= ~( uint32_t )CAN_CTLR_ABOM;
+            CANx->CTLR &= ~(uint32_t)CAN_CTLR_ABOM;
         }
 
-        if( CAN_InitStruct->CAN_AWUM == ENABLE )
+        if(CAN_InitStruct->CAN_AWUM == ENABLE)
         {
             CANx->CTLR |= CAN_CTLR_AWUM;
         }
         else
         {
-            CANx->CTLR &= ~( uint32_t )CAN_CTLR_AWUM;
+            CANx->CTLR &= ~(uint32_t)CAN_CTLR_AWUM;
         }
 
-        if( CAN_InitStruct->CAN_NART == ENABLE )
+        if(CAN_InitStruct->CAN_NART == ENABLE)
         {
             CANx->CTLR |= CAN_CTLR_NART;
         }
         else
         {
-            CANx->CTLR &= ~( uint32_t )CAN_CTLR_NART;
+            CANx->CTLR &= ~(uint32_t)CAN_CTLR_NART;
         }
 
-        if( CAN_InitStruct->CAN_RFLM == ENABLE )
+        if(CAN_InitStruct->CAN_RFLM == ENABLE)
         {
             CANx->CTLR |= CAN_CTLR_RFLM;
         }
         else
         {
-            CANx->CTLR &= ~( uint32_t )CAN_CTLR_RFLM;
+            CANx->CTLR &= ~(uint32_t)CAN_CTLR_RFLM;
         }
 
-        if( CAN_InitStruct->CAN_TXFP == ENABLE )
+        if(CAN_InitStruct->CAN_TXFP == ENABLE)
         {
             CANx->CTLR |= CAN_CTLR_TXFP;
         }
         else
         {
-            CANx->CTLR &= ~( uint32_t )CAN_CTLR_TXFP;
+            CANx->CTLR &= ~(uint32_t)CAN_CTLR_TXFP;
         }
 
-        CANx->BTIMR = ( uint32_t )( ( uint32_t )CAN_InitStruct->CAN_Mode << 30 ) | \
-                      ( ( uint32_t )CAN_InitStruct->CAN_SJW << 24 ) | \
-                      ( ( uint32_t )CAN_InitStruct->CAN_BS1 << 16 ) | \
-                      ( ( uint32_t )CAN_InitStruct->CAN_BS2 << 20 ) | \
-                      ( ( uint32_t )CAN_InitStruct->CAN_Prescaler - 1 );
-        CANx->CTLR &= ~( uint32_t )CAN_CTLR_INRQ;
+        CANx->BTIMR = (uint32_t)((uint32_t)CAN_InitStruct->CAN_Mode << 30) |
+                      ((uint32_t)CAN_InitStruct->CAN_SJW << 24) |
+                      ((uint32_t)CAN_InitStruct->CAN_BS1 << 16) |
+                      ((uint32_t)CAN_InitStruct->CAN_BS2 << 20) |
+                      ((uint32_t)CAN_InitStruct->CAN_Prescaler - 1);
+        CANx->CTLR &= ~(uint32_t)CAN_CTLR_INRQ;
         wait_ack = 0;
 
-        while( ( ( CANx->STATR & CAN_STATR_INAK ) == CAN_STATR_INAK ) && ( wait_ack != INAK_TIMEOUT ) )
+        while(((CANx->STATR & CAN_STATR_INAK) == CAN_STATR_INAK) && (wait_ack != INAK_TIMEOUT))
         {
             wait_ack++;
         }
 
-        if( ( CANx->STATR & CAN_STATR_INAK ) == CAN_STATR_INAK )
+        if((CANx->STATR & CAN_STATR_INAK) == CAN_STATR_INAK)
         {
             InitStatus = CAN_InitStatus_Failed;
         }
         else
         {
-            InitStatus = CAN_InitStatus_Success ;
+            InitStatus = CAN_InitStatus_Success;
         }
     }
 

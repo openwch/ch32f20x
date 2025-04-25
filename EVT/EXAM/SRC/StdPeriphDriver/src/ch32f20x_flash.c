@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : ch32f20x_flash.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/01/09
 * Description        : This file provides all the FLASH firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -72,6 +72,8 @@
 #define Size_256B                  0x100
 #define Size_4KB                   0x1000
 #define Size_32KB                  0x8000
+
+#define FLASH_EraseAll_Delay(t)  ({uint32_t i;for( i = 0; i<t;i++){asm("nop");}})
 
 /*********************************************************************
  * @fn      FLASH_Unlock
@@ -180,7 +182,13 @@ FLASH_Status FLASH_EraseAllPages( void )
 
         FLASH->CTLR &= CR_MER_Reset;
     }
-
+#if defined(CH32F20x_D8) || defined (CH32F20x_D8C)
+        FLASH_EraseAll_Delay(130000);
+#elif defined (CH32F20x_D6)
+        FLASH_EraseAll_Delay(70000);
+#else
+        FLASH_EraseAll_Delay(80000);
+#endif
     return status;
 }
 
@@ -654,7 +662,7 @@ FlagStatus FLASH_GetFlagStatus( uint32_t FLASH_FLAG )
 
     if( FLASH_FLAG == FLASH_FLAG_OPTERR )
     {
-        if( ( FLASH->OBR & FLASH_FLAG_OPTERR ) != ( uint32_t )RESET )
+        if( ( FLASH->OBR & ( 1<<0 )) != ( uint32_t )RESET )
         {
             bitstatus = SET;
         }

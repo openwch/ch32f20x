@@ -157,6 +157,8 @@
 #define ETH_RX_BUF_SZE                          ETH_MAX_PACKET_SIZE
 #define ETH_TX_BUF_SZE                          ETH_MAX_PACKET_SIZE
 
+#define PHY_PAG_SEL 0x1F
+
 extern ETH_DMADESCTypeDef *DMATxDescToSet;
 extern ETH_DMADESCTypeDef *DMARxDescToGet;
 extern __attribute__ ((aligned(4))) uint8_t  MACTxBuf[ETH_TXBUFNB*ETH_TX_BUF_SZE];
@@ -202,7 +204,7 @@ uint32_t MACRAW_Tx(uint8_t *buff, uint16_t len);
 }while(0)
 
 /* definition for Ethernet frame */
-#define ETH_MAX_PACKET_SIZE    1536    /* ETH_HEADER + ETH_EXTRA + MAX_ETH_PAYLOAD + ETH_CRC */
+#define ETH_MAX_PACKET_SIZE    1524    /* ETH_HEADER + ETH_EXTRA + MAX_ETH_PAYLOAD + ETH_CRC */
 #define ETH_HEADER               14    /* 6 byte Dest addr, 6 byte Src addr, 2 byte length/type */
 #define ETH_CRC                   4    /* Ethernet CRC */
 #define ETH_EXTRA                 2    /* Extra bytes in some cases */
