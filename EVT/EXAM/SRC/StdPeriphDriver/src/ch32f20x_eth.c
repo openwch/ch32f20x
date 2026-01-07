@@ -714,7 +714,7 @@ void ETH_DMATxDescChainInit( ETH_DMADESCTypeDef *DMATxDescTab, uint8_t *TxBuff, 
     for( i = 0; i < TxBuffCount; i++ )
     {
         DMATxDesc = DMATxDescTab + i;
-        DMATxDesc->Status = ETH_DMATxDesc_TCH;
+        DMATxDesc->Status = ETH_DMATxDesc_TCH | ETH_DMATxDesc_IC;
         DMATxDesc->Buffer1Addr = ( uint32_t )( &TxBuff[i * ETH_MAX_PACKET_SIZE] );
 
         if( i < ( TxBuffCount - 1 ) )

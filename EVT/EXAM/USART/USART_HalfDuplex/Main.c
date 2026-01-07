@@ -42,8 +42,8 @@ u8 TxBuffer2[] = "#Buffer2 Send from USART3 to USART2 using HalfDuplex Mode!";  
 u8 RxBuffer1[TxSize1]={0};                                                         /* USART2 Using */
 u8 RxBuffer2[TxSize2]={0};                                                         /* USART3 Using  */
 
-u8 TxCnt1 = 0, RxCnt1 = 0;
-u8 TxCnt2 = 0, RxCnt2 = 0;
+vu8 TxCnt1 = 0, RxCnt1 = 0;
+vu8 TxCnt2 = 0, RxCnt2 = 0;
 
 TestStatus TransferStatus1 = FAILED;
 TestStatus TransferStatus2 = FAILED;

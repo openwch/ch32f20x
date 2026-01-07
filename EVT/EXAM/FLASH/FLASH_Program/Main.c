@@ -48,10 +48,10 @@ typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 #define FAST_FLASH_SIZE  (64*1024)
 
 /* Global Variable */
-uint32_t EraseCounter = 0x0, Address = 0x0;
+volatile uint32_t EraseCounter = 0x0, Address = 0x0;
 uint16_t Data = 0xAAAA;
-uint32_t WRPR_Value = 0xFFFFFFFF, ProtectedPages = 0x0;
-uint32_t NbrOfPage;
+volatile uint32_t WRPR_Value = 0xFFFFFFFF, ProtectedPages = 0x0;
+volatile uint32_t NbrOfPage;
 volatile FLASH_Status FLASHStatus = FLASH_COMPLETE;
 volatile TestStatus MemoryProgramStatus = PASSED;
 volatile TestStatus MemoryEraseStatus = PASSED;

@@ -1,5 +1,5 @@
 
-南京沁恒微电子股份有限公司 2025.04
+南京沁恒微电子股份有限公司 2025.10
 最新资料请到我们的网站上查询
 https://wch.cn
 
@@ -175,6 +175,7 @@ https://wch.cn
   |      |      |      |      |-- Standby_RAM_Mode：待机模式不开启LV时，RAM 2K、30K低功耗数据保持例程
   |      |      |      |      |-- PVD_Wakeup：STOP模式PVD中断唤醒例程
   |      |      |      |      |-- PVD_VoltageJudger：PVD电压判定例程
+  |      |      |      |      |-- Stop_Mode_RTC_Wakeup：RTC唤醒停机模式例程
   |      |      |      |-- RCC
   |      |      |      |      |-- Get_CLK：获取system-HCLK-AHB1-AHB2时钟例程    
   |      |      |      |      |-- MCO：MCO引脚时钟输出例程

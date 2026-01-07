@@ -1503,7 +1503,7 @@ uint8_t HUB_Port_PreEnum2( uint8_t usb_port, uint8_t hub_port, uint8_t *pbuf )
                     return s;
                 }
                 retry++;
-            }while( ( buf[ 2 ] & 0x10 ) && ( retry <= 10 ) ); // ����˿ڸ�λ���
+            }while( ( buf[ 2 ] & 0x10 ) && ( retry <= 10 ) );
 
             if( retry != 10 )
             {

@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/01/09
+* Version            : V1.0.2
+* Date               : 2025/10/27
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -27,7 +27,7 @@
 #include "ch32f20x_usbfs_device.h"
 #include "ch32f20x_usbhs_device.h"
 
-extern u8 End_Flag;
+extern vu8 End_Flag;
 
 #define UPGRADE_MODE_COMMAND   0
 #define UPGRADE_MODE_IO        1
@@ -77,9 +77,9 @@ int main(void)
 	printf("IAP\r\n");
 	
 #if UPGRADE_MODE == UPGRADE_MODE_COMMAND
-    if(*(uint32_t*)FLASH_Base  != 0xe339e339 )
+    if(*(vu32 *)FLASH_Base  != 0xe339e339 )
     {
-        if(*(uint32_t*)CalAddr != CheckNum)
+        if(*(vu32 *)CalAddr != CheckNum)
         {
             IAP_2_APP();
             while(1);

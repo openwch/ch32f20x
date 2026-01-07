@@ -2,7 +2,7 @@
 * File Name          : ch32f20x_tim.c
 * Author             : WCH
 * Version            : V1.0.1
-* Date               : 2025/04/09
+* Date               : 2025/08/04
 * Description        : This file provides all the TIM firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -107,8 +107,18 @@ void TIM_DeInit( TIM_TypeDef *TIMx )
 void TIM_TimeBaseInit( TIM_TypeDef *TIMx, TIM_TimeBaseInitTypeDef *TIM_TimeBaseInitStruct )
 {
     uint16_t tmpcr1 = 0;
-
+    uint32_t temper1 = 0;
+    temper1 = ((*( uint32_t * )0x1FFFF704) & 0x000000F0) >> 4;
     tmpcr1 = TIMx->CTLR1;
+
+    #if defined (CH32F20x_D8) || defined (CH32F20x_D8C)
+
+        if(((temper1>=4)&&(temper1<=8))&&((TIMx == TIM1) || (TIMx == TIM8) || (TIMx == TIM9) || (TIMx == TIM10)))
+        {
+            tmpcr1 |= 1<<13;
+        }
+
+    #endif
 
     if( ( TIMx == TIM1 ) || ( TIMx == TIM2 ) || ( TIMx == TIM3 ) || ( TIMx == TIM4 ) ||
         ( TIMx == TIM5 ) || ( TIMx == TIM8 ) || ( TIMx == TIM9 ) || ( TIMx == TIM10 ) )
@@ -720,8 +730,6 @@ void TIM_ITRxExternalClockConfig( TIM_TypeDef *TIMx, uint16_t TIM_InputTriggerSo
  *          TIM_ICPolarity - specifies the TIx Polarity.
  *             TIM_ICPolarity_Rising.
  *             TIM_ICPolarity_Falling.
- *             TIM_DMA_COM - TIM Commutation DMA source.
- *             TIM_DMA_Trigger - TIM Trigger DMA source.
  *          ICFilter - specifies the filter value.
  *             This parameter must be a value between 0x0 and 0xF.
  *
@@ -1566,10 +1574,17 @@ void TIM_OC4PolarityConfig( TIM_TypeDef *TIMx, uint16_t TIM_OCPolarity )
 void TIM_CCxCmd( TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx )
 {
     uint16_t tmp = 0;
-
     tmp = CCER_CCE_Set << TIM_Channel;
-    TIMx->CCER &= ( uint16_t )~ tmp;
-    TIMx->CCER |= ( uint16_t )( TIM_CCx << TIM_Channel );
+
+    if(TIM_CCx == TIM_CCx_Disable)
+    {
+        TIMx->CCER &= ( uint16_t )~ tmp;
+    }
+    else
+    {
+        TIMx->CCER |= ( uint16_t )( TIM_CCx << TIM_Channel );
+    }
+
 }
 
 /*********************************************************************
@@ -1591,10 +1606,16 @@ void TIM_CCxCmd( TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx )
 void TIM_CCxNCmd( TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCxN )
 {
     uint16_t tmp = 0;
-
     tmp = CCER_CCNE_Set << TIM_Channel;
-    TIMx->CCER &= ( uint16_t ) ~tmp;
-    TIMx->CCER |= ( uint16_t )( TIM_CCxN << TIM_Channel );
+
+    if(TIM_CCxN == TIM_CCxN_Disable)
+    {
+        TIMx->CCER &= ( uint16_t ) ~tmp;
+    }
+    else
+    {
+        TIMx->CCER |= ( uint16_t )( TIM_CCxN << TIM_Channel );
+    }
 }
 
 /*********************************************************************
@@ -2144,7 +2165,7 @@ FlagStatus TIM_GetFlagStatus( TIM_TypeDef *TIMx, uint16_t TIM_FLAG )
  *            TIM_FLAG_CC4OF - TIM Capture Compare 4 overcapture Flag.
  *            TIM6/TIM7 only have TIM_FLAG_Update - TIM update Flag.
  *
- * @return  SET or RESET.
+ * @return  none.
  */
 void TIM_ClearFlag( TIM_TypeDef *TIMx, uint16_t TIM_FLAG )
 {
@@ -2168,7 +2189,7 @@ void TIM_ClearFlag( TIM_TypeDef *TIMx, uint16_t TIM_FLAG )
  *            TIM_IT_Break - TIM Break Interrupt source.
  *            TIM6/TIM7 only have TIM_IT_Update - TIM update Interrupt source.
  *
- * @return  none
+ * @return  SET or RESET.
  */
 ITStatus TIM_GetITStatus( TIM_TypeDef *TIMx, uint16_t TIM_IT )
 {

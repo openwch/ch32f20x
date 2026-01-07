@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/10/28
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -26,10 +26,10 @@
 /* Global Variable */
 u32 TxBuf[1];
 u16 Adc_Val[2];
-u16 ADC_Val1, ADC_Val2;
+vu16 ADC_Val1, ADC_Val2;
 vu8 Injected_IT_Flag, DMA_IT_Flag;
-s16 Calibrattion_Val1 = 0;
-s16 Calibrattion_Val2 = 0;
+vs16 Calibrattion_Val1 = 0;
+vs16 Calibrattion_Val2 = 0;
 
 /*********************************************************************
  * @fn      ADC_Function_Init

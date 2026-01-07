@@ -14,8 +14,8 @@
 #include "font.h"
 
 /* LCD brush and background colors */
-u16 POINT_COLOR = 0x0000;
-u16 BACK_COLOR = 0xFFFF;
+vu16 POINT_COLOR = 0x0000;
+vu16 BACK_COLOR = 0xFFFF;
 
 _lcd_dev lcddev;
 

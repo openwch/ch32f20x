@@ -1,5 +1,5 @@
 
-Nanjing WCH Microelectronics Co. 2025.04
+Nanjing WCH Microelectronics Co. 2025.10
 For the latest information, please go to our website.
 https://wch.cn
 
@@ -175,6 +175,7 @@ File Directory
   |      |      |      |      |-- Standby_RAM_Mode:RAM 2K, 30K low-power data retention routines when Standby mode is not on LV
   |      |      |      |      |-- PVD_Wakeup：STOP mode PVD wakeup MCU Routine
   |      |      |      |      |-- PVD_VoltageJudger：PVD voltage Judger Routine
+  |      |      |      |      |-- Stop_Mode_RTC_Wakeup：RTC wakeup Stop mode routines
   |      |      |      |-- RCC
   |      |      |      |      |-- Get_CLK:Get system-HCLK-AHB1-AHB2 clock routine    
   |      |      |      |      |-- MCO:MCO Pin Clock Output Routines

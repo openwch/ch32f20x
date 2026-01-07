@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2025/10/28
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -19,9 +19,9 @@
 #include "debug.h"
 
 /* Global Variable */
-u16 ADC_val1, ADC_val2;
-s16 Calibrattion_Val1 = 0;
-s16 Calibrattion_Val2 = 0;
+vu16 ADC_val1, ADC_val2;
+vs16 Calibrattion_Val1 = 0;
+vs16 Calibrattion_Val2 = 0;
 
 /*********************************************************************
  * @fn      ADC_Function_Init

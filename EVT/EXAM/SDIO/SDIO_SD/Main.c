@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2020/04/30
+* Date               : 2025/07/04
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -87,7 +87,7 @@ int main( void )
 
     printf( "SD Card OK\r\n" );
 
-    Sector_Nums = ( ( u32 )( SDCardInfo.CardCapacity >> 20 ) ) / 2;
+    Sector_Nums = ( ( u32 )( SDCardInfo.CardCapacity >> 20 ) ) * 2048;
     printf( "Sector_Nums:0x%08x\n", Sector_Nums );
 
     for( i = 0; i < 512; i++ ){

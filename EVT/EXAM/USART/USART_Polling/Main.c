@@ -36,7 +36,7 @@ typedef enum { FAILED = 0, PASSED = !FAILED} TestStatus;
 /* Global Variable */
 u8 TxBuffer[] = "Buffer Send from USART2 to USART3 by polling!";
 u8 RxBuffer[TxSize] = {0};
-u8 TxCnt = 0, RxCnt = 0;
+volatile u8 TxCnt = 0, RxCnt = 0;
 TestStatus TransferStatus = FAILED;
 
 /*********************************************************************
