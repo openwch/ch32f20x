@@ -30,7 +30,7 @@
 
 /* Global Variable */
 u16 TxBuf[1024];
-s16 Calibrattion_Val = 0;
+vs16 Calibrattion_Val = 0;
 /*********************************************************************
  * @fn      ADC_Function_Init
  *

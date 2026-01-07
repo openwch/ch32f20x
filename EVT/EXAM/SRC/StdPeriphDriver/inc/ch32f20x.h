@@ -2,7 +2,7 @@
 * File Name          : ch32f20x.h
 * Author             : WCH
 * Version            : V1.0.1
-* Date               : 2025/04/09
+* Date               : 2025/07/08
 * Description        : CH32F20x Device Peripheral Access Layer Header File.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -42,7 +42,7 @@
 
 /* CH32F20x Standard Peripheral Library version number */
 #define __CH32F20x_STDPERIPH_VERSION_MAIN   (0x02) /* [15:8] main version */
-#define __CH32F20x_STDPERIPH_VERSION_SUB    (0x03) /* [7:0] sub version */
+#define __CH32F20x_STDPERIPH_VERSION_SUB    (0x05) /* [7:0] sub version */
 #define __CH32F20x_STDPERIPH_VERSION        ( (__CH32F20x_STDPERIPH_VERSION_MAIN << 8)\
                                              |(__CH32F20x_STDPERIPH_VERSION_SUB << 0))
 

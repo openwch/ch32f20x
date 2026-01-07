@@ -1,9 +1,9 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : system_ch32v30x.h
+* File Name          : CH32F20X_USB.h
 * Author             : WCH
 * Version            : V1.0.0
 * Date               : 2024/01/30
-* Description        : CH32V30x Device Peripheral Access Layer System Header File.
+* Description        : CH32F20x USB Header File.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
 * Attention: This software (modified or not) and binary are used for 
@@ -11,8 +11,8 @@
 ********************************************************************************/
 
 
-#ifndef __CH32V30x_USB_H
-#define __CH32V30x_USB_H
+#ifndef __CH32F20x_USB_H
+#define __CH32F20x_USB_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -836,4 +836,4 @@ typedef struct __attribute__((packed)) _UDISK_BOC_CSW
 }
 #endif
 
-#endif /* __CH32V30x_USB_H */
+#endif 

@@ -21,7 +21,7 @@
 
 /* Global define */
 int a=0;
-u32 counter=0;
+vu32 counter=0;
 
 /* Global Variable */
 

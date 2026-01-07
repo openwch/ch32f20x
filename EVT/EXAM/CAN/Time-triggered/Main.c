@@ -2,7 +2,7 @@
 * File Name          : Main.c
 * Author             : WCH
 * Version            : V1.0.1
-* Date               : 2025/04/11
+* Date               : 2025/07/08
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -87,13 +87,13 @@ struct CANFilterStruct_t
 
 int CAN2FilterStartBank = CANSOFTFILTER_MAX_GROUP_NUM;
 
-uint8_t interrupt_rx_flag = 0;
+volatile uint8_t interrupt_rx_flag = 0;
 volatile u8 canexbuf_interrupt[8];
-uint8_t USESoftFilterFlag = 0;
+volatile uint8_t USESoftFilterFlag = 0;
 
 /* Global Variable */
 u8 txbuf[8];
-u8 tx;
+vu8 tx;
 
 void CAN_SoftFilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct);
 void CAN_SoftSlaveStartBank(uint8_t CAN_BankNumber);
@@ -203,7 +203,7 @@ u8 CAN_Receive_Msg(u8 *buf);
 
 /* Global Variable */
 u8 txbuf[8];
-u8 tx;
+vu8 tx;
 
  /*********************************************************************
  * @fn      CAN_SoftSlaveStartBank
@@ -283,6 +283,14 @@ void CAN_Mode_Init( u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode )
 	CAN_FilterInitSturcture.CAN_FilterActivation = ENABLE;	
 
 #ifdef USE_SOFT_FILTER
+#if defined(CH32F20x_D8) || defined(CH32F20x_D8C)
+	(*(__IO uint32_t *)(0x40006600)) |= 0x1; 	
+	(*(__IO uint32_t *)(0x40006640)) = 0x0;	
+	(*(__IO uint32_t *)(0x40006644)) = 0x0;	
+	(*(__IO uint32_t *)(0x4000660C)) |= 0x3;	
+	(*(__IO uint32_t *)(0x4000661C)) |= 0x3;	
+	(*(__IO uint32_t *)(0x40006600)) &= ~0x1; 	
+#endif
 	CAN_SoftFilterInit( &CAN_FilterInitSturcture );
 #else
 	CAN_FilterInit( &CAN_FilterInitSturcture );	

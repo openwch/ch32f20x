@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.1
-* Date               : 2024/11/29
+* Date               : 2025/10/28
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -21,7 +21,7 @@
 #include "debug.h"
 
 /* Global Variable */
-s16 Calibrattion_Val = 0;
+vs16 Calibrattion_Val = 0;
 
 /*********************************************************************
  * @fn      ADC_Function_Init
@@ -33,7 +33,6 @@ s16 Calibrattion_Val = 0;
 void ADC_Function_Init( void )
 {
     ADC_InitTypeDef ADC_InitStructure = {0};
-    GPIO_InitTypeDef GPIO_InitStructure = {0};
 
     RCC_APB2PeriphClockCmd( RCC_APB2Periph_ADC1, ENABLE );
     RCC_ADCCLKConfig( RCC_PCLK2_Div8 );

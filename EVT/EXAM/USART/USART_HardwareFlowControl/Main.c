@@ -35,7 +35,7 @@ typedef enum { FAILED = 0, PASSED = !FAILED} TestStatus;
 u8 TxBuffer[] = "USART1 Hardware Flow Control Example: USART1-\
 Hyperterminal communication using hardware flow control\n\r";
 u8 RxBuffer[TxSize] = {0};
-u8 TxCnt = 0, RxCnt = 0;
+vu8 TxCnt = 0, RxCnt = 0;
 
 
 /*********************************************************************

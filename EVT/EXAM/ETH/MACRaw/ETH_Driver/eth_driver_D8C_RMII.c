@@ -426,7 +426,7 @@ void EXTI_Line_Init(void)
 /*********************************************************************
  * @fn      PHY_InterruptInit
  *
- * @brief   Configure PHY interrupt function,Supported chip is:RTL8211FS
+ * @brief   Configure PHY interrupt function
  *
  * @param   none.
  *

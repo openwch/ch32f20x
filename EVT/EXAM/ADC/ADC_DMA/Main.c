@@ -22,7 +22,7 @@
 
 /* Global Variable */
 u16 TxBuf[1024];
-s16 Calibrattion_Val = 0;
+vs16 Calibrattion_Val = 0;
 
 /*********************************************************************
  * @fn      ADC_Function_Init
@@ -138,7 +138,9 @@ int main(void)
 
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5 );
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-	Delay_Ms(50);
+    while(DMA_GetFlagStatus(DMA1_FLAG_TC1) == RESET) /* Wait until ADC1 DMA1 Transfer Complete */
+    {
+    }
 	ADC_SoftwareStartConvCmd(ADC1, DISABLE);
 
 	for(i=0; i<1024; i++){

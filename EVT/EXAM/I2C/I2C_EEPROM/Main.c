@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2023/12/28
+* Version            : V1.0.1
+* Date               : 2025/07/06
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -59,16 +59,7 @@ void IIC_Init( u32 bound, u16 address )
 
     RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB, ENABLE );
     RCC_APB1PeriphClockCmd( RCC_APB1Periph_I2C2, ENABLE );
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init( GPIOB, &GPIO_InitStructure );
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init( GPIOB, &GPIO_InitStructure );
+    GPIO_SetBits(GPIOB,GPIO_Pin_10|GPIO_Pin_11);
 
     I2C_InitTSturcture.I2C_ClockSpeed = bound;
     I2C_InitTSturcture.I2C_Mode = I2C_Mode_I2C;
@@ -79,6 +70,16 @@ void IIC_Init( u32 bound, u16 address )
     I2C_Init( I2C2, &I2C_InitTSturcture );
 
     I2C_Cmd( I2C2, ENABLE );
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init( GPIOB, &GPIO_InitStructure );
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init( GPIOB, &GPIO_InitStructure );
 }
 
 /*********************************************************************

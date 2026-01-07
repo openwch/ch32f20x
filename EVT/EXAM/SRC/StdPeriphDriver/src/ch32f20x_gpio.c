@@ -689,7 +689,7 @@ void GPIO_IPD_Unused(void)
     switch(chip)
     {
 #ifdef CH32F20x_D6
-        case 0x20320400:     //CH32F203K8T6
+        case 0x20320400:     //CH32F203K8T
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -732,7 +732,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
-        case 0x20330400:     //CH32F203C6T6
+        case 0x20330400:     //CH32F203C6T
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_2|GPIO_Pin_3\
@@ -765,7 +765,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
-        case 0x20310400:     //CH32F203C8T6
+        case 0x20310400:     //CH32F203C8T
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_2|GPIO_Pin_3\
@@ -798,7 +798,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
-        case 0x20300400:     //CH32F203C8U6
+        case 0x20300400:     //CH32F203C8U
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_2|GPIO_Pin_3\
@@ -832,7 +832,7 @@ void GPIO_IPD_Unused(void)
             break;
         }
 #elif defined(CH32F20x_D8)
-        case 0x20320404:     //CH32F203CBT6
+        case 0x20320404:     //CH32F203CBT
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_2|GPIO_Pin_3\
@@ -865,7 +865,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
-        case 0x20330404:     //CH32F203RBT6
+        case 0x20330404:     //CH32F203RBT
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_3|GPIO_Pin_4\
@@ -889,7 +889,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
-        case 0x20310404:     //CH32F203RCT6
+        case 0x20310404:     //CH32F203RCT
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_3|GPIO_Pin_4\
@@ -914,7 +914,7 @@ void GPIO_IPD_Unused(void)
             break;
         }
 #elif defined(CH32F20x_D8C) 
-        case 0x20500408:     //CH32F205RBT6
+        case 0x20500408:     //CH32F205RBT
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_3|GPIO_Pin_4\
@@ -939,7 +939,7 @@ void GPIO_IPD_Unused(void)
             break;
         }
 #elif defined(CH32F20x_D8W)
-        case 0x2081040C:     //CH32F208RBT6
+        case 0x2081040C:     //CH32F208RBT
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_3|GPIO_Pin_4\
@@ -963,7 +963,7 @@ void GPIO_IPD_Unused(void)
             GPIO_Init(GPIOE, &GPIO_InitStructure);
             break;
         }
-        case 0x2080040C:     //CH32F208WBU6
+        case 0x2080040C:     //CH32F208WBU
         {
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1\
                                           |GPIO_Pin_7|GPIO_Pin_8\

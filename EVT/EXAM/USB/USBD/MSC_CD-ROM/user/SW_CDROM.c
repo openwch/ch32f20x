@@ -729,7 +729,7 @@ void CDROM_SCSI_CMD_Deal( void )
 
 /*******************************************************************************
 * Function Name  : CDROM_In_EP_Deal
-* Description    : U���ϴ��˵㴦��
+* Description    : Upload endpoint handling
 * Input          : None
 * Output         : None
 * Return         : None

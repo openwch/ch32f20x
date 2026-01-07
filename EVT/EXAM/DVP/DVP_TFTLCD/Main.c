@@ -199,7 +199,7 @@ void DVP_Init(void)
     DVP->CR0 |= RB_DVP_ENABLE;  //enable DVP
 }
 
-u32 DVP_ROW_cnt=0;
+vu32 DVP_ROW_cnt=0;
 
 /*********************************************************************
  * @fn      DVP_IRQHandler

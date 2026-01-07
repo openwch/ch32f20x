@@ -537,8 +537,7 @@ uint32_t ETH_TxPktChainMode(uint16_t len, uint32_t *pBuff )
      /* Check if the descriptor is owned by the ETHERNET DMA (when set) or CPU (when reset) */
     if( DMATxDescToSet->Status & ETH_DMATxDesc_OWN )
     {
-        if(((R8_ETH_ECON1 & RB_ETH_ECON1_TXRTS) == 0) &&\
-                (DMATxDescToSet->Status & ETH_DMATxDesc_OWN))
+        if((R8_ETH_ECON1 & RB_ETH_ECON1_TXRTS) == 0)
         {
             DMATxDescToSet->Status &= ~ETH_DMATxDesc_OWN;
         }

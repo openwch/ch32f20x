@@ -22,8 +22,8 @@
  */
 #include "debug.h"
 
-u8 value;
-uint32_t HSEFrequencyMhz;
+vu8 value;
+volatile uint32_t HSEFrequencyMhz;
 #define  F1M                      1000000
 #define  CHECK_ERR_COUNT          (8)
 #define  RTC_COUNT_DELAY          (100)
