@@ -325,7 +325,6 @@ void ETH_PHYLink( void )
  */
 uint32_t ETH_RegInit( ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress )
 {
-	uint16 tmpreg;
     /* Set the SMI interface clock, set as the main frequency divided by 42  */
     ETH->MACMIIAR = (uint32_t)ETH_MACMIIAR_CR_Div42;
 
@@ -335,7 +334,8 @@ uint32_t ETH_RegInit( ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress )
                   ETH_InitStruct->ETH_InterFrameGap |
                   ETH_InitStruct->ETH_ChecksumOffload |
                   ETH_InitStruct->ETH_AutomaticPadCRCStrip |
-                  ETH_InitStruct->ETH_LoopbackMode);
+                  ETH_InitStruct->ETH_LoopbackMode
+                  |(1 << 9));
 
     ETH->MACFFR = (uint32_t)(ETH_InitStruct->ETH_ReceiveAll |
                           ETH_InitStruct->ETH_SourceAddrFilter |
@@ -363,9 +363,7 @@ uint32_t ETH_RegInit( ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress )
                     ETH_InitStruct->ETH_ForwardUndersizedGoodFrames);
 
     /* Reset the physical layer */
-    tmpreg = ETH_ReadPHYRegister(PHYAddress, PHY_BCR);
-    tmpreg |= PHY_Reset;
-    ETH_WritePHYRegister(PHYAddress, PHY_BCR, tmpreg);
+    ETH_WritePHYRegister(PHYAddress, PHY_BCR, PHY_Reset);
     return ETH_SUCCESS;
 }
 
@@ -586,7 +584,6 @@ void ReInitMACReg(void)
     /* Configure MAC address */
     ETH->MACA0HR = (uint32_t)((MACAddr[5]<<8) | MACAddr[4]);
     ETH->MACA0LR = (uint32_t)(MACAddr[0] | (MACAddr[1]<<8) | (MACAddr[2]<<16) | (MACAddr[3]<<24));
-
 
     /* Mask the interrupt that Tx good frame count counter reaches half the maximum value */
     ETH->MMCTIMR = ETH_MMCTIMR_TGFM;

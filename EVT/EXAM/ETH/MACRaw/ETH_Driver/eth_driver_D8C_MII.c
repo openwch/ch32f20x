@@ -28,7 +28,7 @@ ETH_DMADESCTypeDef *pDMATxSet;
 
 extern u8 MACAddr[6];
 volatile uint8_t LinkSta = 0;  //0:Link down 1:Link up
-uint8_t LinkVaildFlag = 0;  //0:invalid 1:valid
+uint8_t LinkValidFlag = 0;  //0:invalid 1:valid
 uint8_t AccelerateLinkStep = 0;
 uint8_t AccelerateLinkTime = 0;
 uint8_t LinkProcessingStep = 0;
@@ -202,22 +202,22 @@ void WCHNET_AccelerateLink(void)
 }
 
 /*********************************************************************
- * @fn      WCHNET_CheckLinkVaild
+ * @fn      WCHNET_CheckLinkValid
  *
  * @brief   check whether Link is valid
  *
  * @return  none.
  */
-void WCHNET_CheckLinkVaild(void)
+void WCHNET_CheckLinkValid(void)
 {
     uint16_t phy_stat, phy_bcr;
 
-    if(LinkVaildFlag == 0)
+    if(LinkValidFlag == 0)
     {
         phy_bcr = ETH_ReadPHYRegister( PHY_ADDRESS, PHY_BCR);
         if((phy_bcr & (1<<13)) == 0)   //Do nothing if Link mode is 10M.
         {
-            LinkVaildFlag = 1;
+            LinkValidFlag = 1;
             LinkProcessingTime = 0;
             return;
         }
@@ -237,7 +237,7 @@ void WCHNET_CheckLinkVaild(void)
             }
         }
         else {
-            LinkVaildFlag = 1;
+            LinkValidFlag = 1;
             LinkProcessingTime = 0;
         }
     }
@@ -273,7 +273,7 @@ void WCHNET_LinkProcessing(void)
             }
         }
         else {                                      //Link up
-            WCHNET_CheckLinkVaild();                //check whether Link is valid
+            WCHNET_CheckLinkValid();                //check whether Link is valid
         }
     }
 }
@@ -421,7 +421,7 @@ void ETH_LinkDownCfg(void)
 {
     printf("Link down\r\n");
     LinkSta = 0;
-    LinkVaildFlag = 0;
+    LinkValidFlag = 0;
     LinkProcessingTime = 0;
 }
 
@@ -502,7 +502,8 @@ uint32_t ETH_RegInit( ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress )
                   ETH_InitStruct->ETH_InterFrameGap |
                   ETH_InitStruct->ETH_ChecksumOffload |
                   ETH_InitStruct->ETH_AutomaticPadCRCStrip |
-                  ETH_InitStruct->ETH_LoopbackMode);
+                  ETH_InitStruct->ETH_LoopbackMode
+                  |(1 << 9));
 
     ETH->MACFFR = (uint32_t)(ETH_InitStruct->ETH_ReceiveAll |
                           ETH_InitStruct->ETH_SourceAddrFilter |

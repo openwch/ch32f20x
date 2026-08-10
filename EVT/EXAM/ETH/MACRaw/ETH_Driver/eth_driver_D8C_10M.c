@@ -606,7 +606,8 @@ uint32_t ETH_RegInit( ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress )
                   ETH_InitStruct->ETH_ChecksumOffload |
                   ETH_InitStruct->ETH_AutomaticPadCRCStrip |
                   ETH_InitStruct->ETH_LoopbackMode |
-                  ETH_Internal_Pull_Up_Res_Enable);
+                  ETH_Internal_Pull_Up_Res_Enable
+                  |(1 << 9));
 
     ETH->MACFFR = (uint32_t)(ETH_InitStruct->ETH_ReceiveAll |
                           ETH_InitStruct->ETH_SourceAddrFilter |
@@ -718,6 +719,7 @@ void ETH_Configuration( uint8_t *macAddr )
     ETH_InitStructure.ETH_TransmitStoreForward = ETH_TransmitStoreForward_Enable;
     ETH_InitStructure.ETH_ForwardErrorFrames = ETH_ForwardErrorFrames_Enable;
     ETH_InitStructure.ETH_ForwardUndersizedGoodFrames = ETH_ForwardUndersizedGoodFrames_Enable;
+
     /* Configure Ethernet */
     ETH_RegInit( &ETH_InitStructure, gPHYAddress );
 
