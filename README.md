@@ -4,7 +4,7 @@ EN | [中文](README_zh.md)
 
 
 ### Overview
-CH32F203 series is an industrial-grade enhanced low-power general-purpose microcontroller designed based on 32-bit Cortex-M3 core, with high performance, supporting up to 144MHz system main frequency, low-power consumption, running at the highest system main frequency with power consumption as low as 69uA/MHz. CH32F203 integrates dual USB interfaces, supporting USB Host and USB Device functions, has 1 CAN interface (2.0B active), dual OPAs, 4 UARTs, dual I2C, 12-bit ADC, 10-channel Touchkey and other rich peripheral resources.
+CH32F203 series is an industrial-grade enhanced low-power general-purpose microcontroller designed based on 32-bit Cortex-M3 core, with high performance, supporting up to 144MHz system main frequency, low-power consumption, running at the highest system main frequency with power consumption as low as 70uA/MHz. CH32F203 integrates dual USB interfaces, supporting USB Host and USB Device functions, has 1 CAN interface (2.0B active), dual OPAs, 4 UARTs, dual I2C, 12-bit ADC, 10-channel Touchkey and other rich peripheral resources.
 
 ### System Block Diagram
 <img src="image/frame1.jpg" alt="frame1" style="zoom:50%;" />
@@ -12,10 +12,10 @@ CH32F203 series is an industrial-grade enhanced low-power general-purpose microc
 ### Features
 - Cortex-M3 core, up to 144MHz system main frequency
 - Single-cycle multiplication and hardware division support 20KB SRAM, 64KB Flash
-- Power supply voltage: 2.5/3.3V, GPIO unit independent power supply
+- Power supply voltage: 2.5/3.6V, GPIO unit independent power supply
 - Multiple low-power modes: Sleep, Stop, Standby
-- Run mode as low as 69.3uA/MHz
-- Sleep mode as low as 22.4uA/MHz
+- Run mode as low as 70.1uA/MHz
+- Sleep mode as low as 20.5uA/MHz
 - Power on/off reset, programmable voltage detector
 - 1 set of 8-channel general-purpose DMA controller
 - 2 sets of op-amp comparators
@@ -44,7 +44,7 @@ The CH32F208 is a wireless MCU based on the Cortex-M3 core. The system clock fre
 - Cortex-M3 core, up to 144MHz system clock frequency;
 - Single-cycle multiplication and hardware division;
 - 64KB SRAM, 128KB Flash;
-- Supply voltage: 2.5/3.3V. GPIO unit is supplied independently;
+- Supply voltage: 2.5/3.6V. GPIO unit is supplied independently;
 - Low-power modes: sleep, stop, standby;
 - Bluetooth Low Energy 5.3;
 - 10M Ethernet controller (MAC+PHY);
