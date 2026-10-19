@@ -82,7 +82,6 @@ void DMA1_Channel5_IRQHandler(void)
 {
     if( DMA_GetITStatus(DMA1_IT_TC5) != RESET )
     {
-
         GPIO_ResetBits(GPIOA, GPIO_Pin_2);
         DMA_ClearITPendingBit(DMA1_IT_TC5);
     }

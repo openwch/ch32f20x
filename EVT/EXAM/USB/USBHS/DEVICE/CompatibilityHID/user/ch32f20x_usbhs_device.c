@@ -295,6 +295,10 @@ void USBHS_IRQHandler( void )
                                         break;
                                 }
                             }
+                            else
+                            {
+                                errflag = 0xFF;
+                            }
 
                         }
                         else
@@ -353,6 +357,11 @@ void USBHS_IRQHandler( void )
                                     switch( USBHS_SetupReqCode )
                                     {
                                         case HID_SET_REPORT:
+                                            if( Hid_Report_Ptr + len > sizeof( HID_Report_Buffer ) )
+                                            {
+                                                len = sizeof( HID_Report_Buffer ) - Hid_Report_Ptr;
+                                                USBHS_SetupReqLen = len;
+                                            }
                                             memcpy(&HID_Report_Buffer[Hid_Report_Ptr],USBHS_EP0_Buf,len);
 											USBHS_SetupReqLen -= len;
 											Hid_Report_Ptr += len;
@@ -367,6 +376,10 @@ void USBHS_IRQHandler( void )
                                         default:
                                             break;
                                     }
+                                }
+                                else
+                                {
+                                    errflag = 0xFF;
                                 }
                             }
 							else
@@ -496,6 +509,10 @@ void USBHS_IRQHandler( void )
                         errflag = 0xFF;
                         break;
                 }
+            }
+            else
+            {
+                errflag = 0xFF;
             }
         }
         else
@@ -757,6 +774,10 @@ void USBHS_IRQHandler( void )
                                     errflag = 0xFF;
                                     break;
                             }
+                        }
+                        else
+                        {
+                            errflag = 0xFF;
                         }
                     }
                     else

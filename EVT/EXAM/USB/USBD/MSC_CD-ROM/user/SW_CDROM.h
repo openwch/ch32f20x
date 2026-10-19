@@ -12,12 +12,15 @@
 #ifdef __cplusplus
  extern "C" {
 #endif 
+#ifndef __SW_CDROM_H
+#define __SW_CDROM_H
+
 #include "stdio.h"
 #include "stdlib.h"
 #include <stdint.h>
 
 /******************************************************************************/
-/* BulkOnly Mass Storage Class requst */
+/* BulkOnly Mass Storage Class request */
 #define CMD_CDROM_RESET                 0xFF
 #define CMD_CDROM_GET_MAX_LUN           0xFE
 
@@ -146,4 +149,6 @@ extern void CDROM_Down_OnePack( uint8_t *pbuf, uint16_t packlen );
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

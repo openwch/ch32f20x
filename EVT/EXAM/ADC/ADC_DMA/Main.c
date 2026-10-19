@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/04/08
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -19,9 +19,10 @@
  */
 
 #include "debug.h"
-
+/* Global define */
+#define Num 1024
 /* Global Variable */
-u16 TxBuf[1024];
+vu16 TxBuf[Num];
 vs16 Calibrattion_Val = 0;
 
 /*********************************************************************
@@ -111,7 +112,7 @@ void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
 u16 Get_ConversionVal(s16 val)
 {
 	if((val+Calibrattion_Val)<0 || val==0) return 0;
-	if((Calibrattion_Val+val)>4095 | val==4095) return 4095;
+	if((Calibrattion_Val+val)>4095 || val==4095) return 4095;
 	return (val+Calibrattion_Val);
 }
 
@@ -133,7 +134,7 @@ int main(void)
 	ADC_Function_Init();
 	printf("CalibrattionValue:%d\n", Calibrattion_Val);
 	
-	DMA_Tx_Init( DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)TxBuf, 1024 );
+	DMA_Tx_Init( DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)TxBuf, Num  );
 	DMA_Cmd( DMA1_Channel1, ENABLE );
 
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5 );
@@ -143,7 +144,7 @@ int main(void)
     }
 	ADC_SoftwareStartConvCmd(ADC1, DISABLE);
 
-	for(i=0; i<1024; i++){
+	for(i=0; i<Num ; i++){
 		printf( "%04d\r\n", Get_ConversionVal(TxBuf[i]));
 		Delay_Ms(10);
 	}

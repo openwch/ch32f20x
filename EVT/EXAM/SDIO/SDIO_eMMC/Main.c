@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2024/03/15
+* Version            : V1.0.1
+* Date               : 2026/10/16
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -52,7 +52,8 @@ void show_eMMCcard_info(void)
         case SDIO_STD_CAPACITY_SD_CARD_V1_1:printf("Card Type:SDSC V1.1\r\n");break;
         case SDIO_STD_CAPACITY_SD_CARD_V2_0:printf("Card Type:SDSC V2.0\r\n");break;
         case SDIO_HIGH_CAPACITY_SD_CARD:printf("Card Type:SDHC V2.0\r\n");break;
-        case SDIO_MULTIMEDIA_CARD:printf("Card Type:eMMC Card\r\n");break;
+        case SDIO_HIGH_CAPACITY_MMC_CARD:printf("Card Type:eMMC Card\r\n");break;
+        default:break;
     }
     printf("Card ManufacturerID:0x%x\r\n",eMMCCardInfo.eMMC_cid.ManufacturerID);
     printf("Card SectorNums:0x%08x\n", eMMCCardInfo.SectorNums);
@@ -70,7 +71,7 @@ void show_eMMCcard_info(void)
  */
 int main( void )
 {
-	u32 i,p;
+	u32 i;
 	u32 Sector_Nums;
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -94,7 +95,7 @@ int main( void )
         buf[i] =i;
 			Readbuf[i]=0;
     }
-    for(i=0; i<Sector_Nums; i++)
+    for(i=1; i<Sector_Nums; i++)
     {
         if(SD_WriteDisk(buf,i,1))
         {
@@ -115,10 +116,6 @@ int main( void )
         if(memcmp(buf, Readbuf, 512))
         {
             printf(" %d sector Verify fail\n", i);
-				for(p=0;p<512;p++){
-					printf("buf[%d]=%d\r\n",p,buf[p]);
-					printf("Readbuf[%d]=%d\r\n",p,Readbuf[p]);
-				}
             break;
         }
     }

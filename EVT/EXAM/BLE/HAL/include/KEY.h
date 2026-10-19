@@ -86,7 +86,7 @@ void HAL_KeyInit(void);
 void HAL_KeyPoll(void);
 
 /**
- * @brief   Configure the Key serivce
+ * @brief   Configure the Key service
  *
  * @param   cback - pointer to the CallBack function
  */

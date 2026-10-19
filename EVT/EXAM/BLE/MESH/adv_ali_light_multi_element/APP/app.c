@@ -48,7 +48,7 @@ NET_BUF_SIMPLE_DEFINE_STATIC(rx_buf, 65);
 #endif /* !PB_GATT */
 
 /*********************************************************************
- * LOCAL FUNCION
+ * LOCAL FUNCTION
  */
 
 static void link_open(bt_mesh_prov_bearer_t bearer);
@@ -174,7 +174,7 @@ static void prov_enable(void)
         return;
     }
 
-    // Make sure we're scanning for provisioning inviations
+    // Make sure we're scanning for provisioning invitations
     bt_mesh_scan_enable();
     // Enable unprovisioned beacon sending
     bt_mesh_beacon_enable();
@@ -666,7 +666,7 @@ void blemesh_on_sync(void)
  *
  * @return  none
  */
-void App_Init()
+void App_Init(void)
 {
     App_TaskID = TMOS_ProcessEventRegister(App_ProcessEvent);
 

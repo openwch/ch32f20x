@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
+ * File Name          : peripheral_main.c
  * Author             : WCH
  * Version            : V1.1
  * Date               : 2019/11/05
@@ -23,7 +23,7 @@ __attribute__((aligned(8))) uint8_t block_buf[256];
 __attribute__((aligned(8))) uint8_t flash_Data[4096];
 
 typedef int( *pImageTaskFn)( void );
-pImageTaskFn user_image_tasks;
+pImageTaskFn user_image_task;
 
 /*********************************************************************
  * GLOBAL TYPEDEFS
@@ -36,10 +36,10 @@ pImageTaskFn user_image_tasks;
  *
  * @return  none
  */
-void GotoResetVector(uint32_t entry_add)
+void GotoResetVector(uint32_t entry_addr)
 {
-	user_image_tasks = (pImageTaskFn)(*(uint32_t *)(entry_add+4));
-	(user_image_tasks)(); 
+	user_image_task = (pImageTaskFn)(*(uint32_t *)(entry_addr+4));
+	(user_image_task)(); 
 }
 
 /*********************************************************************
@@ -130,7 +130,7 @@ void jump_APP(void)
 /*********************************************************************
  * @fn      ReadImageFlag
  *
- * @brief   Read the iMage logo of the current program. 
+ * @brief   Read the Image flag of the current program. 
  *          If the DataFlash is empty, it will be ImageA by default
  *
  * @return  none

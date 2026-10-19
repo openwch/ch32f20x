@@ -292,7 +292,7 @@ static void uuid_generate(struct bt_als_cfg const *cfg)
     tm_uuid[2] = BIT(0) | /* adv version */
                  BIT(4) | /* secret */
                  BIT(5) | /* ota */
-                 BIT(7);  /* ble verison */
+                 BIT(7);  /* ble version */
 
     /* Product Id */
     tm_uuid[2 + 1] = cfg->pid;

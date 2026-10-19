@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : Main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/07/08
+* Version            : V1.0.2
+* Date               : 2026/10/16
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -115,7 +115,7 @@ u8 CAN_Receive_Msg(u8 *buf);
   */
  void CAN_SoftFilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct)
  {
-	if(CAN_FilterInitStruct->CAN_FilterNumber > CANSOFTFILTER_MAX_GROUP_NUM){
+	if(CAN_FilterInitStruct->CAN_FilterNumber >= CANSOFTFILTER_MAX_GROUP_NUM){
 		return;
 	}
 	if(CAN_FilterInitStruct->CAN_FilterActivation)

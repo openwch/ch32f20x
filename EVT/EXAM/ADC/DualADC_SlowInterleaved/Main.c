@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/10/28
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -20,7 +20,7 @@
 #include "debug.h"
 
 /* Global Variable */
-u16 Adc_Val[2];
+vu16 Adc_Val[2];
 vu32 temp;
 vs16 Calibrattion_Val1 = 0;
 vs16 Calibrattion_Val2 = 0;
@@ -84,7 +84,7 @@ void  ADC_Function_Init( void )
     ADC_RegularChannelConfig( ADC2, ADC_Channel_2, 1, ADC_SampleTime_13Cycles5 );
 
     ADC_ITConfig( ADC2, ADC_IT_EOC, ENABLE );
-    ADC_SoftwareStartConvCmd( ADC2, ENABLE );
+    ADC_ExternalTrigConvCmd( ADC2, ENABLE );
     ADC_Cmd( ADC2, ENABLE );
 
     ADC_BufferCmd( ADC2, DISABLE ); //disable buffer
@@ -129,11 +129,11 @@ u16 Get_ConversionVal1( s16 val )
  */
 u16 Get_ConversionVal2( s16 val )
 {
-    if( ( val + Calibrattion_Val2 ) < 0 )
+    if( ( val + Calibrattion_Val2 ) < 0 || val==0 )
     {
         return 0;
     }
-    if( ( Calibrattion_Val2 + val ) > 4095 )
+    if( ( Calibrattion_Val2 + val ) > 4095 || val==4095 )
     {
         return 4095;
     }
@@ -157,14 +157,9 @@ int main( void )
     ADC_Function_Init();
     printf( "CalibrattionValue1:%d\n", Calibrattion_Val1 );
     printf( "CalibrattionValue2:%d\n", Calibrattion_Val2 );
-
-    while( 1 )
-    {
-        ADC_SoftwareStartConvCmd( ADC1, ENABLE );
-        Delay_Ms( 1000 );
-        ADC_SoftwareStartConvCmd( ADC1, DISABLE );
-        Delay_Ms( 1000 );
-    }
+    ADC_SoftwareStartConvCmd( ADC1, ENABLE );
+    while( 1 );
+   
 }
 
 /*********************************************************************
@@ -181,9 +176,10 @@ void ADC1_2_IRQHandler()
         temp = ADC1->RDATAR;
         Adc_Val[0] = temp & 0xffff;
         Adc_Val[1] = ( temp >> 16 ) & 0xffff;
-
-        printf( "\r\nADC1 ch2=%d\r\n", Get_ConversionVal1( Adc_Val[0] ) );
+			 #if 0
+				printf( "\r\nADC1 ch2=%d\r\n", Get_ConversionVal1( Adc_Val[0] ) );
         printf( "\r\nADC2 ch2=%d\r\n", Get_ConversionVal2( Adc_Val[1] ) );
+       #endif
 				ADC_ClearITPendingBit( ADC1, ADC_IT_EOC );
 				ADC_ClearITPendingBit( ADC2, ADC_IT_EOC );
     }

@@ -90,7 +90,7 @@ tmosEvents uart_processevent(tmosTaskID task_id, tmosEvents events)
 
     if(events & UART_RECEIVE_POLL_EVT) {
         if(uart_flag == UART_STATUS_RCV_END) {
-            PRINT("uart recevied %d bytes [", uart_buf->len);
+            PRINT("uart received %d bytes [", uart_buf->len);
             for(int i = 0; i < uart_buf->len; i++) {
                 if(i) PRINT(" ");
                 PRINT("%#x", uart_buf->data[i]);
@@ -116,7 +116,7 @@ tmosEvents uart_processevent(tmosTaskID task_id, tmosEvents events)
     {
         if(usb_flag == UART_STATUS_RCV_END)
         {
-            PRINT("usb recevied %d bytes [", usb_buf->len);
+            PRINT("usb received %d bytes [", usb_buf->len);
             for(int i = 0; i < usb_buf->len; i++)
             {
                 if(i)
@@ -454,8 +454,7 @@ int usb_send(struct simple_buf *buf)
     send_data = simple_buf_pull(buf, buf->len);
 
     USBSendData(send_data, send_len);          
-	  uart_flag = USB_STATUS_IDLE;
-
+	  usb_flag = USB_STATUS_IDLE;
     PRINT("usb send %d bytes [", send_len);
     for(int i = 0; i < send_len; i++)
     {

@@ -70,7 +70,7 @@ typedef void                    *PVOID;
 #ifndef PCHAR
 typedef char                    *PCHAR;
 #endif
-#ifndef PCHAR
+#ifndef PCCHAR
 typedef const char              *PCCHAR;
 #endif
 #ifndef PINT8
@@ -307,7 +307,7 @@ typedef volatile unsigned long  *PUINT32V;
 #define     USBFS_UC_CLR_ALL       0x02      // force clear FIFO and count of USB
 #define     USBFS_UC_DMA_EN        0x01      // DMA enable and DMA interrupt enable for USB
 /* DEVICE USB_CTRL */
-#define   USBFS_UDEV_CTRL        (USBFS_FS->UDEV_CTRL)  // USB device physical prot control
+#define   USBFS_UDEV_CTRL        (USBFS_FS->UDEV_CTRL)  // USB device physical port control
 #define     USBFS_UD_PD_DIS        0x80      // disable USB UDP/UDM pulldown resistance: 0=enable pulldown, 1=disable
 #define     USBFS_UD_DP_PIN        0x20      // ReadOnly: indicate current UDP pin level
 #define     USBFS_UD_DM_PIN        0x10      // ReadOnly: indicate current UDM pin level
@@ -478,12 +478,12 @@ typedef volatile unsigned long  *PUINT32V;
 //   00: DATA0 or DATA1 then expecting ACK (ready)
 //   01: DATA0 or DATA1 then expecting no response, time out from host, for non-zero endpoint isochronous transactions
 //   10: NAK (busy)
-//   11: TALL (error)
+//   11: STALL (error)
 
 #ifdef  USBFS_HOST
 /* USBFS_FS HOST CONTROL&CFG */
 /* HOST USB_CTRL */
-#define  USBFS_UHOST_CTRL       (USBFS_FS->UDEV_CTRL) // USB host physical prot control
+#define  USBFS_UHOST_CTRL       (USBFS_FS->UDEV_CTRL) // USB host physical port control
 #define     USBFS_UH_PD_DIS        0x80      // disable USB UDP/UDM pulldown resistance: 0=enable pulldown, 1=disable
 #define     USBFS_UH_DP_PIN        0x20      // ReadOnly: indicate current UDP pin level
 #define     USBFS_UH_DM_PIN        0x10      // ReadOnly: indicate current UDM pin level
@@ -578,7 +578,7 @@ typedef volatile unsigned long  *PUINT32V;
 #endif
 
 /* 端点大小定义 */
-#define DEF_USB_LS_EP_SIZE     8                                               /* 端点全速模式大小 */
+#define DEF_USB_LS_EP_SIZE     8                                               /* 端点低速模式大小 */
 #define DEF_USB_FS_EP_SIZE     64                                              /* 端点全速模式大小 */
 
 /******************************************************************************/

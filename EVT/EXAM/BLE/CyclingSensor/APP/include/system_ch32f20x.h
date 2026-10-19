@@ -26,7 +26,7 @@ extern void SystemCoreClockUpdate(void);
 }
 #endif
 
-#endif /*__CH32F20x_SYSTEM_H */
+#endif /* __SYSTEM_CH32F20x_H */
 
 
 

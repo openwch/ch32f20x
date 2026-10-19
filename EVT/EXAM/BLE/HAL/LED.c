@@ -352,13 +352,13 @@ void HalLedOnOff(uint8_t leds, uint8_t mode)
 }
 
 /***************************************************************************************************
- * @fn      HalGetLedState
+ * @fn      HalLedGetState
  *
- * @brief   Dim LED2 - Dim (set level) of LED2
+ * @brief   Get current LED state
  *
  * @return  led state
  */
-uint8_t HalLedGetState()
+uint8_t HalLedGetState(void)
 {
     return HalLedState;
 }

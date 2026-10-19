@@ -44,7 +44,7 @@
 #define HID_HIGH_ADV_TIMEOUT              5
 #define HID_LOW_ADV_TIMEOUT               0
 
-// Heart Rate Task Events
+// HID Dev Task Events
 #define START_DEVICE_EVT                  0x0001
 #define BATT_PERIODIC_EVT                 0x0002
 
@@ -152,14 +152,14 @@ static gapBondCBs_t hidDevBondCB = {
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
- *          notificaiton ... ).
+ *          notification ... ).
  *
  * @param   task_id - the ID assigned by TMOS.  This ID should be
  *                    used to send messages and set timers.
  *
  * @return  none
  */
-void HidDev_Init()
+void HidDev_Init(void)
 {
     hidDevTaskId = TMOS_ProcessEventRegister(HidDev_ProcessEvent);
 
@@ -1063,7 +1063,7 @@ static uint8_t hidDevSendReport(uint8_t id, uint8_t type, uint8_t len, uint8_t *
 }
 
 /*********************************************************************
- * @fn      hidDevSendNoti
+ * @fn      HidDev_sendNoti
  *
  * @brief   Send a HID notification.
  *

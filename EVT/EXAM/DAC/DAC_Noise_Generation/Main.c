@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2024/11/18
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -21,11 +21,6 @@
 
 #include "debug.h"
 
-/* Global define */
-#define Num 7
-
-/* Global Variable */
-u16 DAC_Value[Num] = {64, 128, 256, 512, 1024, 2048, 4095};
 
 
 /*********************************************************************

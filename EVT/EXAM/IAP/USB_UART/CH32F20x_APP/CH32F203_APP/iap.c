@@ -16,14 +16,7 @@
 #include "flash.h"
 
 /******************************************************************************/  
-iapfun jump2app; 
-vu32 Program_addr = FLASH_Base; 
-vu32 Verify_addr = FLASH_Base; 
-u32 User_APP_Addr_offset = 0x5000;  
-vu8 Verify_Star_flag = 0;   
-vu8 Fast_Program_Buf[390];
-vu16 CodeLen = 0;
-vu8 End_Flag = 0;  
+
 #define  isp_cmd_t   ((isp_cmd  *)EP2_Rx_Buffer)
 
 /*********************************************************************
@@ -57,10 +50,9 @@ u8 RecData_Deal(void)
 					break;
 			
     case CMD_JUMP_IAP:
-				 FLASH_Unlock_Fast();
-				 FLASH_ErasePage_Fast(CalAddr & 0xFFFFFF00);
+				 FLASH_ROM_ERASE(CalAddr & 0xFFFFFF00,256);
+				 FLASH_Unlock();
          FLASH_ProgramWord(CalAddr, 0x5aa55aa5);
-         FLASH->CTLR |= ((uint32_t)0x00008000);
          FLASH->CTLR |= ((uint32_t)0x00000080);
 
         s = ERR_SUCCESS;

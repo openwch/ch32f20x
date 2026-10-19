@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : rf_phy.h
+ * File Name          : RF_PHY.h
  * Author             : WCH
  * Version            : V1.0
  * Date               : 2018/11/12
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef CENTRAL_H
-#define CENTRAL_H
+#ifndef RF_PHY_H
+#define RF_PHY_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -653,7 +653,7 @@ uint8_t KM_AnalyzeConfigDesc( uint8_t usb_port, uint8_t index )
     uint8_t  num, innum, outnum;
 
     num = 0;
-    for( i = 0; i < ( Com_Buf[ 2 ] + ( (uint16_t)Com_Buf[ 3 ] << 8 ) ); )
+    for( i = 0; ( i < DEF_COM_BUF_LEN ) && ( i < ( Com_Buf[ 2 ] + ( (uint16_t)Com_Buf[ 3 ] << 8 ) ) ); )
     {
         if( Com_Buf[ i + 1 ] == DEF_DECR_CONFIG )
         {
@@ -696,7 +696,7 @@ uint8_t KM_AnalyzeConfigDesc( uint8_t usb_port, uint8_t index )
                     outnum = 0;
                     while( 1 )
                     {
-                        if( ( Com_Buf[ i + 1 ] == DEF_DECR_INTERFACE ) || ( i >= Com_Buf[ 2 ] ) )
+                        if( ( Com_Buf[ i + 1 ] == DEF_DECR_INTERFACE ) || ( i >= ( Com_Buf[ 2 ] + ( (uint16_t)Com_Buf[ 3 ] << 8 ) ) ) )
                         {
                             break;
                         }
@@ -708,26 +708,32 @@ uint8_t KM_AnalyzeConfigDesc( uint8_t usb_port, uint8_t index )
                                 /* Save endpoint related information (endpoint address, attribute, max packet size, polling interval) */
                                 if( ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bEndpointAddress & 0x80 )
                                 {
-                                    /* IN */
-                                    HostCtl[ index ].Interface[ num ].InEndpAddr[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bEndpointAddress & 0x0F;
-                                    HostCtl[ index ].Interface[ num ].InEndpType[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bmAttributes;
-                                    HostCtl[ index ].Interface[ num ].InEndpSize[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeL +
-                                                                              (uint16_t)( ( ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeH ) << 8 );
-                                    HostCtl[ index ].Interface[ num ].InEndpInterval[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bInterval;
-                                    HostCtl[ index ].Interface[ num ].InEndpNum++;
+                                    if( innum < 4 )
+                                    {
+                                        /* IN */
+                                        HostCtl[ index ].Interface[ num ].InEndpAddr[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bEndpointAddress & 0x0F;
+                                        HostCtl[ index ].Interface[ num ].InEndpType[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bmAttributes;
+                                        HostCtl[ index ].Interface[ num ].InEndpSize[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeL +
+                                                                                  (uint16_t)( ( ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeH ) << 8 );
+                                        HostCtl[ index ].Interface[ num ].InEndpInterval[ innum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bInterval;
+                                        HostCtl[ index ].Interface[ num ].InEndpNum++;
                                     
-                                    innum++;
+                                        innum++;
+                                    }
                                 }
                                 else
                                 {
-                                    /* OUT */
-                                    HostCtl[ index ].Interface[ num ].OutEndpAddr[ outnum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bEndpointAddress & 0x0f;
-                                    HostCtl[ index ].Interface[ num ].OutEndpType[ outnum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bmAttributes;
-                                    HostCtl[ index ].Interface[ num ].OutEndpSize[ outnum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeL +
-                                                                                (uint16_t)( ( ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeH ) << 8 );
-                                    HostCtl[ index ].Interface[ num ].OutEndpNum++;
+                                    if( outnum < 4 )
+                                    {
+                                        /* OUT */
+                                        HostCtl[ index ].Interface[ num ].OutEndpAddr[ outnum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bEndpointAddress & 0x0f;
+                                        HostCtl[ index ].Interface[ num ].OutEndpType[ outnum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->bmAttributes;
+                                        HostCtl[ index ].Interface[ num ].OutEndpSize[ outnum ] = ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeL +
+                                                                                    (uint16_t)( ( ( (PUSB_ENDP_DESCR)( &Com_Buf[ i ] ) )->wMaxPacketSizeH ) << 8 );
+                                        HostCtl[ index ].Interface[ num ].OutEndpNum++;
 
-                                    outnum++;
+                                        outnum++;
+                                    }
                                 }
 
                                 i += Com_Buf[ i ];
@@ -797,7 +803,7 @@ void KM_AnalyzeHidReportDesc( uint8_t index, uint8_t intf_num )
 
     uint16_t i = 0;
 
-    /* Usage Page(Generic Desktop), Usage(Kyeboard) */
+    /* Usage Page(Generic Desktop), Usage(Keyboard) */
     if( ( Com_Buf[ i + 0 ] == 0x05 ) && ( Com_Buf[ i + 1 ] == 0x01 ) &&
         ( Com_Buf[ i + 2 ] == 0x09 ) && ( Com_Buf[ i + 3 ] == 0x06 ) )
     {
@@ -942,7 +948,7 @@ void KM_AnalyzeHidReportDesc( uint8_t index, uint8_t intf_num )
  */
 uint8_t KM_DealHidReportDesc( uint8_t usb_port, uint8_t index, uint8_t ep0_size )
 {
-    uint8_t  s;
+    uint8_t  s = ERR_SUCCESS;
     uint8_t  num, num_tmp;
     uint8_t  getrep_cnt;
 #if DEF_DEBUG_PRINTF
@@ -1148,7 +1154,7 @@ uint8_t HUB_AnalyzeConfigDesc( uint8_t index )
     uint8_t  s = ERR_SUCCESS;
     uint16_t i;
 
-    for( i = 0; i < ( Com_Buf[ 2 ] + ( (uint16_t)Com_Buf[ 3 ] << 8 ) ); )
+    for( i = 0; ( i < DEF_COM_BUF_LEN ) && ( i < ( Com_Buf[ 2 ] + ( (uint16_t)Com_Buf[ 3 ] << 8 ) ) ); )
     {
         if( Com_Buf[ i + 1 ] == DEF_DECR_CONFIG )
         {
@@ -1466,7 +1472,7 @@ uint8_t HUB_Port_PreEnum2( uint8_t usb_port, uint8_t hub_port, uint8_t *pbuf )
 {
     uint8_t  s;
     uint8_t  buf[ 4 ];
-    uint8_t  retry;
+    uint8_t  retry = 0;
 
     if( ( *pbuf ) & ( 1 << hub_port ) )
     {
@@ -1477,7 +1483,6 @@ uint8_t HUB_Port_PreEnum2( uint8_t usb_port, uint8_t hub_port, uint8_t *pbuf )
             return s;
         }
 
-        Delay_Ms( 10 );
         do
         {
             s = HUB_GetPortStatus( usb_port, RootHubDev[ usb_port ].bEp0MaxPks, hub_port, &buf[ 0 ] );
@@ -1487,9 +1492,10 @@ uint8_t HUB_Port_PreEnum2( uint8_t usb_port, uint8_t hub_port, uint8_t *pbuf )
                 return s;
             }
             retry++;
-        }while( ( !( buf[ 2 ] & 0x10 ) ) && ( retry <= 10 ) );
+            Delay_Ms(1);
+        }while( ( !( buf[ 2 ] & 0x10 ) ) && ( retry < 100 ) );
 
-        if( retry != 10 )
+        if( retry != 100 )
         {
             retry = 0;
             s = HUB_ClearPortFeature( usb_port, RootHubDev[ usb_port ].bEp0MaxPks, hub_port, HUB_C_PORT_RESET  );
@@ -1503,9 +1509,10 @@ uint8_t HUB_Port_PreEnum2( uint8_t usb_port, uint8_t hub_port, uint8_t *pbuf )
                     return s;
                 }
                 retry++;
-            }while( ( buf[ 2 ] & 0x10 ) && ( retry <= 10 ) );
+                Delay_Ms(1);
+            }while( ( buf[ 2 ] & 0x10 ) && ( retry < 100 ) );
 
-            if( retry != 10 )
+            if( retry != 100 )
             {
                 if( buf[ 0 ] & 0x01 )
                 {
@@ -1693,7 +1700,7 @@ uint8_t USBH_EnumHubPortDevice( uint8_t usb_port, uint8_t hub_port, uint8_t *pad
  */
 void KB_AnalyzeKeyValue( uint8_t index, uint8_t intf_num, uint8_t *pbuf, uint16_t len )
 {
-    uint8_t  i;
+    uint16_t  i;
     uint8_t  value;
     uint8_t  bit_pos = 0x00;
 
@@ -1906,7 +1913,7 @@ void USBH_MainDeal( void )
                         /* Get endpoint data based on the interval time of the device */
                         if( HostCtl[ index ].Interface[ intf_num ].InEndpTimeCount[ in_num ] >= HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ] )
                         {
-                            HostCtl[ index ].Interface[ intf_num ].InEndpTimeCount[ in_num ] %= HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ];
+                            HostCtl[ index ].Interface[ intf_num ].InEndpTimeCount[ in_num ] %= HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ] ? HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ] : 1;
                
                             /* Get endpoint data */
                             s = USBH_GetHidData( usb_port, index, intf_num, in_num, Com_Buf, &len );
@@ -1991,7 +1998,7 @@ void USBH_MainDeal( void )
                 /* Query port status change */
                 if( HostCtl[ index ].Interface[ 0 ].InEndpTimeCount[ 0 ] >= HostCtl[ index ].Interface[ 0 ].InEndpInterval[ 0 ] )
                 {
-                    HostCtl[ index ].Interface[ 0 ].InEndpTimeCount[ 0 ] %= HostCtl[ index ].Interface[ 0 ].InEndpInterval[ 0 ];
+                    HostCtl[ index ].Interface[ 0 ].InEndpTimeCount[ 0 ] %= HostCtl[ index ].Interface[ 0 ].InEndpInterval[ 0 ] ? HostCtl[ index ].Interface[ 0 ].InEndpInterval[ 0 ] : 1;
          
                     /* Select HUB port */
                     USBFSH_SetSelfAddr( RootHubDev[ usb_port ].bAddress );
@@ -2079,7 +2086,7 @@ void USBH_MainDeal( void )
                                                 DUG_PRINTF("printer!\r\n");
                                                 break;
                                             case USB_DEV_CLASS_HUB:
-                                                DUG_PRINTF("printer!\r\n");
+                                                DUG_PRINTF("hub!\r\n");
                                                 break;
                                             case DEF_DEV_TYPE_UNKNOWN:
                                                 DUG_PRINTF("unknown!\r\n");
@@ -2114,7 +2121,7 @@ void USBH_MainDeal( void )
                                     /* Get endpoint data based on the interval time of the device */
                                     if( HostCtl[ index ].Interface[ intf_num ].InEndpTimeCount[ in_num ] >= HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ] )
                                     {
-                                        HostCtl[ index ].Interface[ intf_num ].InEndpTimeCount[ in_num ] %= HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ];
+                                        HostCtl[ index ].Interface[ intf_num ].InEndpTimeCount[ in_num ] %= HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ] ? HostCtl[ index ].Interface[ intf_num ].InEndpInterval[ in_num ] : 1;
 
                                         /* Select HUB device port */
                                         USBFSH_SetSelfAddr( RootHubDev[ usb_port ].Device[ hub_port ].bAddress );

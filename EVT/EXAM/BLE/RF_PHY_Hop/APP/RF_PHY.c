@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
+ * File Name          : RF_PHY.c
  * Author             : WCH
  * Version            : V1.0
  * Date               : 2020/08/06
@@ -34,7 +34,7 @@ volatile uint8_t rx_end_flag=0;
  */
 __HIGH_CODE
 __NO_INLINE
-void RF_Wait_Tx_End()
+void RF_Wait_Tx_End(void)
 {
     uint32_t i=0;
     while(!tx_end_flag)
@@ -59,7 +59,7 @@ void RF_Wait_Tx_End()
  */
 __HIGH_CODE
 __NO_INLINE
-void RF_Wait_Rx_End()
+void RF_Wait_Rx_End(void)
 {
     uint32_t i=0;
     while(!rx_end_flag)
@@ -159,7 +159,7 @@ void RF_2G4StatusCallBack(uint8_t sta, uint8_t crc, uint8_t *rxBuf)
                     PRINT("match type error\n");
                 }
             }
-            tmos_set_event(taskID, SBP_RF_RF_RX_EVT);
+            tmos_set_event(taskID, SBP_RF_RX_EVT);
             break;
         }
         case RX_MODE_TX_FINISH:
@@ -223,14 +223,14 @@ uint16_t RF_ProcessEvent(uint8_t task_id, uint16_t events)
         tmos_start_task(taskID, SBP_RF_PERIODIC_EVT, 1000);
         return events ^ SBP_RF_PERIODIC_EVT;
     }
-    if(events & SBP_RF_RF_RX_EVT)
+    if(events & SBP_RF_RX_EVT)
     {
         uint8_t state;
         RF_Shut();
         TX_DATA[0]++;
         rx_end_flag = FALSE;
         state = RF_Rx(TX_DATA, 10, 0xFF, 0xFF);
-        return events ^ SBP_RF_RF_RX_EVT;
+        return events ^ SBP_RF_RX_EVT;
     }
     // Turn on rf hop sending
     if(events & SBP_RF_CHANNEL_HOP_TX_EVT)

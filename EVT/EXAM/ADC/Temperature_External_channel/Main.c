@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/10/28
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -144,13 +144,13 @@ int main(void)
     {
 		adc_val = Get_ConversionVal(Get_ADC_Val(ADC_Channel_TempSensor));
 		val_mv = (adc_val*3300/4096);
-		printf("mv-T-%d,%0d\n",val_mv ,TempSensor_Volt_To_Temper(val_mv));
+		printf("mv-T-%d,%d\n",val_mv ,TempSensor_Volt_To_Temper(val_mv));
 		ADC_TempSensorVrefintCmd(DISABLE);
 		
-	    adc_val = Get_ConversionVal(Get_ADC_Val(ADC_Channel_3));
-		Delay_Us(80);
-		printf("ADC_val  %04d\r\n",adc_val);
+	  adc_val = Get_ConversionVal(Get_ADC_Val(ADC_Channel_3));
 		Delay_Ms(2);
+		printf("ADC_val  %04d\r\n",adc_val);
+
 		ADC_TempSensorVrefintCmd(ENABLE);
 		Delay_Ms(500);
     }

@@ -32,6 +32,7 @@ u16 desport = 1000;                                     //destination port
 u16 srcport = 1000;                                     //source port
 
 u8 TCPConnValid = 0;                                    //0 disconnected  1 connect
+u32 ethRxDropCnt = 0;                                   //frames dropped because no TX buffer was free
 
 /*********************************************************************
  * @fn      mStopIfError
@@ -92,8 +93,11 @@ void WCHNET_CreateTcpSocket(void)
     TmpSocketInf.ProtoType = PROTO_TYPE_TCP;
     TmpSocketInf.RecvBufLen = RECE_BUF_LEN;
     i = WCHNET_SocketCreat(&SocketId,&TmpSocketInf);
-    printf("WCHNET_SocketCreat %d\r\n",SocketId);
     mStopIfError(i);
+    if(i != WCHNET_ERR_SUCCESS){
+        return;
+    }
+    printf("WCHNET_SocketCreat %d\r\n",SocketId);
     i = WCHNET_SocketConnect(SocketId);
     mStopIfError(i);
 }
@@ -109,6 +113,7 @@ void WCHNET_CreateTcpSocket(void)
 void uartRxAndSendDataToETH(void)
 {
     u8 *p;
+    u8 ret;
     uint32_t temp = 0;
     uint32_t len = 0;
     uint32_t readindex = 0;
@@ -127,7 +132,11 @@ void uartRxAndSendDataToETH(void)
         }
         readindex = UART_RX_DMA_SIZE - uart_data_t.last_RX_DMA_length;
         p = &uart_data_t.RX_buffer[readindex];
-        WCHNET_SocketSend(SocketId, p, &len);
+        ret = WCHNET_SocketSend(SocketId, p, &len);
+        if((ret != WCHNET_ERR_SUCCESS) || (len == 0))
+        {
+            return;
+        }
         uart_data_t.last_RX_DMA_length -= len;
         if(uart_data_t.last_RX_DMA_length == 0)
             uart_data_t.last_RX_DMA_length = UART_RX_DMA_SIZE;
@@ -171,6 +180,8 @@ void ETHRx(u8 socketid)
     int8_t receive_state = -1;
 
     len = WCHNET_SocketRecvLen(socketid, NULL);                               /* query length */
+    if(len > ETH_RECEIVE_SIZE)
+        len = ETH_RECEIVE_SIZE;
 
     if( uart_data_t.tx_remainBuffNum > 0)
     {
@@ -178,6 +189,7 @@ void ETHRx(u8 socketid)
         receive_state = WCHNET_SocketRecv(socketid, uart_data_t.TX_buffer[uart_data_t.tx_write], &len);
         if(receive_state == WCHNET_ERR_SUCCESS)
         {
+			DMA_ITConfig(DMA1_Channel7,DMA_IT_TC,DISABLE);
             uart_data_t.TX_data_length[uart_data_t.tx_write] = len;
 
             uart_data_t.tx_write++;
@@ -185,11 +197,14 @@ void ETHRx(u8 socketid)
             uart_data_t.tx_write = (uart_data_t.tx_write)%UART_TX_BUF_NUM;
 
             uart_data_t.tx_remainBuffNum--;
+			DMA_ITConfig(DMA1_Channel7,DMA_IT_TC,ENABLE);
         }
     }
     else
     {
-        printf("eth receive buff busy\n");
+        WCHNET_SocketRecv(socketid, NULL, &len);
+        ethRxDropCnt++;
+        printf("eth receive buff busy, drop count: %u\r\n", (unsigned)ethRxDropCnt);
     }
     uartTx();
 }
@@ -220,6 +235,7 @@ void WCHNET_HandleSockInt(u8 socketid,u8 intstat)
     {
         TCPConnValid = 0;
         printf("TCP Disconnect\r\n");
+        WCHNET_CreateTcpSocket();
     }
     if(intstat & SINT_STAT_TIM_OUT)                     //timeout disconnect
     {
@@ -282,22 +298,27 @@ int main(void)
 	Delay_Init();
 	USART_Printf_Init(115200);                                              //USART initialize
 	printf("ETH_UART\r\n");
-    printf("SystemClk:%d\r\n",SystemCoreClock);
-    printf("net version:%x\n",WCHNET_GetVer());
+    printf("SystemClk:%lu\r\n", (unsigned long)SystemCoreClock);
+    printf("net version:%x\r\n",(unsigned)WCHNET_GetVer());
     if( WCHNET_LIB_VER != WCHNET_GetVer() ){
-      printf("version error.\n");
+      printf("version error.\r\n");
     }
     WCHNET_GetMacAddr(MACAddr);                                             //get the chip MAC address
     printf("mac addr:");
     for(i = 0; i < 6; i++) 
-        printf("%x ", MACAddr[i]);
-    printf("\n");
+        printf("%x ", (unsigned)MACAddr[i]);
+    printf("\r\n");
     TIM2_Init();
     BSP_Uart_Init(BAUD_RATE);                                               //USART2 initialize 
     i = ETH_LibInit(IPAddr,GWIPAddr,IPMask,MACAddr);                        //Ethernet library initialize
     mStopIfError(i);
-    if(i == WCHNET_ERR_SUCCESS) printf("WCHNET_LibInit Success\r\n");
-
+    if(i == WCHNET_ERR_SUCCESS) {
+        printf("WCHNET_LibInit Success\r\n");
+    }
+    else {
+        printf("WCHNET_LibInit failed, halted\r\n");
+        while(1);
+    }
     WCHNET_CreateTcpSocket();                                               //Create TCP Socket
 
 	while(1)

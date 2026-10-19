@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : Main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/07/08
+* Version            : V1.0.2
+* Date               : 2026/10/16
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -143,7 +143,7 @@ void USB_LP_CAN1_RX0_IRQHandler()
  */
 void CAN_SoftFilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct)
 {
-    if(CAN_FilterInitStruct->CAN_FilterNumber > sizeof(CANFilterStruct) / sizeof(*CANFilterStruct)){
+    if(CAN_FilterInitStruct->CAN_FilterNumber >= sizeof(CANFilterStruct) / sizeof(*CANFilterStruct)){
         return;
     }
     if(CAN_FilterInitStruct->CAN_FilterActivation)

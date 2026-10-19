@@ -19,15 +19,15 @@
  */
 #define RTC_INIT_TIME_HOUR      0
 #define RTC_INIT_TIME_MINUTE    0
-#define RTC_INIT_TIME_SECEND    0
+#define RTC_INIT_TIME_SECOND    0
 
 /***************************************************
  * Global variables
  */
-volatile uint32_t RTCTigFlag;
+volatile uint32_t RTCTrigFlag;
 
 /*******************************************************************************
- * @fn      RTC_SetTignTime
+ * @fn      RTC_SetTrigTime
  *
  * @brief   Configure RTC trigger time
  *
@@ -35,16 +35,16 @@ volatile uint32_t RTCTigFlag;
  *
  * @return  None.
  */
-void RTC_SetTignTime(uint32_t time)
+void RTC_SetTrigTime(uint32_t time)
 {
     RTC_WaitForLastTask();
     RTC_SetAlarm(time);
     RTC_WaitForLastTask();
-    RTCTigFlag = 0;
+    RTCTrigFlag = 0;
 }
 
 /*******************************************************************************
- * @fn      HAL_Time0Init
+ * @fn      HAL_TimeInit
  *
  * @brief   System timer initialization
  *
@@ -102,7 +102,7 @@ void HAL_TimeInit(void)
 
 void RTCAlarm_IRQHandler(void)
 {
-    RTCTigFlag = 1;
+    RTCTrigFlag = 1;
     EXTI_ClearITPendingBit(EXTI_Line17);
     RTC_ClearITPendingBit(RTC_IT_ALR);
     RTC_WaitForLastTask();

@@ -516,12 +516,15 @@ void ReInitMACReg(void)
     uint32_t maccr, macmiiar, macffr, machthr, machtlr;
     uint32_t macfcr, macvlantr, dmaomr;
 
-    /* Wait for sending data to complete */
-    while((ETH->DMASR & (7 << 20)) != ETH_DMA_TransmitProcess_Suspended);
+    /* Wait for sending data to complete, give up when the timeout is reached */
+    do{
+        Delay_Us(10);
+        if( !--timeout )  break;
+    }while((ETH->DMASR & (7 << 20)) != ETH_DMA_TransmitProcess_Suspended);
 
     PHY_TR_REVERSE();
 
-    /* Record the register value */
+    /* Record the register value  */
     macmiiar = ETH->MACMIIAR;
     maccr = ETH->MACCR;
     macffr = ETH->MACFFR;
@@ -534,6 +537,7 @@ void ReInitMACReg(void)
     /* Software reset */
     ETH_SoftwareReset();
     /* Wait for software reset */
+    timeout = 10000;
     do{
         Delay_Us(10);
         if( !--timeout )  break;
@@ -680,11 +684,7 @@ void ETH_Configuration( uint8_t *macAddr )
     ETH_InitStructure.ETH_Watchdog = ETH_Watchdog_Enable;
     ETH_InitStructure.ETH_Jabber = ETH_Jabber_Enable;
     ETH_InitStructure.ETH_InterFrameGap = ETH_InterFrameGap_96Bit;
-#if HARDWARE_CHECKSUM_CONFIG
-    ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Enable;
-#else
     ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Disable;
-#endif
     ETH_InitStructure.ETH_AutomaticPadCRCStrip = ETH_AutomaticPadCRCStrip_Disable;
     ETH_InitStructure.ETH_LoopbackMode = ETH_LoopbackMode_Disable;
 

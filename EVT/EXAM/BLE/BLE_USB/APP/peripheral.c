@@ -190,14 +190,14 @@ static simpleProfileCBs_t Peripheral_SimpleProfileCBs = {
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
- *          notificaiton ... ).
+ *          notification ... ).
  *
  * @param   task_id - the ID assigned by TMOS.  This ID should be
  *                    used to send messages and set timers.
  *
  * @return  none
  */
-void Peripheral_Init()
+void Peripheral_Init(void)
 {
     Peripheral_TaskID = TMOS_ProcessEventRegister(Peripheral_ProcessEvent);
 
@@ -288,7 +288,7 @@ void Peripheral_Init()
  *
  * @param   peripheralConnList -
  *
- * @return  NULL
+ * @return  none
  */
 static void peripheralInitConnItem(peripheralConnItem_t *peripheralConnList)
 {
@@ -792,7 +792,7 @@ void ble_usb_ServiceEvt(uint16_t connection_handle, ble_usb_evt_t *p_evt)
         case BLE_USB_EVT_TX_NOTI_ENABLED:
             PRINT("%02x:bleusb_EVT_TX_NOTI_ENABLED\r\n", connection_handle);
             break;
-        case BLE_USB_EVT_BLE_DATA_RECIEVED:
+        case BLE_USB_EVT_BLE_DATA_RECEIVED:
             PRINT("BLE RX DATA len:%d\r\n", p_evt->data.length);
 
             if(RingMemWrite(&RingMemBLE, (uint8_t *)p_evt->data.p_data, p_evt->data.length) != SUCCESS)

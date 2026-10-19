@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : ch32v30x_usbfs_device.c
+ * File Name          : ch32f20x_usbfs_device.c
  * Author             : WCH
  * Version            : V1.0.0
  * Date               : 2021/06/06
@@ -81,10 +81,10 @@ const UINT8 MyDevDescrHD[] = {
     0x86, 0x1A, 0x23, 0x75, 0x63, 0x02, 0x00, 0x02,
     0x00, 0x01};
 
-/* Configration Descriptor */
+/* Configuration Descriptor */
 const UINT8 MyCfgDescrHD[] =
     {
-        0x09, 0x02, 0x27, 0x00, 0x01, 0x01, 0x00, 0x80, 0xf0, //Configure descriptor, interface descriptor, endpoint descriptor
+        0x09, 0x02, 0x27, 0x00, 0x01, 0x01, 0x00, 0x80, 0xf0, //Configuration descriptor, interface descriptor, endpoint descriptor
         0x09, 0x04, 0x00, 0x00, 0x03, 0xff, 0x01, 0x02, 0x00,
         0x07, 0x05, 0x82, 0x02, 0x20, 0x00, 0x00, //Bulk upload endpoint
         0x07, 0x05, 0x02, 0x02, 0x20, 0x00, 0x00, //Bulk download endpoint
@@ -95,7 +95,7 @@ const UINT8 MyLangDescrHD[] =
     {
         0x04, 0x03, 0x09, 0x04};
 
-/* Manufactor Descriptor */
+/* Manufacturer Descriptor */
 const UINT8 MyManuInfoHD[] =
     {
         0x0E, 0x03, 'w', 0, 'c', 0, 'h', 0, '.', 0, 'c', 0, 'n', 0};
@@ -119,7 +119,7 @@ const uint8_t Return3[2] = {0x9F, 0xEE};
 
 
 /*********************************************************************
- * @fn      USBFSD_DeviceInit
+ * @fn      USBDeviceInit
  *
  * @brief   Initializes USB device.
  *
@@ -401,7 +401,7 @@ void USBFS_IRQHandler(void)
                             break;
 
                         case USB_CLEAR_FEATURE:
-                            /* Cleaer feature */
+                            /* Clear feature */
                             if((pSetupReqPakHD->bRequestType & USB_REQ_RECIP_MASK) == USB_REQ_RECIP_ENDP)
                             {
                                 /* Clear endpoint */
@@ -610,7 +610,7 @@ void USBFS_IRQHandler(void)
                                 break;
                         }
                         break;
-                        /* Back to NCK by default */
+                        /* Back to NAK by default */
                     case USBFS_UIS_TOKEN_IN | 1:
                         USBFSD->UEP1_TX_CTRL ^= USBFS_UEP_T_TOG;
                         USBFSD->UEP1_TX_CTRL = (USBFSD->UEP1_TX_CTRL & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
@@ -931,7 +931,7 @@ void DevEP2_OUT_Deal(UINT8 l)
 {
     if(RingMemWrite(&RingMemUSB, pEP2_OUT_DataBuf, l) != SUCCESS)
     {
-        PRINT("RingMemBLE ERR \n");
+        PRINT("RingMemUSB ERR \n");
     }
     tmos_set_event(Peripheral_TaskID, SBP_PROCESS_USBDATA_EVT);
 }

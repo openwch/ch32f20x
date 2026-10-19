@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/10/28
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -12,7 +12,7 @@
 
 /*
  *@Note
- *Dual ADC alternate trigger sampling routine:
+ *Dual ADC RegInjecSimult trigger sampling routine:
  *Rule group ADC1 channel 2 (PA2), ADC2 channel 4 (PA4), 
  *injection group ADC1 channel 3 (PA3) ADC2 channel 5 (PA5)
  *The rule group injection groups are all triggered by software, 
@@ -24,8 +24,8 @@
 #include "debug.h"
 
 /* Global Variable */
-u32 TxBuf[1];
-u16 Adc_Val[2];
+vu32 TxBuf[1];
+vu16 Adc_Val[2];
 vu16 ADC_Val1, ADC_Val2;
 vu8 Injected_IT_Flag, DMA_IT_Flag;
 vs16 Calibrattion_Val1 = 0;
@@ -97,7 +97,7 @@ void  ADC_Function_Init( void )
     ADC_InjectedChannelConfig( ADC2, ADC_Channel_5, 1, ADC_SampleTime_239Cycles5 );
 
     ADC_ExternalTrigInjectedConvConfig( ADC2, ADC_ExternalTrigInjecConv_None );
-    ADC_SoftwareStartConvCmd( ADC2, ENABLE );
+    ADC_ExternalTrigConvCmd( ADC2, ENABLE );
     ADC_ITConfig( ADC2, ADC_IT_JEOC, ENABLE );
     ADC_Cmd( ADC2, ENABLE );
 
@@ -163,11 +163,11 @@ void DMA_Tx_Init( DMA_Channel_TypeDef *DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
  */
 u16 Get_ConversionVal1( s16 val )
 {
-    if( ( val + Calibrattion_Val1 ) < 0 )
+    if( ( val + Calibrattion_Val1 ) < 0 || val==0 )
     {
         return 0;
     }
-    if( ( Calibrattion_Val1 + val ) > 4095 )
+    if( ( Calibrattion_Val1 + val ) > 4095 || val==4095  )
     {
         return 4095;
     }

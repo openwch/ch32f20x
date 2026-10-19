@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2026/05/22
+* Version            : V1.0.2
+* Date               : 2026/10/16
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -57,7 +57,7 @@ volatile TestStatus MemoryProgramStatus = PASSED;
 volatile TestStatus MemoryEraseStatus = PASSED;
 
 #define Fadr    (0x08020000)
-#define Fsize   ((((256*4))>>2))
+#define Fsize   (256)
 u32 buf[Fsize];
 
 
@@ -206,10 +206,14 @@ int main(void)
 	printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 	printf("Flash Program Test\r\n");
 
+	__disable_irq();
 	Flash_Test();
 	Flash_Test_Fast();
-
-	while(1);
+	__enable_irq();
+	
+	while(1)
+	{
+	}
 }
 
 

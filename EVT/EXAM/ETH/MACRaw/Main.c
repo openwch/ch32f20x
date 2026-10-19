@@ -93,7 +93,7 @@ void TIM2_Init(void)
 /*********************************************************************
  * @fn      main
  *
- * @brief   Main program
+ * @brief   Main program.
  *
  * @return  none
  */
@@ -106,12 +106,12 @@ int main(void)
     Delay_Init();
     USART_Printf_Init(115200);                                  //USART initialize
     printf("MAC RAW Test\r\n");
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%lu\r\n", (unsigned long)SystemCoreClock);
     WCHNET_GetMacAddr(MACAddr);                                 //get the chip MAC address
     printf("mac addr:");
     for(i = 0; i < 6; i++)
-        printf("%x ", MACAddr[i]);
-    printf("\n");
+        printf("%x ", (unsigned)MACAddr[i]);
+    printf("\r\n");
     TIM2_Init();
     ETH_Init(MACAddr);
     /* change source MAC address */

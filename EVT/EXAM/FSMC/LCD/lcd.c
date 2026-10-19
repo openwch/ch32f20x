@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : lcd.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/04/06
+* Version            : V1.0.2
+* Date               : 2026/10/16
 * Description        : This file contains the headers of the TFTLCD.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -14,8 +14,8 @@
 #include "font.h"
 
 /* LCD brush and background colors */
-vu16 POINT_COLOR = 0x0000;
-vu16 BACK_COLOR = 0xFFFF;
+u16 POINT_COLOR = 0x0000;
+u16 BACK_COLOR = 0xFFFF;
 
 _lcd_dev lcddev;
 
@@ -167,6 +167,7 @@ void LCD_Scan_Dir( u8 dir )
             case 5: dir = 0; break;
             case 6: dir = 3; break;
             case 7: dir = 2; break;
+			default: break;
         }
     }
 
@@ -323,8 +324,6 @@ void LCD_Init( void )
     readWriteTiming.FSMC_AddressHoldTime = 0x00;
     readWriteTiming.FSMC_DataSetupTime = 0x0f;
     readWriteTiming.FSMC_BusTurnAroundDuration = 0x00;
-    readWriteTiming.FSMC_CLKDivision = 0x00;
-    readWriteTiming.FSMC_DataLatency = 0x00;
     readWriteTiming.FSMC_AccessMode = FSMC_AccessMode_A;
 
     writeTiming.FSMC_AddressSetupTime = 0x00;

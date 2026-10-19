@@ -47,7 +47,7 @@
                                                                                                                                         暂停模式    - 45
                                                                                                                                        空闲模式    - 5
  
- 【TEMPERATION】
+ 【TEMPERATURE】
  TEM_SAMPLE                                 - 是否打开根据温度变化校准的功能，单次校准耗时小于10ms( 默认:TRUE )
  
  【CALIBRATION】

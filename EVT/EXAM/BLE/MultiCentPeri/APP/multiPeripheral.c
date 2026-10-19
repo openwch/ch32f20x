@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : peripheral.C
+ * File Name          : multiPeripheral.c
  * Author             : WCH
  * Version            : V1.0
  * Date               : 2025/04/12
@@ -203,14 +203,14 @@ static simpleProfileCBs_t Peripheral_SimpleProfileCBs = {
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
- *          notificaiton ... ).
+ *          notification ... ).
  *
  * @param   task_id - the ID assigned by TMOS.  This ID should be
  *                    used to send messages and set timers.
  *
  * @return  none
  */
-void Peripheral_Init()
+void Peripheral_Init(void)
 {
     Peripheral_TaskID = TMOS_ProcessEventRegister(Peripheral_ProcessEvent);
 
@@ -297,7 +297,7 @@ void Peripheral_Init()
  *
  * @param   peripheralConnList -
  *
- * @return  NULL
+ * @return  none
  */
 static void peripheralInitConnItem(uint8_t task_id, peripheralConnItem_t *peripheralConnList)
 {
@@ -375,9 +375,11 @@ uint16_t Peripheral_ProcessEvent(uint8_t task_id, uint16_t events)
  *
  * @brief   Process an incoming task message.
  *
- * @param   pMsg - message to process
+ * @param   task_id - The TMOS assigned task ID.
+ * @param   events - events to process.  This is a bit map and can
+ *                   contain more than one event.
  *
- * @return  none
+ * @return  events not processed
  */
 static uint16_t connect0_ProcessEvent(uint8_t task_id, uint16_t events)
 {
@@ -433,9 +435,11 @@ static uint16_t connect0_ProcessEvent(uint8_t task_id, uint16_t events)
  *
  * @brief   Process an incoming task message.
  *
- * @param   pMsg - message to process
+ * @param   task_id - The TMOS assigned task ID.
+ * @param   events - events to process.  This is a bit map and can
+ *                   contain more than one event.
  *
- * @return  none
+ * @return  events not processed
  */
 static uint16_t connect1_ProcessEvent(uint8_t task_id, uint16_t events)
 {
@@ -489,9 +493,11 @@ static uint16_t connect1_ProcessEvent(uint8_t task_id, uint16_t events)
  *
  * @brief   Process an incoming task message.
  *
- * @param   pMsg - message to process
+ * @param   task_id - The TMOS assigned task ID.
+ * @param   events - events to process.  This is a bit map and can
+ *                   contain more than one event.
  *
- * @return  none
+ * @return  events not processed
  */
 static uint16_t connect2_ProcessEvent(uint8_t task_id, uint16_t events)
 {
@@ -545,7 +551,7 @@ static uint16_t connect2_ProcessEvent(uint8_t task_id, uint16_t events)
  *
  * @brief   Process an incoming task message.
  *
- * @param   pMsg - message to process
+ * @param   pEvent - event to process
  *
  * @return  none
  */
@@ -858,7 +864,7 @@ static void peripheralStateNotificationCB(gapRole_States_t newState, gapRoleEven
  *          from the profile, and then copied into the value of the
  *          the fourth characteristic.
  *
- * @param   none
+ * @param   connHandle - connect handle
  *
  * @return  none
  */

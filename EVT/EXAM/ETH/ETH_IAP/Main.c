@@ -9,9 +9,7 @@
 * Attention: This software (modified or not) and binary are used for 
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
-#include <stdlib.h>
 #include <string.h>
-#include "string.h"
 #include "eth_driver.h"
 #include "IAP_Task.h"
 /*
@@ -95,8 +93,11 @@ void WCHNET_CreateTcpSocket(void)
     TmpSocketInf.ProtoType = PROTO_TYPE_TCP;
     TmpSocketInf.RecvBufLen = RECE_BUF_LEN;
     i = WCHNET_SocketCreat(&SocketId,&TmpSocketInf);
-    printf("WCHNET_SocketCreat %d\r\n",SocketId);
     mStopIfError(i);
+    if(i != WCHNET_ERR_SUCCESS){
+        return;
+    }
+    printf("WCHNET_SocketCreat %d\r\n",SocketId);
     i = WCHNET_SocketConnect(SocketId);
     mStopIfError(i);
 }
@@ -219,7 +220,7 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);                                                      //USART initialize   	
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%lu\r\n", (unsigned long)SystemCoreClock);
     GPIOInit();
     /*Detect whether the button(PA6) is pressed, if pressed,
      *make a TCP connection to upgrade, otherwise jump
@@ -228,21 +229,26 @@ int main(void)
         Delay_Ms(50);
         if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6) == 0){
             printf("IAP Test\r\n");
-            printf("SystemClk:%d\r\n",SystemCoreClock);
-            printf("net version:%x\n",WCHNET_GetVer());
+            printf("net version:%x\r\n", (unsigned)WCHNET_GetVer());
             if( WCHNET_LIB_VER != WCHNET_GetVer() ){
-                printf("version error.\n");
+                printf("version error.\r\n");
             }
             WCHNET_GetMacAddr(MACAddr);                                             //get the chip MAC address
             printf("mac addr:");
             for(i = 0; i < 6; i++) 
-                printf("%x ",MACAddr[i]);
-            printf("\n");
+                printf("%x ", (unsigned)MACAddr[i]);
+            printf("\r\n");
 			IAPParaInit();
             TIM2_Init();
             i = ETH_LibInit(IPAddr,GWIPAddr,IPMask,MACAddr);                        //Ethernet library initialize
             mStopIfError(i);
-            if(i == WCHNET_ERR_SUCCESS) printf("WCHNET_LibInit Success\r\n");
+            if(i == WCHNET_ERR_SUCCESS) {
+                printf("WCHNET_LibInit Success\r\n");
+            }
+            else {
+                printf("WCHNET_LibInit failed, halted\r\n");
+                while(1);
+            }
             WCHNET_CreateTcpSocket();                                               //Create TCP Socket
 
             while(1)

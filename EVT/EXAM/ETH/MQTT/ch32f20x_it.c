@@ -13,7 +13,7 @@
 #include <WCHNET.h>
 #include "eth_driver.h"
 
-uint8_t publishValid = 0;
+volatile uint8_t publishValid = 0;
 uint16_t MqttSendTimeCnt = 0;
 /*********************************************************************
  * @fn      NMI_Handler

@@ -59,7 +59,7 @@ extern "C" {
 #define RSC_MULTI_SENS_SUPP         0x10
 #define RSC_FULL_SUPPORT            0x1F
 
-//RSC Censor Locations
+//RSC Sensor Locations
 #define RSC_NO_SENSOR_LOC           0x00
 #define RSC_SENSOR_LOC_0            0x01
 #define RSC_SENSOR_LOC_1            0x02
@@ -70,7 +70,7 @@ extern "C" {
 //Spec says there are 17 possible.
 #define RSC_MAX_SENSOR_LOCS         8
 
-//RSC Commands - arbitrarly assigned
+//RSC Commands - arbitrarily assigned
 #define RSC_SET_CUMM_VAL            1
 #define RSC_START_SENS_CALIB        2
 #define RSC_UPDATE_SENS_LOC         3
@@ -140,7 +140,7 @@ extern void RunningService_Init(uint8_t task_id);
 extern uint16_t RunningService_ProcessEvent(uint8_t task_id, uint16_t events);
 
 /*
- * @fn      Runninging_AddService
+ * @fn      Running_AddService
  *
  * @brief   Initializes the RSC service by registering
  *          GATT attributes with the GATT server.
@@ -169,7 +169,7 @@ extern void Running_Register(runningServiceCB_t pfnServiceCB);
  * @brief   Set a RSC parameter.
  *
  * @param   param - Profile parameter ID
- * @param   len - length of data to right
+ * @param   len - length of data to write
  * @param   value - pointer to data to write.  This is dependent on
  *          the parameter ID and WILL be cast to the appropriate
  *          data type (example: data type of uint16_t will be cast to

@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2026/10/15
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -51,7 +51,9 @@ void SYSTICK_Init_Config( u32 ticks )
  */
 void SysTick_Handler(void)
 {
+    #if 0
 	printf("welcome to WCH\r\n"); 
+    #endif
 }
 
 /*********************************************************************

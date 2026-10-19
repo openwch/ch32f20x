@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : ch32v20x_usbfs_device.h
+* File Name          : ch32f20x_usbfs_device.h
 * Author             : WCH
 * Version            : V1.0.0
 * Date               : 2022/08/20
@@ -11,8 +11,8 @@
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
-#ifndef __CH32V20X_USBFS_DEVICE_H_
-#define __CH32V20X_USBFS_DEVICE_H_
+#ifndef __CH32F20X_USBFS_DEVICE_H_
+#define __CH32F20X_USBFS_DEVICE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,12 +52,12 @@ extern "C" {
 #define USBFSD_UEP_BUF_MOD            0x01
 #define DEF_UEP_DMA_LOAD              0 /* Direct the DMA address to the data to be processed */
 #define DEF_UEP_CPY_LOAD              1 /* Use memcpy to move data to a buffer */
-#define USBFSD_UEP_MOD(n)             (*((volatile uint8_t *)(USBFSD_UEP_MOD_BASE+n)))
-#define USBFSD_UEP_TX_CTRL(n)         (*((volatile uint8_t *)(USBFSD_UEP_CTL_BASE+n*0x04)))
-#define USBFSD_UEP_RX_CTRL(n)         (*((volatile uint8_t *)(USBFSD_UEP_CTL_BASE+n*0x04+1)))
-#define USBFSD_UEP_DMA(n)             (*((volatile uint32_t *)(USBFSD_UEP_DMA_BASE+n*0x04)))
-#define USBFSD_UEP_BUF(n)             ((uint8_t *)(*((volatile uint32_t *)(USBFSD_UEP_DMA_BASE+n*0x04)))+0x20000000)
-#define USBFSD_UEP_TLEN(n)            (*((volatile uint16_t *)(USBFSD_UEP_LEN_BASE+n*0x04)))
+#define USBFSD_UEP_MOD(n)             (*((volatile uint8_t *)(USBFSD_UEP_MOD_BASE+(n))))
+#define USBFSD_UEP_TX_CTRL(n)         (*((volatile uint8_t *)(USBFSD_UEP_CTL_BASE+(n)*0x04)))
+#define USBFSD_UEP_RX_CTRL(n)         (*((volatile uint8_t *)(USBFSD_UEP_CTL_BASE+(n)*0x04+1)))
+#define USBFSD_UEP_DMA(n)             (*((volatile uint32_t *)(USBFSD_UEP_DMA_BASE+(n)*0x04)))
+#define USBFSD_UEP_BUF(n)             ((uint8_t *)(*((volatile uint32_t *)(USBFSD_UEP_DMA_BASE+(n)*0x04)))+0x20000000)
+#define USBFSD_UEP_TLEN(n)            (*((volatile uint16_t *)(USBFSD_UEP_LEN_BASE+(n)*0x04)))
 
 /* Setup Request Packets */
 #define pUSBFS_SetupReqPak                 ((PUSB_SETUP_REQ)USBFS_EP0_Buf)
@@ -103,5 +103,5 @@ extern uint8_t USBFS_Endp_DataUp(uint8_t endp, uint8_t *pbuf, uint16_t len, uint
 #endif
 
 
-#endif /* USER_CH32V20X_USB_DEVICE_H_ */
+#endif /* __CH32F20X_USBFS_DEVICE_H_ */
 

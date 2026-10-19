@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : ch32f20x_usbfs_device.h
+* File Name          : ch32f20x_usbfs_device.c
 * Author             : WCH
 * Version            : V1.0.0
 * Date               : 2022/08/20
@@ -373,6 +373,10 @@ void USBFS_IRQHandler( void )
                                                 break;
                                         }
                                     }
+                                    else
+                                    {
+                                        errflag = 0xFF;
+                                    }
                                 }
                                 else
                                 {
@@ -491,6 +495,10 @@ void USBFS_IRQHandler( void )
                                 errflag = 0xFF;
                                 break;
                         }
+                    }
+                    else
+                    {
+                        errflag = 0xFF;
                     }
                 }
                 else
@@ -616,6 +624,10 @@ void USBFS_IRQHandler( void )
                                 {
                                     /* clear usb sleep status, device not prepare to sleep */
                                     USBFS_DevSleepStatus &= ~0x01;
+                                }
+                                else
+                                {
+                                    errflag = 0xFF;
                                 }
                             }
                             else if ( ( USBFS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )

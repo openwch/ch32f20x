@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : lcd.h
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/06/06
+* Version            : V1.0.1
+* Date               : 2026/10/16
 * Description        : This file contains the headers of the TFTLCD.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -95,7 +95,6 @@ void LCD_WriteRAM_Prepare( void );
 void LCD_WriteRAM( u16 RGB_Code );
 void LCD_Scan_Dir( u8 dir );
 void LCD_Display_Dir( u8 dir );
-void LCD_Set_Window( u16 sx, u16 sy, u16 width, u16 height );
 void LCD_Fast_DrawPoint( u16 x, u16 y, u16 color );
 void LCD_ShowChar( u16 x, u16 y, u8 num, u8 size, u8 mode );
 void LCD_ShowNum( u16 x, u16 y, u32 num, u8 len, u8 size );

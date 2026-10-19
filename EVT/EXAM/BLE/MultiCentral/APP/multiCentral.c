@@ -48,7 +48,7 @@
 // Connection supervision timeout in 10ms
 #define DEFAULT_CONNECTION_TIMEOUT          100
 
-// Discovey mode (limited, general, all)
+// Discovery mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE              DEVDISC_MODE_ALL
 
 // TRUE to use active scan
@@ -183,7 +183,7 @@ static void     centralPairStateCB(uint16_t connHandle, uint8_t state, uint8_t s
 static uint16_t connect0_ProcessEvent(uint8_t task_id, uint16_t events);
 static void     central_ProcessTMOSMsg(tmos_event_hdr_t *pMsg);
 static void     centralGATTDiscoveryEvent(uint8_t connItem, gattMsgEvent_t *pMsg);
-static void     centralConnIistStartDiscovery_0(void);
+static void     centralConnListStartDiscovery_0(void);
 static void     centralAddDeviceInfo(uint8_t *pAddr, uint8_t addrType);
 static void     centralInitConnItem(uint8_t task_id, centralConnItem_t *centralConnList);
 static uint8_t  centralAddrCmp(peerAddrDefItem_t *PeerAddrDef, uint8_t *addr);
@@ -223,7 +223,7 @@ static gapBondCBs_t centralBondCB = {
  *
  * @return  none
  */
-void Central_Init()
+void Central_Init(void)
 {
     centralTaskId = TMOS_ProcessEventRegister(Central_ProcessEvent);
 
@@ -266,7 +266,7 @@ void Central_Init()
  * @param   task_id -
  *          centralConnList -
  *
- * @return  NULL
+ * @return  none
  */
 static void centralInitConnItem(uint8_t task_id, centralConnItem_t *centralConnList)
 {
@@ -348,18 +348,20 @@ uint16_t Central_ProcessEvent(uint8_t task_id, uint16_t events)
 /*********************************************************************
  * @fn      connect0_ProcessEvent
  *
- * @brief   Process an incoming task message.
+ * @brief   Connection 0 task event processor.
  *
- * @param   pMsg - message to process
+ * @param   task_id - The TMOS assigned task ID.
+ * @param   events - events to process.  This is a bit map and can
+ *                   contain more than one event.
  *
- * @return  none
+ * @return  events not processed
  */
 static uint16_t connect0_ProcessEvent(uint8_t task_id, uint16_t events)
 {
     if(events & START_SVC_DISCOVERY_EVT)
     {
         // start service discovery
-        centralConnIistStartDiscovery_0();
+        centralConnListStartDiscovery_0();
         return (events ^ START_SVC_DISCOVERY_EVT);
     }
 
@@ -555,7 +557,7 @@ static void centralProcessGATTMsg(gattMsgEvent_t *pMsg)
         }
         else
         {
-            // After a succesful write, display the value that was written and increment value
+            // After a successful write, display the value that was written and increment value
             PRINT("Write sent: %x\n", centralCharVal);
         }
 
@@ -806,7 +808,7 @@ static void centralEventCB(gapRoleEvent_t *pEvent)
 }
 
 /*********************************************************************
- * @fn      pairStateCB
+ * @fn      centralPairStateCB
  *
  * @brief   Pairing state callback.
  *
@@ -874,13 +876,13 @@ static void centralPasscodeCB(uint8_t *deviceAddr, uint16_t connectionHandle,
 }
 
 /*********************************************************************
- * @fn      centralConnIistStartDiscovery_0
+ * @fn      centralConnListStartDiscovery_0
  *
  * @brief   Start connection 0 service discovery.
  *
  * @return  none
  */
-static void centralConnIistStartDiscovery_0(void)
+static void centralConnListStartDiscovery_0(void)
 {
     uint8_t uuid[ATT_BT_UUID_SIZE] = {LO_UINT16(SIMPLEPROFILE_SERV_UUID),
                                       HI_UINT16(SIMPLEPROFILE_SERV_UUID)};
