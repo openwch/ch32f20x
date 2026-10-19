@@ -281,7 +281,7 @@ static void ble_new_neighbor_callback(lwns_addr_t *n)
  * @param   dataptr     - 待发送的数据缓冲头指针.
  * @param   len         - 待发送的数据缓冲长度.
  *
- * @return  TRUE if success, FLASE is failed.
+ * @return  TRUE if success, FALSE is failed.
  */
 static BOOL ble_phy_output(uint8_t *dataptr, uint8_t len)
 {
@@ -531,7 +531,7 @@ void lwns_shut()
  *
  * @return  None.
  */
-void lwns_start()
+void lwns_start(void)
 {
     RF_Shut();
     RF_Rx(NULL, 0, USER_RF_RX_TX_TYPE, USER_RF_RX_TX_TYPE); //打开RF接收，如果需要低功耗管理，在其他地方打开。

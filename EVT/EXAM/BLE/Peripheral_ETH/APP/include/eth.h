@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef eth_H
-#define eth_H
+#ifndef ETH_H
+#define ETH_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,7 +26,7 @@ extern "C" {
  */
 
 // ETH Task Events
-#define ETH_SENG_DATA_EVENT         1<<1
+#define ETH_SEND_DATA_EVENT         (1 << 1)
 
 /*********************************************************************
  * MACROS

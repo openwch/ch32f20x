@@ -4,7 +4,7 @@
  * Version            : V1.0
  * Date               : 2018/12/10
  * Description        : Bluetooth mouse application, initialize the broadcast parameters, 
- *                      and then broadcast until the host is connected, the key value is uploaded regularly
+ *                      and then broadcast until the host is connected, the report is uploaded regularly
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * Attention: This software (modified or not) and binary are used for 
@@ -38,7 +38,7 @@
 // Param update delay
 #define START_PARAM_UPDATE_EVT_DELAY         12800
 
-// Param update delay
+// PHY update delay
 #define START_PHY_UPDATE_DELAY               1600
 
 // HID idle timeout in msec; set to zero to disable timeout
@@ -102,9 +102,9 @@ static uint8_t scanRspData[] = {
     // connection interval range
     0x05, // length of this data
     GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
-    LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL), // 100ms
+    LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL), // 10ms
     HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
-    LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 1s
+    LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 10ms
     HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
 
     // service UUIDs
@@ -186,18 +186,18 @@ static hidDevCB_t hidEmuHidCBs = {
 /*********************************************************************
  * @fn      HidEmu_Init
  *
- * @brief   Initialization function for the HidEmuKbd App Task.
+ * @brief   Initialization function for the HidEmu App Task.
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
- *          notificaiton ... ).
+ *          notification ... ).
  *
  * @param   task_id - the ID assigned by TMOS.  This ID should be
  *                    used to send messages and set timers.
  *
  * @return  none
  */
-void HidEmu_Init()
+void HidEmu_Init(void)
 {
     hidEmuTaskId = TMOS_ProcessEventRegister(HidEmu_ProcessEvent);
 
@@ -235,7 +235,7 @@ void HidEmu_Init()
         Batt_SetParameter(BATT_PARAM_CRITICAL_LEVEL, sizeof(uint8_t), &critical);
     }
 
-    // Set up HID keyboard service
+    // Set up HID mouse service
     Hid_AddService();
 
     // Register for HID Dev callback
@@ -248,7 +248,7 @@ void HidEmu_Init()
 /*********************************************************************
  * @fn      HidEmu_ProcessEvent
  *
- * @brief   HidEmuKbd Application Task event processor.  This function
+ * @brief   HidEmu Application Task event processor.  This function
  *          is called to process all events for the task.  Events
  *          include timers, messages and any other user defined events.
  *

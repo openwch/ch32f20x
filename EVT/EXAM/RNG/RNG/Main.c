@@ -45,7 +45,7 @@ int main( void )
         {
         }
         random = RNG_GetRandomNumber();
-        printf( "random:0x%08x\r\n", random ); \
+        printf( "random:0x%08x\r\n", random ); 
         Delay_Ms( 500 );
     }
 }

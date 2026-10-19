@@ -26,7 +26,7 @@ typedef enum
 {
     BLE_USB_EVT_TX_NOTI_DISABLED = 1,
     BLE_USB_EVT_TX_NOTI_ENABLED,
-    BLE_USB_EVT_BLE_DATA_RECIEVED,
+    BLE_USB_EVT_BLE_DATA_RECEIVED,
 } ble_usb_evt_type_t;
 
 typedef struct

@@ -67,7 +67,7 @@
 // Request bonding.
 #define REQ_BONDING                          TRUE
 
-// Time alloted for service discovery before requesting more energy efficient connection parameters
+// Time allotted for service discovery before requesting more energy efficient connection parameters
 #define SVC_DISC_DELAY                       5000
 
 // After 15 seconds of no user input with notifications off, terminate connection
@@ -218,14 +218,14 @@ static gapBondCBs_t cyclingBondCB = {
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
- *          notificaiton ... ).
+ *          notification ... ).
  *
  * @param   task_id - the ID assigned by TMOS.  This ID should be
  *                    used to send messages and set timers.
  *
  * @return  none
  */
-void CyclingSensor_Init()
+void CyclingSensor_Init(void)
 {
     sensor_TaskID = TMOS_ProcessEventRegister(CyclingSensor_ProcessEvent);
 

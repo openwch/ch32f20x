@@ -31,7 +31,9 @@ void TIM1_UP_IRQHandler(void)
 {
         if( TIM_GetITStatus( TIM1, TIM_IT_Update ) != RESET )
         {
+            #if 0
             printf( "Hi\r\n" );
+            #endif
         }
         TIM_ClearITPendingBit( TIM1, TIM_IT_Update );
 }
@@ -40,7 +42,9 @@ void TIM2_IRQHandler(void)
 {
         if( TIM_GetITStatus( TIM2, TIM_IT_Update ) != RESET )
         {
+            #if 0
             printf( "WCH\r\n" );
+            #endif
         }
         TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
 }

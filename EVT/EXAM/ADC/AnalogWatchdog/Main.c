@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -19,7 +19,7 @@
  */
 
 #include "debug.h"
-
+vu8  IntResponse=0 ;
 /*********************************************************************
  * @fn      ADC_Function_Init
  *
@@ -58,7 +58,7 @@ void ADC_Function_Init( void )
     ADC_AnalogWatchdogCmd( ADC1, ADC_AnalogWatchdog_SingleRegEnable );
 
     NVIC_InitStructure.NVIC_IRQChannel = ADC1_2_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init( &NVIC_InitStructure );
@@ -105,6 +105,8 @@ u16 Get_ADC_Val( u8 ch )
 {
     u16 val;
 
+    ADC_RegularChannelConfig(ADC1, ch ,1, ADC_SampleTime_239Cycles5 );
+
     ADC_SoftwareStartConvCmd( ADC1, ENABLE );
 
     while( !ADC_GetFlagStatus( ADC1, ADC_FLAG_EOC ) );
@@ -112,6 +114,23 @@ u16 Get_ADC_Val( u8 ch )
     val = ADC_GetConversionValue( ADC1 );
 
     return val;
+}
+
+/*********************************************************************
+ * @fn      ADC1_2_IRQHandler
+ *
+ * @brief   This function handles analog wathdog exception.
+ *
+ * @return  none
+ */
+void ADC1_2_IRQHandler(void)
+{
+    if( ADC_GetITStatus( ADC1, ADC_IT_AWD ) )
+    {
+        IntResponse=1;
+    }
+
+    ADC_ClearITPendingBit( ADC1, ADC_IT_AWD );
 }
 
 /*********************************************************************
@@ -137,24 +156,12 @@ int main( void )
     {
         ADC_val = Get_ADC_Val( ADC_Channel_2 );
         Delay_Ms( 500 );
+			     if(IntResponse == 1)
+        {
+					IntResponse=0;
+           printf( "Enter AnalogWatchdog Interrupt\r\n" );
+        }
         printf( "%04d\r\n", ADC_val );
         Delay_Ms( 2 );
     }
-}
-
-/*********************************************************************
- * @fn      ADC1_2_IRQHandler
- *
- * @brief   This function handles analog wathdog exception.
- *
- * @return  none
- */
-void ADC1_2_IRQHandler( void )
-{
-    if( ADC_GetITStatus( ADC1, ADC_IT_AWD ) )
-    {
-        printf( "Enter AnalogWatchdog Interrupt\r\n" );
-    }
-
-    ADC_ClearITPendingBit( ADC1, ADC_IT_AWD );
 }

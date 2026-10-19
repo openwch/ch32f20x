@@ -28,7 +28,7 @@
 #define SELENCE_ADV_OF    0x00
 
 // 命令超时设置，如果有低功耗节点，则不能小于低功耗节点唤醒间隔（默认10s）
-#define APP_CMD_TIMEOUT               1600*10
+#define APP_CMD_TIMEOUT               (1600*10)
 
 #define APP_DELETE_LOCAL_NODE_DELAY   3200
 // shall not less than APP_DELETE_LOCAL_NODE_DELAY
@@ -76,7 +76,7 @@ NET_BUF_SIMPLE_DEFINE_STATIC(rx_buf, 65);
 #endif /* !PB_GATT */
 
 /*********************************************************************
- * LOCAL FUNCION
+ * LOCAL FUNCTION
  */
 
 static void cfg_srv_rsp_handler( const cfg_srv_status_t *val );
@@ -223,7 +223,7 @@ static void prov_enable(void)
         return;
     }
 
-    // Make sure we're scanning for provisioning inviations
+    // Make sure we're scanning for provisioning invitations
     bt_mesh_scan_enable();
     // Enable unprovisioned beacon sending
     bt_mesh_beacon_enable();
@@ -757,7 +757,7 @@ void blemesh_on_sync(void)
  *
  * @return  none
  */
-void App_Init()
+void App_Init(void)
 {
     GAPRole_PeripheralInit();
     Peripheral_Init();

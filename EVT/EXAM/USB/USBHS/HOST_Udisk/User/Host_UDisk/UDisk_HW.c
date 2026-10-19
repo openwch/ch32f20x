@@ -12,7 +12,7 @@
 
 /*******************************************************************************/
 /* Header File */
-#include "Udisk_Operation.h"
+#include "UDisk_Operation.h"
 
 /*******************************************************************************/
 /* Variable Definition */
@@ -43,12 +43,12 @@ void mStopIfError( uint8_t iError )
     }
     /* Display the errors */
     DUG_PRINTF( "Error:%02x\r\n", iError );
-    /* After encountering an error, you should analyze the error code and CH103DiskReday status, for example,
-     * call CH103DiskReday to check whether the current USB disk is connected or not,
+    /* After encountering an error, you should analyze the error code and CH103DiskReady status, for example,
+     * call CH103DiskReady to check whether the current USB disk is connected or not,
      * if the disk is disconnected then wait for the disk to be plugged in again and operate again,
      * Suggested steps to follow after an error:
-     *     1,call CH103DiskReday once, if successful, then continue the operation, such as Open, Read/Write, etc.
-     *     2,If CH103DiskReday is not successful, then the operation will be forced to start from the beginning.
+     *     1,call CH103DiskReady once, if successful, then continue the operation, such as Open, Read/Write, etc.
+     *     2,If CH103DiskReady is not successful, then the operation will be forced to start from the beginning.
      */
     while(1)
     {  }
@@ -477,7 +477,7 @@ ENUM_START:
 }
 
 /*********************************************************************
- * @fn      IAP_USBH_PreDeal
+ * @fn      UDisk_USBH_PreDeal
  *
  * @brief   usb host preemption operations, 
   *         including detecting device insertion and enumerating device information 

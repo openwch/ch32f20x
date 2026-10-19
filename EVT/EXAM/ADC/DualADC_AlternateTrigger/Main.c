@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/10/28
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -96,7 +96,7 @@ void  ADC_Function_Init( void )
 }
 
 /*********************************************************************
- * @fn      TIM2_PWM_In
+ * @fn      TIM2_PWM_Init
  *
  * @brief   TIM2,PWM input mode init(Only CH1 and CH2 channels can be used)
  *
@@ -106,7 +106,7 @@ void  ADC_Function_Init( void )
  *
  * @return  none
  */
-void TIM2_PWM_In( u16 arr, u16 psc, u16 ccp )
+void TIM2_PWM_Init( u16 arr, u16 psc, u16 ccp )
 {
     GPIO_InitTypeDef GPIO_InitStructure = {0};
     TIM_OCInitTypeDef TIM_OCInitStructure = {0};
@@ -173,11 +173,11 @@ u16 Get_ConversionVal1( s16 val )
  */
 u16 Get_ConversionVal2( s16 val )
 {
-    if( ( val + Calibrattion_Val2 ) < 0 )
+    if( ( val + Calibrattion_Val2 ) < 0 || val==0)
     {
         return 0;
     }
-    if( ( Calibrattion_Val2 + val ) > 4095 )
+    if( ( Calibrattion_Val2 + val ) > 4095 || val==4095)
     {
         return 4095;
     }
@@ -201,7 +201,7 @@ int main( void )
     ADC_Function_Init();
     printf( "CalibrattionValue1:%d\n", Calibrattion_Val1 );
     printf( "CalibrattionValue2:%d\n", Calibrattion_Val2 );
-    TIM2_PWM_In( 600, 48000 - 1, 300 );
+    TIM2_PWM_Init( 600, 48000 - 1, 300 );
     while( 1 )
     {
         while( !ADC_GetFlagStatus( ADC1, ADC_FLAG_JEOC ) ) {/*printf("wait\r\n");*/};

@@ -12,12 +12,15 @@
 #ifdef __cplusplus
  extern "C" {
 #endif 
+#ifndef __SW_UDISK_H
+#define __SW_UDISK_H
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdint.h"
 
 /******************************************************************************/
-/* BulkOnly Mass Storage Class requst */
+/* BulkOnly Mass Storage Class request */
 #define CMD_UDISK_RESET                 0xFF
 #define CMD_UDISK_GET_MAX_LUN           0xFE
 
@@ -150,4 +153,6 @@ extern void UDISK_Down_OnePack( uint8_t *pbuf, uint16_t packlen );
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

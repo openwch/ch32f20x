@@ -287,7 +287,7 @@ uint8_t *USBD_GetStringDescriptor(uint16_t Length)
 {
   uint8_t wValue0 = pInformation->USBwValue0;
 	
-  if (wValue0 > 4)
+  if (wValue0 > 3)
   {
     return NULL;
   }
@@ -329,7 +329,7 @@ RESULT USBD_Get_Interface_Setting(uint8_t Interface, uint8_t AlternateSetting)
  *
  * @param   Length
  *
- * @return  Inecoding structure base address.
+ * @return  LineCoding structure base address.
  */
 uint8_t *USB_CDC_GetLineCoding( uint16_t Length )
 {
@@ -348,7 +348,7 @@ uint8_t *USB_CDC_GetLineCoding( uint16_t Length )
  *
  * @param   Length
  *
- * @return  Inecoding structure base address.
+ * @return  LineCoding structure base address.
  */
 uint8_t *USB_CDC_SetLineCoding( uint16_t Length )
 {
@@ -435,5 +435,9 @@ RESULT USBD_NoData_Setup(uint8_t RequestNo)
       return USB_UNSUPPORT;
     }    
   }             
+  else
+  {
+    return USB_UNSUPPORT;
+  }
   return USB_SUCCESS;
 }

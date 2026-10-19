@@ -1,10 +1,10 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
+ * File Name          : peripheral_main.c
  * Author             : WCH
  * Version            : V1.1
  * Date               : 2020/08/06
- * Description        : The main function and task system of peripherals 
- *                      should be initialized by the main function and task system
+ * Description        : Peripheral slave application main function and task system 
+ *                      initialization
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * Attention: This software (modified or not) and binary are used for 

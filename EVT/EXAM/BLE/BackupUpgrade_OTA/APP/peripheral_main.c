@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
+ * File Name          : peripheral_main.c
  * Author             : WCH
  * Version            : V1.1
  * Date               : 2019/11/05
@@ -37,7 +37,7 @@ const uint8_t MacAddr[6] =
 /*********************************************************************
  * @fn      ReadImageFlag
  *
- * @brief   Read the iMage logo of the current program. If the DataFlash is empty, 
+ * @brief   Read the Image flag of the current program. If the DataFlash is empty, 
  *          it will be ImageA by default
  *
  * @return  none

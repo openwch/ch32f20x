@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/07/28
+* Version            : V1.0.2
+* Date               : 2026/10/15
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -91,7 +91,7 @@ int main( void )
     GPIO_Init( GPIOE, &GPIO_InitStructure );
 
     USART_Printf_Init( 115200 );
-    printf( "SystemClk:%d\r\n", SystemCoreClock );
+    printf( "SystemClk:%u\r\n", SystemCoreClock );
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     printf( "Sleep Mode Test\r\n" );
@@ -123,7 +123,6 @@ void EXTI0_IRQHandler( void )
 {
     if( EXTI_GetITStatus( EXTI_Line0 ) != RESET )
     {
-        printf( "EXTI0 Wake_up\r\n" );
         EXTI_ClearITPendingBit( EXTI_Line0 );   /* Clear Flag */
     }
 }

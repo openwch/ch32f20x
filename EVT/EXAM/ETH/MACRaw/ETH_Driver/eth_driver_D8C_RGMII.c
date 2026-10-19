@@ -410,11 +410,7 @@ void ETH_Configuration( uint8_t *macAddr )
     ETH_InitStructure.ETH_Watchdog = ETH_Watchdog_Enable;
     ETH_InitStructure.ETH_Jabber = ETH_Jabber_Enable;
     ETH_InitStructure.ETH_InterFrameGap = ETH_InterFrameGap_96Bit;
-#if HARDWARE_CHECKSUM_CONFIG
-    ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Enable;
-#else
     ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Disable;
-#endif
     ETH_InitStructure.ETH_AutomaticPadCRCStrip = ETH_AutomaticPadCRCStrip_Disable;
     ETH_InitStructure.ETH_LoopbackMode = ETH_LoopbackMode_Disable;
 

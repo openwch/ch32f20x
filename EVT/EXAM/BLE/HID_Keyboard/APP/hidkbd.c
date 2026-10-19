@@ -99,9 +99,9 @@ static uint8_t hidEmuTaskId = INVALID_TASK_ID;
 static uint8_t scanRspData[] = {
     0x05, // length of this data
     GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
-    LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL), // 100ms
+    LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL), // 10ms
     HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
-    LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 1s
+    LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 10ms
     HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
 
     // service UUIDs
@@ -144,7 +144,7 @@ static uint8_t advertData[] = {
     'r',
     'o',
     'a',
-    'd',  // connection interval range
+    'd'
 };
 
 // Device name attribute value
@@ -191,14 +191,14 @@ static hidDevCB_t hidEmuHidCBs = {
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
- *          notificaiton ... ).
+ *          notification ... ).
  *
  * @param   task_id - the ID assigned by TMOS.  This ID should be
  *                    used to send messages and set timers.
  *
  * @return  none
  */
-void HidEmu_Init()
+void HidEmu_Init(void)
 {
     hidEmuTaskId = TMOS_ProcessEventRegister(HidEmu_ProcessEvent);
 
@@ -474,7 +474,7 @@ static uint8_t hidEmuRcvReport(uint8_t len, uint8_t *pData)
  * @param   type - HID report type.
  * @param   uuid - attribute uuid.
  * @param   oper - operation:  read, write, etc.
- * @param   len - Length of report.
+ * @param   pLen - Length of report.
  * @param   pData - Report data.
  *
  * @return  GATT status code.
@@ -521,7 +521,7 @@ static uint8_t hidEmuRptCB(uint8_t id, uint8_t type, uint16_t uuid,
  *
  * @param   evt - event ID.
  *
- * @return  HID response code.
+ * @return  none
  */
 static void hidEmuEvtCB(uint8_t evt)
 {

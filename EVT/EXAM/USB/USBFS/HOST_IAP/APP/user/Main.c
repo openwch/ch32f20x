@@ -12,9 +12,9 @@
 
 /*
  *@Note
-   The matching APP code has modified.‘Options for target’-‘Target’-
-  ‘Read/Only Memory Areas’-‘on-chip’IROM1 of the region， change Start be‘0x805000’，
-    size is 0xB000，The rest remains unchanged. To be used as a companion APP for IAP. The generated 
+   The matching APP code has modified.'Options for target'-'Target'-
+  'Read/Only Memory Areas'-'on-chip'IROM1 of the region, change Start be'0x805000',
+    size is 0xB000,The rest remains unchanged. To be used as a companion APP for IAP. The generated 
    Hex file needs to be converted into a bin file,You can use the HexToBin.exe tool under the HOST_IAP 
    folder and modify the file name to APP.bin.
 */

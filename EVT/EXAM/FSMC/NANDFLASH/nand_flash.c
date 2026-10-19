@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : nand_flash.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/06/06
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : This file contains the headers of the NANDFLASH.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -25,10 +25,10 @@ u32 ReadEccData[4];
  */
 u8 NAND_Init( void )
 {
-    FSMC_NANDInitTypeDef  FSMC_NANDInitStructure;
-    FSMC_NAND_PCCARDTimingInitTypeDef  ComSpaceTiming;
-    FSMC_NAND_PCCARDTimingInitTypeDef  AttSpaceTiming;
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    FSMC_NANDInitTypeDef  FSMC_NANDInitStructure = {0};
+    FSMC_NAND_PCCARDTimingInitTypeDef  ComSpaceTiming = {0};
+    FSMC_NAND_PCCARDTimingInitTypeDef  AttSpaceTiming = {0};
+    GPIO_InitTypeDef  GPIO_InitStructure = {0};
 
     RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE );
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_FSMC, ENABLE );
@@ -66,29 +66,26 @@ u8 NAND_Init( void )
     FSMC_NANDInitStructure.FSMC_TARSetupTime = 1;
     FSMC_NANDInitStructure.FSMC_CommonSpaceTimingStruct = &ComSpaceTiming;
     FSMC_NANDInitStructure.FSMC_AttributeSpaceTimingStruct = &AttSpaceTiming;
-    FSMC_NANDInit( &FSMC_NANDInitStructure );
+    FSMC_NANDInit(&FSMC_NANDInitStructure);
 
-    FSMC_NANDCmd( FSMC_Bank2_NAND, ENABLE );
+    FSMC_NANDCmd(FSMC_Bank2_NAND, ENABLE);
 
     NAND_Reset();
-    Delay_Ms( 100 );
-    nand_dev.id = NAND_ReadID();
+    Delay_Ms(100);
+    nand_dev.id=NAND_ReadID();
 
-    printf( "id:%08x\n", nand_dev.id );
-		if(nand_dev.id==W29N01HV)
-    {
-        nand_dev.page_totalsize = 2112;
-        nand_dev.page_mainsize = 2048;
-        nand_dev.page_sparesize = 64;
-        nand_dev.block_pagenum = 64;
-        nand_dev.plane_blocknum = 1024;
-        nand_dev.block_totalnum = 1024;
+    printf("id:%08x\n", nand_dev.id);
+
+    if(nand_dev.id==W29N01HV){
+        nand_dev.page_totalsize=2112;
+        nand_dev.page_mainsize=2048;
+        nand_dev.page_sparesize=64;
+        nand_dev.block_pagenum=64;
+        nand_dev.plane_blocknum=1024;
+        nand_dev.block_totalnum=1024;
 
     }
-    else
-    {
-        return 1;
-    }
+    else return 1;
 
     return 0;
 }
@@ -104,15 +101,15 @@ u32 NAND_ReadID( void )
 {
     u8 deviceid[5];
     u32 id;
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_READID;
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_READID;
     *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = 0X00;
 
-    /* First 5 bytes: 0xEC ,0xF1, 0x00 ,0x95, 0x42 */
-    deviceid[0] = *( vu8 * )NAND_ADDRESS;
-    deviceid[1] = *( vu8 * )NAND_ADDRESS;
-    deviceid[2] = *( vu8 * )NAND_ADDRESS;
-    deviceid[3] = *( vu8 * )NAND_ADDRESS;
-    deviceid[4] = *( vu8 * )NAND_ADDRESS;
+    /* First 5 bytes: 0xEF ,0xF1, 0x00 ,0x95, 0x00 */
+    deviceid[0]=*(vu8*)NAND_ADDRESS;
+    deviceid[1]=*(vu8*)NAND_ADDRESS;
+    deviceid[2]=*(vu8*)NAND_ADDRESS;
+    deviceid[3]=*(vu8*)NAND_ADDRESS;
+    deviceid[4]=*(vu8*)NAND_ADDRESS;
 
     id = ( ( u32 )deviceid[1] ) << 24 | ( ( u32 )deviceid[2] ) << 16 | ( ( u32 )deviceid[3] ) << 8 | deviceid[4];
     return id;
@@ -128,13 +125,44 @@ u32 NAND_ReadID( void )
  *            bit6 - 0-Busy 1-Ready
  *            bit7 - 0-Protected 1-Not Protected
  */
-u8 NAND_ReadStatus( void )
+u8 NAND_ReadStatus(void)
 {
-    vu8 data = 0;
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_READSTA;
-    data++; data++; data++; data++; data++;
-    data = *( vu8 * )NAND_ADDRESS;
+    vu8 data=0;
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_READSTA;
+    data++;data++;data++;data++;data++;
+    data=*(vu8*)NAND_ADDRESS;
     return data;
+}
+
+/**********************************************************************
+* @fn      FSMC_NAND_GetStatus
+* @brief   Get the NAND operation status
+* 
+* @return  New status of the NAND operation. This parameter can be:
+*          - NAND_TIMEOUT_ERROR: when the previous operation generate
+*          a Timeout error
+*          - NAND_READY: when memory is ready for the next operation
+*/
+u32 FSMC_NAND_GetStatus(void)
+{
+  u32 timeout = 0x1000000, status = NSTA_READY;
+
+  status = NAND_ReadStatus();
+
+  /* Wait for a NAND operation to complete or a TIMEOUT to occur */
+  while ((status != NSTA_READY) &&( timeout != 0x00))
+  {
+     status = NAND_ReadStatus();
+     timeout --;
+  }
+
+  if(timeout == 0x00)
+  {
+    status =  NSTA_TIMEOUT;
+  }
+
+  /* Return the operation status */
+  return (status);
 }
 
 /*********************************************************************
@@ -151,16 +179,10 @@ u8 NAND_WaitForReady( void )
     vu32 time = 0;
     while( 1 )
     {
-        status = NAND_ReadStatus();
-        if( status & NSTA_READY )
-        {
-            break;
-        }
+        status=NAND_ReadStatus();
+        if(status&NSTA_READY)break;
         time++;
-        if( time >= 0X1FFFF )
-        {
-            return NSTA_TIMEOUT;
-        }
+        if(time>=0X1FFFF)return NSTA_TIMEOUT;
     }
     return NSTA_READY;
 }
@@ -173,40 +195,11 @@ u8 NAND_WaitForReady( void )
  * @return  0 - success
  *          1 - ERR
  */
-u8 NAND_Reset( void )
+u8 NAND_Reset(void)
 {
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_RESET;
-    if( NAND_WaitForReady() == NSTA_READY )
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
-}
-
-/*********************************************************************
- * @fn      NAND_WaitRB
- *
- * @brief   Wait RB signal valid
- *
- * @param   rb -
- *            0- Low level active
- *            1- High level active
- *
- * @return  0 - success
- *          1 - ERR
- */
-u8 NAND_WaitRB( vu8 rb )
-{
-    vu16 time = 0;
-    while( time < 10000 )
-    {
-        time++;
-        GPIO_ReadInputDataBit( GPIOD,  GPIO_Pin_6 );
-    }
-    return 1;
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_RESET;
+    if(NAND_WaitForReady()==NSTA_READY)return 0;
+    else return 1;
 }
 
 /*********************************************************************
@@ -218,12 +211,9 @@ u8 NAND_WaitRB( vu8 rb )
  *
  * @return  none
  */
-void NAND_Delay( vu32 i )
+void NAND_Delay(vu32 i)
 {
-    while( i > 0 )
-    {
-        i--;
-    }
+    while(i>0)i--;
 }
 
 /*********************************************************************
@@ -251,24 +241,15 @@ u8 NAND_ReadPage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToRead )
     *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )PageNum;
     *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )( PageNum >> 8 );
 
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_AREA_TRUE1;
-
-    Delay_Ms( 10 );
-    FSMC_NANDECCCmd( FSMC_Bank2_NAND, DISABLE );
-    FSMC_NANDECCCmd( FSMC_Bank2_NAND, ENABLE );
-
-    for( i = 0; i < NumByteToRead; i++ )
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_AREA_TRUE1;
+    Delay_Ms(10);
+    FSMC_NANDECCCmd(FSMC_Bank2_NAND, DISABLE);
+    for(i=0; i<NumByteToRead; i++)
     {
-        *( vu8 * )pBuffer++ = *( vu8 * )NAND_ADDRESS;
+        *(vu8*)pBuffer++ = *(vu8*)NAND_ADDRESS;
     }
-
-    while( FSMC_GetFlagStatus( FSMC_Bank2_NAND, FSMC_FLAG_FEMPT ) == RESET );
-    printf( "FMC_Bank2_3->ECCR3=%08x\r\n", FSMC_GetECC( FSMC_Bank2_NAND ) );
-    FSMC_NANDECCCmd( FSMC_Bank2_NAND, DISABLE );
-    if( NAND_WaitForReady() != NSTA_READY )
-    {
-        errsta = NSTA_ERROR;
-    }
+    while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
+    if(NAND_WaitForReady()!=NSTA_READY)errsta=NSTA_ERROR;
 
     return errsta;
 }
@@ -289,7 +270,7 @@ u8 NAND_ReadPage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToRead )
 
 u8 NAND_ReadPageWithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
 {
-    vu16 i=0,j=0,p=0,k=0;
+    vu16 i=0,j=0,k=0,p=0;
     u8 n=0;
     u8 errsta=0;
     u32 Eccdata,data;
@@ -348,7 +329,7 @@ u8 NAND_ReadPageWithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
            Delay_Ms(10);
            for (p= 0;  p < 4; p++)
            {
-               SpareBuf[p] = *(vu8*)(NAND_ADDRESS+2*i);
+               SpareBuf[p] = *(vu8*)(NAND_ADDRESS+2*k);
 
         }
            Eccdata=SpareBuf[0]+(SpareBuf[1]<<8)+(SpareBuf[2]<<16)+(SpareBuf[3]<<24);
@@ -382,33 +363,27 @@ u8 NAND_ReadPageWithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
  * @return  0 - success
  *          1 - ERR
  */
-u8 NAND_WritePage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToWrite )
+
+u8 NAND_WritePage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
 {
-    vu16 i = 0;
+    int j=0;
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE0;
+    *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)ColNum;
+    *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(ColNum>>8);
+    *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)PageNum;
+    *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(PageNum>>8);
 
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_WRITE0;
-    *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )ColNum;
-    *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )( ColNum >> 8 );
-    *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )PageNum;
-    *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )( PageNum >> 8 );
+    NAND_Delay(30);
+    FSMC_NANDECCCmd(FSMC_Bank2_NAND, DISABLE);
 
-    NAND_Delay( 30 );
-    FSMC_NANDECCCmd( FSMC_Bank2_NAND, ENABLE );
-
-    for( i = 0; i < NumByteToWrite; i++ )
+    for(j=0;j<NumByteToWrite;j++)
     {
-        *( vu8 * )NAND_ADDRESS = *( vu8 * )pBuffer++;
+        *(vu8*)NAND_ADDRESS=*(vu8*)pBuffer++;
     }
+    while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
 
-    while( FSMC_GetFlagStatus( FSMC_Bank2_NAND, FSMC_FLAG_FEMPT ) == RESET );
-    printf( "FMC_Bank2_3->ECCR3=%08x\r\n", FSMC_GetECC( FSMC_Bank2_NAND ) );
-    FSMC_NANDECCCmd( FSMC_Bank2_NAND, DISABLE );
-
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_WRITE_TURE1;
-    if( NAND_WaitForReady() != NSTA_READY )
-    {
-        return NSTA_ERROR;
-    }
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE_TURE1;
+    if(NAND_WaitForReady()!=NSTA_READY)return NSTA_ERROR;
 
     return 0;
 }
@@ -429,7 +404,7 @@ u8 NAND_WritePage( u32 PageNum, u16 ColNum, u8 *pBuffer, u16 NumByteToWrite )
 
 u8 NAND_WritePagewithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
 {
-    int i=0,j=0,p=0,k=0;
+    int i=0,j=0,k=0,p=0;
     u8 buf[16];
     u8 n=0;
     u16 EccColNum=0;
@@ -488,7 +463,7 @@ u8 NAND_WritePagewithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
         buf[3]=(WriteEccData[k]>>24)&0xFF;
         for(p=0;p<4;p++)
         {
-            *(vu8*)(NAND_ADDRESS+2*i)=buf[p];
+            *(vu8*)(NAND_ADDRESS+2*k)=buf[p];
         }
         while(FSMC_GetFlagStatus(FSMC_Bank2_NAND, FSMC_FLAG_FEMPT)==RESET);
         *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_WRITE_TURE1;
@@ -505,30 +480,22 @@ u8 NAND_WritePagewithEcc(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
  *
  * @brief   Erase NANDFLASH block
  *
- * @param   0 - success
- *          1 - ERR
+ * @param   BlockNum - Block Number
  *
  * @return  none
  */
-u8  NAND_EraseBlock( u32 BlockNum )
+u8  NAND_EraseBlock(u32 BlockNum)
 {
-    if( nand_dev.id == W29N01HV )
-    {
-        BlockNum <<= 6;
-    }
+    if(nand_dev.id==W29N01HV)BlockNum<<=6;
 
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_ERASE0;
-    *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )BlockNum;
-    *( vu8 * )( NAND_ADDRESS | NAND_ADDR ) = ( u8 )( BlockNum >> 8 );
-    *( vu8 * )( NAND_ADDRESS | NAND_CMD ) = NAND_ERASE1;
-    if( NAND_WaitForReady() != NSTA_READY )
-    {
-        return NSTA_ERROR;
-    }
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_ERASE0;
+    *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)BlockNum;
+    *(vu8*)(NAND_ADDRESS|NAND_ADDR)=(u8)(BlockNum>>8);
+    *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_ERASE1;
+    if(NAND_WaitForReady()!=NSTA_READY)return NSTA_ERROR;
 
     return 0;
 }
-
 
 /*********************************************************************
  * @fn      CheckEcc
@@ -542,8 +509,8 @@ u8  NAND_EraseBlock( u32 BlockNum )
 
 u32 CheckEcc( u32  data)
 {
-  u32 temp;
-  int i,p=0;
+  u32 temp,p=0;
+  int i;
   u8 eccdata;
   u32 location=0;
   for(p=0;p<4;p++)
@@ -564,8 +531,9 @@ u32 CheckEcc( u32  data)
           else {
               return 0;
           }
-          printf("Error location: %d\r\n",location);
+
       }
+    printf("Error location: %d\r\n",location);
   }
   return location;
 }

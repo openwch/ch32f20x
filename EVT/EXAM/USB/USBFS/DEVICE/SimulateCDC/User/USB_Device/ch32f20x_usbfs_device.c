@@ -381,10 +381,10 @@ void USBFS_IRQHandler( void )
 
                     /* end-point 1 data out interrupt */
                     case USBFS_UIS_TOKEN_OUT | DEF_UEP2:
-                        /* USB端点2下传 */
+                        /* USBEndpoint 2 download */
                         USBFSD->UEP2_RX_CTRL ^= USBFS_UEP_R_TOG;
 
-                         /* 记录相关信息,并切换DMA地址 */
+                         /* Record the related information and switch the DMA address */
                         Uart.Tx_PackLen[ Uart.Tx_LoadNum ] = USBFSD->RX_LEN;
                         Uart.Tx_LoadNum++;
                         USBFSD->UEP2_DMA = (uint32_t)(uint8_t *)&UART2_Tx_Buf[ ( Uart.Tx_LoadNum * DEF_USB_FS_PACK_LEN ) ];
@@ -395,7 +395,7 @@ void USBFS_IRQHandler( void )
                         }
                         Uart.Tx_RemainNum++;
 
-                       /* 判断是否需要暂停下传 */
+                       /* Check whether the download must be paused */
                         if( Uart.Tx_RemainNum >= ( DEF_UARTx_TX_BUF_NUM_MAX - 2 ) )
                         {
                             USBFSD->UEP2_RX_CTRL &= ~USBFS_UEP_R_RES_MASK;
@@ -561,6 +561,10 @@ void USBFS_IRQHandler( void )
                                 {
                                     /* clear usb sleep status, device not prepare to sleep */
                                     USBFS_DevSleepStatus &= ~0x01;
+                                }
+                                else
+                                {
+                                    errflag = 0xFF;
                                 }
                             }
                             else if( ( USBFS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )

@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/10/28
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -57,11 +57,10 @@ void  ADC_Function_Init( void )
     ADC_InitStructure.ADC_Pga = ADC_Pga_1;
 
     ADC_Init( ADC1, &ADC_InitStructure );
-
+    ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_None);
     ADC_InjectedSequencerLengthConfig( ADC1, 1 );
     ADC_InjectedChannelConfig( ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5 );
 
-    ADC_DMACmd( ADC1, ENABLE );
     ADC_Cmd( ADC1, ENABLE );
 
     ADC_BufferCmd( ADC1, DISABLE ); //disable buffer
@@ -73,6 +72,7 @@ void  ADC_Function_Init( void )
 
 
     ADC_Init( ADC2, &ADC_InitStructure );
+		ADC_ExternalTrigInjectedConvConfig(ADC2, ADC_ExternalTrigInjecConv_None);
     ADC_InjectedSequencerLengthConfig( ADC2, 1 );
     ADC_InjectedChannelConfig( ADC2, ADC_Channel_3, 1, ADC_SampleTime_239Cycles5 );
 
@@ -121,11 +121,11 @@ u16 Get_ConversionVal1( s16 val )
  */
 u16 Get_ConversionVal2( s16 val )
 {
-    if( ( val + Calibrattion_Val2 ) < 0 )
+    if( ( val + Calibrattion_Val2 ) < 0 || val==0 )
     {
         return 0;
     }
-    if( ( Calibrattion_Val2 + val ) > 4095 )
+    if( ( Calibrattion_Val2 + val ) > 4095 || val==4095 )
     {
         return 4095;
     }
@@ -156,8 +156,7 @@ int main( void )
         Delay_Ms( 100 );
 
         ADC_SoftwareStartInjectedConvCmd( ADC1, DISABLE );
-        Delay_Ms( 100 );
-
+  
         while( !ADC_GetFlagStatus( ADC1, ADC_FLAG_JEOC ) );
         ADC_val1 = ADC_GetInjectedConversionValue( ADC1, ADC_InjectedChannel_1 );
         ADC_val2 = ADC_GetInjectedConversionValue( ADC2, ADC_InjectedChannel_1 );

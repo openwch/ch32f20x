@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : sdio.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2024/03/15
+* Version            : V1.0.3
+* Date               : 2026/10/14
 * Description        : This file contains the headers of the SDIO.
 *********************************************************************************
 * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -13,9 +13,9 @@
 #include "string.h"
 
 
-SDIO_InitTypeDef SDIO_InitStructure;
-SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
-SDIO_DataInitTypeDef SDIO_DataInitStructure;
+SDIO_InitTypeDef SDIO_InitStructure={0};
+SDIO_CmdInitTypeDef SDIO_CmdInitStructure={0};
+SDIO_DataInitTypeDef SDIO_DataInitStructure={0};
 
 SD_Error CmdError( void );
 SD_Error CmdResp7Error( void );
@@ -200,7 +200,7 @@ SD_Error eMMC_PowerON( void )
         errorstatus = SD_INVALID_VOLTRANGE;
         return errorstatus;
     }
-    CardType = SDIO_MULTIMEDIA_CARD;
+    CardType = SDIO_HIGH_CAPACITY_MMC_CARD;
     return( errorstatus );
 }
 
@@ -447,8 +447,8 @@ SD_Error eMMC_GetCardInfo(eMMC_CardInfo *eMMC, u32 *CSD_Tab, u32 *CID_Tab, u16 R
     tmp = (u8)((CSD_Tab[2] & 0x0000FF00) >> 8);
     eMMC->eMMC_csd.DeviceSizeMul |= (tmp & 0x80) >> 7;
     eMMC->CardBlockSize = 1 << (eMMC->eMMC_csd.RdBlockLen);
-    eMMC->SectorNums = (u32)(eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[3] << 24) | (u32)(eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[2] << 16) |
-            (u32)(eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[1] << 8) | (u32)(eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[0]);
+    eMMC->SectorNums = ((u32)eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[3] << 24) | ((u32)eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[2] << 16) |
+           ( (u32)eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[1] << 8) | ((u32)eMMC->eMMC_ExtCsd.EXT_CSD.SEC_COUNT[0]);
     eMMC->eMMC_csd.EraseGrSize = (tmp & 0x40) >> 6;
     eMMC->eMMC_csd.EraseGrMul = (tmp & 0x3F) << 1;
 
@@ -688,6 +688,11 @@ SD_Error SD_ReadBlock( u8 *buf, long long addr, u16 blksize )
     {
         return SD_LOCK_UNLOCK_FAILED;
     }
+    if( CardType == SDIO_HIGH_CAPACITY_MMC_CARD )
+    {
+        blksize = 512;
+        addr >>= 9;
+    }
     if( ( blksize > 0 ) && ( blksize <= 2048 ) && ( ( blksize & ( blksize - 1 ) ) == 0 ) )
     {
         power = convert_from_bytes_to_power_of_two( blksize );
@@ -796,7 +801,6 @@ SD_Error SD_ReadBlock( u8 *buf, long long addr, u16 blksize )
             errorstatus = TransferError;
         }
     }
-//			printf("SDIO->=%x\r\n",SDIO->STA);
     return errorstatus;
 }
 
@@ -825,7 +829,7 @@ SD_Error SD_ReadMultiBlocks( u8 *buf, long long addr, u16 blksize, u32 nblks )
         SD_ProcessIRQSrc();
     }
     SDIO->DCTRL = 0x0;
-    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD )
+    if( CardType == SDIO_HIGH_CAPACITY_MMC_CARD )
     {
         blksize = 512;
         addr >>= 9;
@@ -962,7 +966,7 @@ SD_Error SD_ReadMultiBlocks( u8 *buf, long long addr, u16 blksize, u32 nblks )
             SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 5 ) | ( 1 << 9 );
             SDIO->DCTRL |= 1 << 3;
             SD_BUSY=1;
-            while( ( ( DMA2->INTFR & 0X4000 ) == RESET )&&( TransferEnd == 0 ) && ( TransferError == SD_OK ) && timeout )
+            while( ( ( DMA2->INTFR & 0X2000 ) == RESET )&&( TransferEnd == 0 ) && ( TransferError == SD_OK ) && timeout )
             {
                 timeout--;
             }
@@ -1019,7 +1023,7 @@ SD_Error SD_WriteBlock( u8 *buf, long long addr,  u16 blksize )
     {
         return SD_LOCK_UNLOCK_FAILED;
     }
-    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD )
+    if( CardType == SDIO_HIGH_CAPACITY_MMC_CARD )
     {
         blksize = 512;
         addr >>= 9;
@@ -1182,7 +1186,6 @@ SD_Error SD_WriteBlock( u8 *buf, long long addr,  u16 blksize )
         }
         if( timeout == 0 )
         {
-            eMMC_Init();
             return SD_DATA_TIMEOUT;
         }
         timeout = SDIO_DATATIMEOUT;
@@ -1205,7 +1208,6 @@ SD_Error SD_WriteBlock( u8 *buf, long long addr,  u16 blksize )
     {
         errorstatus = IsCardProgramming( &cardstate );
     }
-//		printf("SDIO->=%x\r\n",SDIO->STA);
     return errorstatus;
 }
 
@@ -1247,7 +1249,7 @@ SD_Error SD_WriteMultiBlocks( u8 *buf, long long addr, u16 blksize, u32 nblks )
     {
         return SD_LOCK_UNLOCK_FAILED;
     }
-    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD )
+    if( CardType == SDIO_HIGH_CAPACITY_MMC_CARD )
     {
         blksize = 512;
         addr >>= 9;
@@ -1464,6 +1466,7 @@ SD_Error SD_WriteMultiBlocks( u8 *buf, long long addr, u16 blksize, u32 nblks )
     }
     return errorstatus;
 }
+
 
 /*********************************************************************
  * @fn      SDIO_IRQHandler
@@ -1896,7 +1899,7 @@ SD_Error FindSCR( u16 rca, u32 *pscr )
         return errorstatus;
     }
 
-    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) RCA << 16;
+    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) rca << 16;
     SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;
     SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
     SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
@@ -2057,7 +2060,6 @@ u8 SD_ReadDisk( u8 *buf, u32 sector, u8 cnt )
         if( cnt == 1 )
         {
             sta = SD_ReadBlock( buf, lsector, 512 );
-					printf("Rsta=%d\r\n",sta);
         }
         else
         {
@@ -2097,8 +2099,6 @@ u8 SD_WriteDisk( u8 *buf, u32 sector, u8 cnt )
         if( cnt == 1 )
         {
             sta = SD_WriteBlock( buf, lsector, 512 );
-					printf("Wsta=%d\r\n",sta);
-			
         }
         else
         {

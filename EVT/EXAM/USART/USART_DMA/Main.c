@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2026/10/16
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -155,7 +155,7 @@ void DMA_INIT( void )
     DMA_InitStructure.DMA_PeripheralBaseAddr = ( u32 )( &USART2->DATAR );
     DMA_InitStructure.DMA_MemoryBaseAddr = ( u32 )RxBuffer1;
     DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-    DMA_InitStructure.DMA_BufferSize = TxSize2;
+    DMA_InitStructure.DMA_BufferSize = TxSize1;
     DMA_Init( DMA1_Channel6, &DMA_InitStructure );
 
     DMA_DeInit( DMA1_Channel2 );
@@ -169,7 +169,7 @@ void DMA_INIT( void )
     DMA_InitStructure.DMA_PeripheralBaseAddr = ( u32 )( &USART3->DATAR );
     DMA_InitStructure.DMA_MemoryBaseAddr = ( u32 )RxBuffer2;
     DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-    DMA_InitStructure.DMA_BufferSize = TxSize1;
+    DMA_InitStructure.DMA_BufferSize = TxSize2;
     DMA_Init( DMA1_Channel3, &DMA_InitStructure );
 }
 

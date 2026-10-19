@@ -71,7 +71,7 @@ static void uninetflood_recv(lwns_controller_ptr ptr, const lwns_addr_t *sender,
  *
  * @brief   lwns uninetflood发送完成回调函数
  *
- * @param   ptr     -   本次发送完成的可靠单播控制结构体指针.
+ * @param   ptr     -   本次发送完成的单播网络泛洪控制结构体指针.
  *
  * @return  None.
  */

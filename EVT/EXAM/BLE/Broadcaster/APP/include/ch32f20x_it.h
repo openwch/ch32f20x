@@ -9,8 +9,8 @@
  * Attention: This software (modified or not) and binary are used for 
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
-#ifndef __CH32F20xIT_H
-#define __CH32F20xIT_H
+#ifndef __CH32F20x_IT_H
+#define __CH32F20x_IT_H
 
 #include "ch32f20x.h"
 
@@ -25,6 +25,6 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 
 
-#endif /* __CH32F20xIT_H */
+#endif /* __CH32F20x_IT_H */
 
 

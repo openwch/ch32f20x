@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : sdio.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/08/08
+* Version            : V1.0.1
+* Date               : 2026/10/16
 * Description        : This file contains the headers of the SDIO.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -13,9 +13,9 @@
 #include "string.h"
 
 
-SDIO_InitTypeDef SDIO_InitStructure;
-SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
-SDIO_DataInitTypeDef SDIO_DataInitStructure;
+SDIO_InitTypeDef SDIO_InitStructure={0};
+SDIO_CmdInitTypeDef SDIO_CmdInitStructure={0};
+SDIO_DataInitTypeDef SDIO_DataInitStructure={0};
 
 SD_Error CmdError( void );
 SD_Error CmdResp7Error( void );
@@ -29,7 +29,7 @@ SD_Error FindSCR( u16 rca, u32 *pscr );
 u8 convert_from_bytes_to_power_of_two( u16 NumberOfBytes );
 
 
-static u8 CardType = SDIO_STD_CAPACITY_SD_CARD_V1_1;
+static vu8 CardType = SDIO_STD_CAPACITY_SD_CARD_V1_1;
 static u32 CSD_Tab[4], CID_Tab[4], RCA = 0;
 static u8 DeviceMode = SD_DMA_MODE;
 static u8 StopCondition = 0;
@@ -48,8 +48,8 @@ __attribute__( ( aligned( 4 ) ) ) u8 SDIO_DATA_BUFFER[512];
  */
 SD_Error SD_Init( void )
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure= {0};
+    GPIO_InitTypeDef  GPIO_InitStructure= {0};
 
     u8 clkdiv = 0;
     SD_Error errorstatus = SD_OK;
@@ -280,7 +280,7 @@ SD_Error SD_PowerON( void )
 /*********************************************************************
  * @fn      SD_PowerOFF
  *
- * @brief   SD care Power off
+ * @brief   SD card Power off
  *
  * @return  SD_Error - ERR code
  */
@@ -293,7 +293,7 @@ SD_Error SD_PowerOFF( void )
 /*********************************************************************
  * @fn      SD_InitializeCards
  *
- * @brief   Init SD care
+ * @brief   Init SD card
  *
  * @return  SD_Error - ERR code
  */
@@ -324,7 +324,7 @@ SD_Error SD_InitializeCards( void )
         CID_Tab[2] = SDIO->RESP3;
         CID_Tab[3] = SDIO->RESP4;
     }
-    if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_SECURE_DIGITAL_IO_COMBO_CARD == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) ) //判断卡类型
+    if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_SECURE_DIGITAL_IO_COMBO_CARD == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) )
     {
         SDIO_CmdInitStructure.SDIO_Argument = 0x00;
         SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_REL_ADDR;
@@ -411,7 +411,7 @@ SD_Error SD_GetCardInfo( SD_CardInfo *cardinfo )
     cardinfo->SD_csd.RdBlockMisalign = ( tmp & 0x20 ) >> 5;
     cardinfo->SD_csd.DSRImpl = ( tmp & 0x10 ) >> 4;
     cardinfo->SD_csd.Reserved2 = 0;
-    if( ( CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1 ) || ( CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0 ) || ( SDIO_MULTIMEDIA_CARD == CardType ) ) //��׼1.1/2.0��/MMC��
+    if( ( CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1 ) || ( CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0 ) || ( SDIO_MULTIMEDIA_CARD == CardType ) ) 
     {
         cardinfo->SD_csd.DeviceSize = ( tmp & 0x03 ) << 10;
         tmp = ( u8 )( CSD_Tab[1] & 0x000000FF );
@@ -534,7 +534,6 @@ SD_Error SD_EnableWideBusOperation( u32 wmode )
             {
                 SDIO->CLKCR &= ~( 3 << 11 );
                 SDIO->CLKCR |= ( u16 )wmode << 11;
-                SDIO->CLKCR |= 0 << 14;
             }
         }
     }
@@ -725,6 +724,7 @@ SD_Error SD_ReadBlock( u8 *buf, long long addr, u16 blksize )
         TransferEnd = 0;
         SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 5 ) | ( 1 << 9 );
         SDIO_DMACmd( ENABLE );
+        DMA_Cmd( DMA2_Channel4, ENABLE );
         while( ( ( DMA2->INTFR & 0X2000 ) == RESET ) && ( TransferEnd == 0 ) && ( TransferError == SD_OK ) && timeout )
         {
             timeout--;
@@ -905,6 +905,7 @@ SD_Error SD_ReadMultiBlocks( u8 *buf, long long addr, u16 blksize, u32 nblks )
             TransferEnd = 0;
             SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 5 ) | ( 1 << 9 );
             SDIO->DCTRL |= 1 << 3;
+            DMA_Cmd( DMA2_Channel4, ENABLE );
             while( ( ( DMA2->INTFR & 0X2000 ) == RESET ) && timeout )
             {
                 timeout--;
@@ -1119,6 +1120,7 @@ SD_Error SD_WriteBlock( u8 *buf, long long addr,  u16 blksize )
         TransferEnd = 0;
         SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 4 ) | ( 1 << 9 );
         SDIO->DCTRL |= 1 << 3;
+        DMA_Cmd( DMA2_Channel4, ENABLE );
         while( ( ( DMA2->INTFR & 0X2000 ) == RESET ) && timeout )
         {
             timeout--;
@@ -1361,6 +1363,7 @@ SD_Error SD_WriteMultiBlocks( u8 *buf, long long addr, u16 blksize, u32 nblks )
             TransferEnd = 0;
             SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 4 ) | ( 1 << 9 );
             SDIO->DCTRL |= 1 << 3;
+            DMA_Cmd( DMA2_Channel4, ENABLE );
             timeout = SDIO_DATATIMEOUT;
             while( ( ( DMA2->INTFR & 0X2000 ) == RESET ) && timeout )
             {
@@ -1512,7 +1515,7 @@ SD_Error CmdError( void )
 SD_Error CmdResp7Error( void )
 {
     SD_Error errorstatus = SD_OK;
-    u32 status;
+    u32 status=0;
     u32 timeout = SDIO_CMD0TIMEOUT;
     while( timeout-- )
     {
@@ -1609,7 +1612,7 @@ SD_Error CmdResp3Error( void )
 SD_Error CmdResp2Error( void )
 {
     SD_Error errorstatus = SD_OK;
-    u32 status;
+    u32 status=0;
     u32 timeout = SDIO_CMD0TIMEOUT;
     while( timeout-- )
     {
@@ -1647,7 +1650,7 @@ SD_Error CmdResp2Error( void )
 SD_Error CmdResp6Error( u8 cmd, u16 *prca )
 {
     SD_Error errorstatus = SD_OK;
-    u32 status;
+    u32 status=0;
     u32 rspr1;
     while( 1 )
     {
@@ -1888,7 +1891,7 @@ SD_Error FindSCR( u16 rca, u32 *pscr )
         return errorstatus;
     }
 
-    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) RCA << 16;
+    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) rca << 16;
     SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;
     SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
     SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
@@ -1970,7 +1973,7 @@ SD_Error FindSCR( u16 rca, u32 *pscr )
  *
  * @param   NumberOfBytes - byte number
  *              
- * @return  SD_Error -  ERR code
+ * @return  Count
  */
 u8 convert_from_bytes_to_power_of_two( u16 NumberOfBytes )
 {
@@ -1991,11 +1994,11 @@ u8 convert_from_bytes_to_power_of_two( u16 NumberOfBytes )
  * @param   mbuf - Storage address
  *             bufsize - data size
  *
- * @return  SD_Error -  ERR code
+ * @return  None
  */
 void SD_DMA_Config( u32 *mbuf, u32 bufsize, u32 DMA_DIR )
 {
-    DMA_InitTypeDef DMA_InitStructure;
+    DMA_InitTypeDef DMA_InitStructure = {0};
 
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA2, ENABLE );
 
@@ -2014,8 +2017,6 @@ void SD_DMA_Config( u32 *mbuf, u32 bufsize, u32 DMA_DIR )
     DMA_InitStructure.DMA_Priority = DMA_Priority_High;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init( DMA2_Channel4, &DMA_InitStructure );
-
-    DMA_Cmd( DMA2_Channel4, DISABLE );
 }
 
 /*********************************************************************

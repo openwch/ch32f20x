@@ -32,7 +32,7 @@
 // Scan duration in (625us)
 #define DEFAULT_SCAN_DURATION            4800
 
-// Discovey mode (limited, general, all)
+// Discovery mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE           DEVDISC_MODE_ALL
 
 // TRUE to use active scan
@@ -65,7 +65,7 @@ uint8_t gStatus;
 // Task ID for internal task/event processing
 static uint8_t ObserverTaskId;
 
-// Number of scan results and scan result index
+// Number of scan results
 static uint8_t ObserverScanRes;
 
 // Scan result list
@@ -100,12 +100,9 @@ static const gapRoleObserverCB_t ObserverRoleCB = {
  *          initialization/setup, table initialization, power up
  *          notification).
  *
- * @param   task_id - the ID assigned by TMOS.  This ID should be
- *                    used to send messages and set timers.
- *
  * @return  none
  */
-void Observer_Init()
+void Observer_Init(void)
 {
     ObserverTaskId = TMOS_ProcessEventRegister(Observer_ProcessEvent);
 
@@ -224,7 +221,7 @@ static void ObserverEventCB(gapRoleEvent_t *pEvent)
             if(pEvent->discCmpl.numDevs > 0)
             {
                 int i, j;
-                // Increment index of current result (with wraparound)
+
                 for(j = 0; j < pEvent->discCmpl.numDevs; j++)
                 {
                     PRINT("Device %d : ", j);

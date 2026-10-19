@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
+ * File Name          : RF_PHY.c
  * Author             : WCH
  * Version            : V1.0
  * Date               : 2020/08/06
@@ -32,7 +32,7 @@ volatile uint8_t tx_end_flag=0;
  */
 __HIGH_CODE
 __NO_INLINE
-void RF_Wait_Tx_End()
+void RF_Wait_Tx_End(void)
 {
     uint32_t i=0;
     while(!tx_end_flag)

@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : ble_uart_service_16bit_char.c
+ * File Name          : ble_uart_service_16bit.c
  * Author             : WCH
  * Version            : V1.1
  * Date               : 2022/01/19
@@ -88,7 +88,7 @@ static uint8_t ble_uart_TxCharProps = GATT_PROP_NOTIFY;
 // Characteristic 2 Value
 static uint8_t ble_uart_TxCharValue = 0;
 
-// Simple Profile Characteristic 2 User Description
+// Characteristic 2 Client Characteristic Configuration
 static gattCharCfg_t ble_uart_TxCCCD[4];
 
 /*********************************************************************
@@ -96,7 +96,7 @@ static gattCharCfg_t ble_uart_TxCCCD[4];
  */
 
 static gattAttribute_t ble_uart_ProfileAttrTbl[] = {
-    // Simple Profile Service
+    // ble_uart Profile Service
     {
         {ATT_BT_UUID_SIZE, primaryServiceUUID}, /* type */
         GATT_PERMIT_READ,                       /* permissions */
@@ -154,7 +154,7 @@ static void ble_uart_HandleConnStatusCB(uint16_t connHandle, uint8_t changeType)
 /*********************************************************************
  * PROFILE CALLBACKS
  */
-// Simple Profile Service Callbacks
+// ble_uart Profile Service Callbacks
 gattServiceCBs_t ble_uart_ProfileCBs = {
     ble_uart_ReadAttrCB,  // Read callback function pointer
     ble_uart_WriteAttrCB, // Write callback function pointer
@@ -166,9 +166,9 @@ gattServiceCBs_t ble_uart_ProfileCBs = {
  */
 
 /*********************************************************************
- * @fn      ble_uart_AddService
+ * @fn      ble_uart_add_service
  *
- * @brief   Initializes the Simple Profile service by registering
+ * @brief   Initializes the ble_uart Profile service by registering
  *          GATT attributes with the GATT server.
  *
  * @param   services - services to add. This is a bit map and can
@@ -245,7 +245,7 @@ static bStatus_t ble_uart_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr
 }
 
 /*********************************************************************
- * @fn      simpleProfile_WriteAttrCB
+ * @fn      ble_uart_WriteAttrCB
  *
  * @brief   Validate attribute data prior to a write operation
  *
@@ -295,7 +295,7 @@ static bStatus_t ble_uart_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAtt
             if(ble_uart_AppCBs)
             {
                 ble_uart_evt_t evt;
-                evt.type = BLE_UART_EVT_BLE_DATA_RECIEVED;
+                evt.type = BLE_UART_EVT_BLE_DATA_RECEIVED;
                 evt.data.length = (uint16_t)len;
                 evt.data.p_data = pValue;
                 ble_uart_AppCBs(connHandle, &evt);
@@ -309,7 +309,7 @@ static bStatus_t ble_uart_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAtt
     //        {
     //            if(ble_uart_AppCBs) {
     //                ble_uart_evt_t evt;
-    //                evt.type = BLE_UART_EVT_BLE_DATA_RECIEVED;
+    //                evt.type = BLE_UART_EVT_BLE_DATA_RECEIVED;
     //                evt.data.length = (uint16_t)len;
     //                evt.data.p_data = pValue;
     //                ble_uart_AppCBs(connHandle,&evt);
@@ -320,9 +320,9 @@ static bStatus_t ble_uart_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAtt
 }
 
 /*********************************************************************
- * @fn          simpleProfile_HandleConnStatusCB
+ * @fn          ble_uart_HandleConnStatusCB
  *
- * @brief       Simple Profile link status change handler function.
+ * @brief       ble_uart Profile link status change handler function.
  *
  * @param       connHandle - connection handle
  * @param       changeType - type of change
@@ -351,10 +351,9 @@ uint8_t ble_uart_notify_is_ready(uint16_t connHandle)
     return (GATT_CLIENT_CFG_NOTIFY == GATTServApp_ReadCharCfg(connHandle, ble_uart_TxCCCD));
 }
 /*********************************************************************
- * @fn          BloodPressure_IMeasNotify
+ * @fn          ble_uart_notify
  *
- * @brief       Send a notification containing a bloodPressure
- *              measurement.
+ * @brief       Send a notification containing ble uart data.
  *
  * @param       connHandle - connection handle
  * @param       pNoti - pointer to notification structure
@@ -371,7 +370,7 @@ bStatus_t ble_uart_notify(uint16_t connHandle, attHandleValueNoti_t *pNoti, uint
         // Set the handle
         pNoti->handle = ble_uart_ProfileAttrTbl[RAWPASS_TX_VALUE_HANDLE].handle;
 
-        // Send the Indication
+        // Send the notification
         return GATT_Notification(connHandle, pNoti, FALSE);
     }
     return bleIncorrectMode;

@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : main.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/10/28
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -22,7 +22,8 @@
 
 /* Global Variable */
 vs16 Calibrattion_Val = 0;
-
+vu8  IntResponse=0 ;
+vu16 ADC_val;
 /*********************************************************************
  * @fn      ADC_Function_Init
  *
@@ -54,7 +55,7 @@ void ADC_Function_Init( void )
     ADC_Init( ADC1, &ADC_InitStructure );
 
     ADC_InjectedSequencerLengthConfig( ADC1, 1 );
-	ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_Ext_IT15_TIM8_CC4);
+	  ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_Ext_IT15_TIM8_CC4);
     ADC_InjectedChannelConfig( ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5 );
     ADC_ExternalTrigInjectedConvCmd( ADC1, ENABLE );
 
@@ -144,7 +145,15 @@ int main( void )
     printf( "CalibrattionValue:%d\n", Calibrattion_Val );
     EXTI_Event_Init();
 
-    while( 1 );
+    while( 1 )
+		{
+				if(IntResponse == 1)
+        {
+				   IntResponse=0;
+           printf( "ADC Extline trigger conversion...\r\n" );
+           printf( "JADC%04d\r\n", Get_ConversionVal( ADC_val ) );
+        }
+		}
 }
 
 /*********************************************************************
@@ -156,13 +165,13 @@ int main( void )
  */
 void ADC1_2_IRQHandler()
 {
-    u16 ADC_val;
+
 
     if( ADC_GetITStatus( ADC1, ADC_IT_JEOC ) )
     {
-        printf( "ADC Extline trigger conversion...\r\n" );
+        
         ADC_val = ADC_GetInjectedConversionValue( ADC1, ADC_InjectedChannel_1 );
-        printf( "JADC%04d\r\n", Get_ConversionVal( ADC_val ) );
+        IntResponse=1;
     }
 
     ADC_ClearITPendingBit( ADC1, ADC_IT_JEOC );

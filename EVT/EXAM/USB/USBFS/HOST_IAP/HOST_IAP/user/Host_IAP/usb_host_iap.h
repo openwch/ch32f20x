@@ -22,22 +22,22 @@ extern "C" {
 #include "ch32f20x.h"
 #include "ch32f20x_usbfs_host.h"
 #include "usb_host_config.h"
-#include "CH32F103UFI.h"
+#include "CH32F103UFI.H"
 
 /*******************************************************************************/
 /* File Descripton */
 /*
  *@Note
-  适用于CH32系列的单片机，包括risc-v内核的CH32V系列和cortex-m3内核的CH32F系列
-  iap_flash.c/iap_flash.h文件包括iap和app需要的iap区域代码起止定义，app区域代码起止定义，
-  芯片flash的操作函数。
-  ***2022年6月13日***
-     1，版本0.1，
-  完整的代码包括flash字，半字，字节读，iap特化的flash擦除，写入，编程，读取，校验。
-  所有涉及flash读写，擦除的操作均使用DEF_FLASH_OPERATION_KEY_CODE保护，DEF_FLASH_OPERATION_KEY_CODE_0
-  在主函数开始时写入，DEF_FLASH_OPERATION_KEY_CODE_1在每次操作flash前写入。
-  使用宏定义区分iap代码和app代码，将iap和app对flash操作的代码统一到一个文件内
- iap代码开放所有函数调用，app代码仅开放IAP_VerifyCode_Erase(); 函数。
+  Applies to CH32 series MCUs, including the RISC-V based CH32V series and the Cortex-M3 based CH32F series
+  iap_flash.c/iap_flash.hThe file contains the start and end definitions of the IAP code area and of the APP code area needed by IAP and APP,
+  Flash operation functions of the chip.
+  ***2022/06/13***
+     1,Version 0.1,
+  The complete code covers flash word, half-word and byte reads, plus IAP-specific flash erase, write, program, read and verify.
+  All flash read, write and erase operations are protected by DEF_FLASH_OPERATION_KEY_CODE; DEF_FLASH_OPERATION_KEY_CODE_0
+  Written at the start of main; DEF_FLASH_OPERATION_KEY_CODE_1 is written before every flash operation.
+  Macro definitions distinguish IAP code from APP code so that the flash operation code of both IAP and APP is unified in one file
+ iapFor the IAP code all functions are exposed; for the APP code only the IAP_VerifyCode_Erase(); function is exposed.
 */
 
 /*******************************************************************************/

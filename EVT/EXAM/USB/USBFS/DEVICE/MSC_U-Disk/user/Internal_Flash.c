@@ -12,7 +12,7 @@
 #include "ch32f20x.h"
 #include "Internal_Flash.h"
 #include "ch32f20x_flash.h"
-#include "Debug.h"
+#include "debug.h"
 void IFlash_Prog_512(uint32_t address,uint32_t *pbuf)
 {
     if (address < IFLASH_UDISK_START_ADDR || (address + 511) > IFLASH_UDISK_END_ADDR )

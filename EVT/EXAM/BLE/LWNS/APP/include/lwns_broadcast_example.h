@@ -14,7 +14,7 @@
 
 #include "lwns_config.h"
 
-#define BROADCAST_EXAMPLE_TX_PERIOD_EVT    1 << (0)
+#define BROADCAST_EXAMPLE_TX_PERIOD_EVT    (1 << (0))
 
 void lwns_broadcast_process_init(void);
 

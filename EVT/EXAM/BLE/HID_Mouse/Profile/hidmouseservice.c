@@ -383,7 +383,7 @@ bStatus_t Hid_AddService(void)
 /*********************************************************************
  * @fn      Hid_SetParameter
  *
- * @brief   Set a HID Kbd parameter.
+ * @brief   Set a HID parameter.
  *
  * @param   id - HID report ID.
  * @param   type - HID report type.
@@ -431,7 +431,7 @@ uint8_t Hid_SetParameter(uint8_t id, uint8_t type, uint16_t uuid, uint8_t len, v
 /*********************************************************************
  * @fn      Hid_GetParameter
  *
- * @brief   Get a HID Kbd parameter.
+ * @brief   Get a HID parameter.
  *
  * @param   id - HID report ID.
  * @param   type - HID report type.
